@@ -3,6 +3,7 @@
 (function () {
   const root = document.documentElement;
   const THEME_KEY = "anmol-theme";
+  const CFG = window.SITE_VIDEOS || {}; // 🎬 edit js/config.js, not this file
 
   /* ---------- Theme ---------- */
   function getPreferredTheme() {
@@ -92,38 +93,101 @@
   });
 
   /* ---------- Preview modal ---------- */
-  const modal = document.getElementById("preview-modal");
-  const previewTitle = document.getElementById("preview-title");
-  const previewDesc = document.getElementById("preview-desc");
-  const previewVisual = document.getElementById("preview-visual");
+  const sheetOverlay = document.getElementById("video-sheet");
+  const sheetPlayer = document.getElementById("sheet-player");
+  const sheetTitle = document.getElementById("sheet-title");
+  const sheetDesc = document.getElementById("sheet-desc");
+  let sheetCloseTimer = null;
 
-  function openPreview(title, desc) {
-    if (!modal) return;
-    previewTitle.textContent = title;
-    previewDesc.textContent = desc || "Demo preview — swap in your real video embed later.";
-    previewVisual.innerHTML = '<i class="fa-solid fa-play" aria-hidden="true"></i>';
-    modal.hidden = false;
-    document.body.style.overflow = "hidden";
+  function toEmbed(url) {
+    if (!url) return null;
+    const yt = url.match(/(?:youtube\.com\/(?:watch\?v=|shorts\/|embed\/)|youtu\.be\/)([\w-]{6,})/);
+    if (yt) return "https://www.youtube-nocookie.com/embed/" + yt[1] + "?autoplay=1&rel=0&playsinline=1";
+    const vm = url.match(/vimeo\.com\/(?:video\/)?(\d+)/);
+    if (vm) return "https://player.vimeo.com/video/" + vm[1] + "?autoplay=1";
+    return null;
   }
 
-  function closePreview() {
-    if (!modal) return;
-    modal.hidden = true;
+  function showSheetEmpty(title, msg) {
+    sheetPlayer.innerHTML =
+      '<div class="sheet-empty"><i class="fa-solid fa-clapperboard" aria-hidden="true"></i><strong>' +
+      title +
+      "</strong><span>" +
+      msg +
+      "</span></div>";
+  }
+
+  function buildPlayer(src) {
+    sheetPlayer.innerHTML = "";
+    if (!src) {
+      showSheetEmpty("Link coming soon", "Paste this project\u2019s video link in js/config.js and it plays here.");
+      return;
+    }
+    const embed = toEmbed(src);
+    if (embed) {
+      const f = document.createElement("iframe");
+      f.src = embed;
+      f.allow = "autoplay; fullscreen; picture-in-picture; encrypted-media";
+      f.allowFullscreen = true;
+      f.title = "Video player";
+      sheetPlayer.appendChild(f);
+      return;
+    }
+    const v = document.createElement("video");
+    v.src = src;
+    v.controls = true;
+    v.autoplay = true;
+    v.playsInline = true;
+    v.setAttribute("playsinline", "");
+    v.addEventListener(
+      "error",
+      () => showSheetEmpty("Video not found", "Check this project\u2019s file path or link in js/config.js."),
+      { once: true }
+    );
+    sheetPlayer.appendChild(v);
+    v.play().catch(() => {});
+  }
+
+  function openSheet(id, fallbackTitle, fallbackDesc) {
+    if (!sheetOverlay) return;
+    const item = (CFG.work || {})[id] || {};
+    sheetTitle.textContent = item.title || fallbackTitle || "Project";
+    sheetDesc.textContent = item.meta || fallbackDesc || "";
+    buildPlayer(item.src || "");
+    clearTimeout(sheetCloseTimer);
+    sheetOverlay.hidden = false;
+    requestAnimationFrame(() =>
+      requestAnimationFrame(() => sheetOverlay.classList.add("is-open"))
+    );
+    document.body.style.overflow = "hidden";
+    document.getElementById("sheet-close")?.focus({ preventScroll: true });
+  }
+
+  function closeSheet() {
+    if (!sheetOverlay || sheetOverlay.hidden) return;
+    sheetOverlay.classList.remove("is-open");
     document.body.style.overflow = "";
+    sheetCloseTimer = setTimeout(() => {
+      sheetOverlay.hidden = true;
+      sheetPlayer.innerHTML = ""; // stops playback
+    }, 480);
   }
 
   document.querySelectorAll(".work-card").forEach((card) => {
+    const id = card.dataset.video || "";
     const title = card.querySelector("h3")?.textContent || "Project";
-    const desc = card.querySelector("p")?.textContent || "";
-    card.querySelector(".work-play")?.addEventListener("click", (e) => {
+    const desc = card.querySelector(".work-meta p")?.textContent || "";
+    const open = (e) => {
       e.stopPropagation();
-      openPreview(title, desc);
-    });
+      openSheet(id, title, desc);
+    };
+    card.querySelector(".work-play")?.addEventListener("click", open);
+    card.querySelector(".work-thumb")?.addEventListener("click", open);
   });
 
-  document.getElementById("preview-close")?.addEventListener("click", closePreview);
-  modal?.addEventListener("click", (e) => {
-    if (e.target === modal) closePreview();
+  document.getElementById("sheet-close")?.addEventListener("click", closeSheet);
+  sheetOverlay?.addEventListener("click", (e) => {
+    if (e.target === sheetOverlay) closeSheet();
   });
 
   /* ---------- Contact form ---------- */
@@ -147,13 +211,22 @@
   });
 
   /* ---------- Hero video playback (cards + bank) ---------- */
-  const HERO_CLIPS = [
-    "media/luxury.mp4",
-    "media/stain-glass.mp4",
-    "media/hero-anim.mp4",
-    "media/animation.mp4",
-    "media/knowledge.mp4",
-  ];
+  const HERO_CLIPS = (Array.isArray(CFG.hero) && CFG.hero.length
+    ? CFG.hero
+    : [
+        "media/luxury.mp4",
+        "media/stain-glass.mp4",
+        "media/hero-anim.mp4",
+        "media/animation.mp4",
+        "media/knowledge.mp4",
+      ]
+  ).slice(0, 5);
+
+  // Feed the hero cards from the dashboard; branded still if a clip is missing
+  document.querySelectorAll(".film-video").forEach((v, i) => {
+    if (HERO_CLIPS[i]) v.src = HERO_CLIPS[i];
+    v.addEventListener("error", () => v.closest(".film-card")?.classList.add("no-src"), { once: true });
+  });
 
   function allHeroVideos() {
     return [
@@ -347,6 +420,23 @@
       return video;
     }
 
+    function makeFallbackTexture() {
+      const c = document.createElement("canvas");
+      c.width = c.height = 256;
+      const g = c.getContext("2d");
+      const grad = g.createLinearGradient(0, 0, 256, 256);
+      grad.addColorStop(0, "#1c1c1c");
+      grad.addColorStop(0.55, "#121212");
+      grad.addColorStop(1, "rgba(251, 86, 7, 0.6)");
+      g.fillStyle = grad;
+      g.fillRect(0, 0, 256, 256);
+      g.fillStyle = "rgba(255, 255, 255, 0.05)";
+      for (let y = 0; y < 256; y += 7) g.fillRect(0, y, 256, 1);
+      const t = new THREE.CanvasTexture(c);
+      if ("colorSpace" in t) t.colorSpace = THREE.SRGBColorSpace;
+      return t;
+    }
+
     activeLayouts.forEach((L, i) => {
       const video = createVideoEl(L.src);
       const texture = new THREE.VideoTexture(video);
@@ -382,6 +472,15 @@
         new THREE.LineBasicMaterial({ color: accent, transparent: true, opacity: 0.7 })
       );
       mesh.add(line);
+
+      video.addEventListener(
+        "error",
+        () => {
+          mat.map = makeFallbackTexture();
+          mat.needsUpdate = true;
+        },
+        { once: true }
+      );
 
       const start = () => {
         video.play().catch(() => {});
@@ -447,7 +546,7 @@
     group.add(ico);
 
     function resize() {
-      const rect = hero.getBoundingClientRect();
+      const rect = canvas.getBoundingClientRect();
       const w = Math.max(1, rect.width);
       const h = Math.max(1, rect.height);
       renderer.setSize(w, h, false);
@@ -549,7 +648,7 @@
   /* ---------- Escape closes UI ---------- */
   document.addEventListener("keydown", (e) => {
     if (e.key === "Escape") {
-      closePreview();
+      closeSheet();
       closeMobileNav();
     }
   });

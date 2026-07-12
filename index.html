@@ -220,7 +220,7 @@
         </div>
 
         <div class="work-grid" id="work-grid">
-          <article class="work-card" data-cat="reel brand" style="--i:0">
+          <article class="work-card" data-cat="reel brand" style="--i:0" data-video="luxury">
             <div class="work-thumb ratio-9-16">
               <div class="thumb-gradient g1"></div>
               <span class="work-badge">9:16</span>
@@ -232,7 +232,7 @@
             </div>
           </article>
 
-          <article class="work-card featured" data-cat="brand" style="--i:1">
+          <article class="work-card featured" data-cat="brand" style="--i:1" data-video="stain-glass">
             <div class="work-thumb ratio-16-9">
               <div class="thumb-gradient g2"></div>
               <span class="work-badge">16:9</span>
@@ -244,7 +244,7 @@
             </div>
           </article>
 
-          <article class="work-card" data-cat="reel" style="--i:2">
+          <article class="work-card" data-cat="reel" style="--i:2" data-video="nav-bharat">
             <div class="work-thumb ratio-9-16">
               <div class="thumb-gradient g3"></div>
               <span class="work-badge">9:16</span>
@@ -256,7 +256,7 @@
             </div>
           </article>
 
-          <article class="work-card" data-cat="motion" style="--i:3">
+          <article class="work-card" data-cat="motion" style="--i:3" data-video="sfs-logo">
             <div class="work-thumb ratio-16-9">
               <div class="thumb-gradient g4"></div>
               <span class="work-badge">MOTION</span>
@@ -268,7 +268,7 @@
             </div>
           </article>
 
-          <article class="work-card" data-cat="reel brand" style="--i:4">
+          <article class="work-card" data-cat="reel brand" style="--i:4" data-video="look-book">
             <div class="work-thumb ratio-9-16">
               <div class="thumb-gradient g5"></div>
               <span class="work-badge">9:16</span>
@@ -280,7 +280,7 @@
             </div>
           </article>
 
-          <article class="work-card" data-cat="brand motion" style="--i:5">
+          <article class="work-card" data-cat="brand motion" style="--i:5" data-video="drywall">
             <div class="work-thumb ratio-16-9">
               <div class="thumb-gradient g6"></div>
               <span class="work-badge">16:9</span>
@@ -477,21 +477,25 @@
   <!-- Toast -->
   <div class="toast-stack" id="toast-stack" aria-live="polite"></div>
 
-  <!-- Preview modal -->
-  <div class="modal-overlay" id="preview-modal" hidden>
-    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="preview-title">
-      <button type="button" class="modal-close" id="preview-close" aria-label="Close preview">
-        <i class="fa-solid fa-xmark"></i>
+  <!-- Bottom-sheet video player -->
+  <div class="sheet-overlay" id="video-sheet" hidden>
+    <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="sheet-title">
+      <div class="sheet-handle" aria-hidden="true"></div>
+      <button type="button" class="sheet-close" id="sheet-close" aria-label="Close player">
+        <i class="fa-solid fa-xmark" aria-hidden="true"></i>
       </button>
-      <div class="modal-preview">
-        <div class="modal-preview-inner" id="preview-visual"></div>
+      <div class="sheet-bezel">
+        <div class="sheet-player" id="sheet-player"></div>
       </div>
-      <h3 id="preview-title">Project preview</h3>
-      <p class="muted" id="preview-desc">Demo preview — drop your real video links here later.</p>
+      <div class="sheet-meta">
+        <h3 id="sheet-title">Project</h3>
+        <p id="sheet-desc"></p>
+      </div>
     </div>
   </div>
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script src="js/config.js"></script>
   <script src="js/main.js"></script>
 </body>
 </html>
