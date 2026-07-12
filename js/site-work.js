@@ -5,10 +5,12 @@
    already in index.html, just from data instead of hardcoding six of them.
 
    Requires nothing else from you except:
-     1. this file included after config.js / before main.js
+     1. this file included after config.js / before main.js (or after — order
+        doesn't matter, it only touches #work-grid and #video-sheet)
      2. data/videos.json sitting next to index.html
      3. the filter buttons and #work-grid / #video-sheet already in the page
    ========================================================================== */
+
 (function () {
   'use strict';
 
@@ -32,37 +34,13 @@
   }
 
   function posterFor(v) {
-    if (v.poster) return v.poster;
-    if (v.platform === 'youtube' || !v.platform) {
-      return 'https://i.ytimg.com/vi/' + v.id + '/maxresdefault.jpg';
-    }
-    if (v.platform === 'vimeo') {
-      return 'https://vumbnail.com/' + v.id + '.jpg';
-    }
-    return ''; // Instagram or others
+    return v.poster || ('https://i.ytimg.com/vi/' + v.id + '/maxresdefault.jpg');
   }
 
-  function getEmbedSrc(v) {
-    var platform = v.platform || 'youtube';
-    var id = v.id;
-
-    if (platform === 'youtube') {
-      var p = { autoplay: 1, rel: 0, modestbranding: 1, playsinline: 1, color: 'white' };
-      if (v.start) p.start = v.start;
-      return 'https://www.youtube-nocookie.com/embed/' + id + '?' +
-        Object.keys(p).map(function (k) { return k + '=' + p[k]; }).join('&');
-    }
-
-    if (platform === 'vimeo') {
-      return 'https://player.vimeo.com/video/' + id + '?autoplay=1&title=0&byline=0&portrait=0';
-    }
-
-    if (platform === 'instagram') {
-      return 'https://www.instagram.com/reel/' + id + '/embed/?cr=1';
-    }
-
-    // Fallback
-    return 'https://www.youtube-nocookie.com/embed/' + id;
+  function embedURL(id, opts) {
+    var p = Object.assign({ autoplay: 1, rel: 0, modestbranding: 1, playsinline: 1, color: 'white' }, opts || {});
+    return 'https://www.youtube-nocookie.com/embed/' + id + '?' +
+      Object.keys(p).map(function (k) { return k + '=' + p[k]; }).join('&');
   }
 
   async function load() {
@@ -79,7 +57,7 @@
     }
   }
 
-  /* ---------- build one .work-card ----------------------------------- */
+  /* ---------- build one .work-card, matching the hand-written markup --- */
 
   function buildCard(v, i) {
     var article = document.createElement('article');
@@ -89,6 +67,7 @@
     article.dataset.video = v.id;
 
     var ratio = v.aspect === '9:16' ? 'ratio-9-16' : 'ratio-16-9';
+
     var badge = v.aspect === '9:16' ? '9:16'
               : tagsOf(v) === 'motion' ? 'MOTION'
               : v.aspect || '16:9';
@@ -111,6 +90,7 @@
     article.querySelector('.work-play').addEventListener('click', function () { openSheet(v); });
     article.querySelector('.work-thumb').addEventListener('click', function () { openSheet(v); });
 
+    // Hover preview: muted YouTube loop behind the poster, same trick as before.
     if (v.previewMode === 'youtube' || v.previewMode === 'clip') {
       wirePreview(article, v);
     }
@@ -125,39 +105,35 @@
 
     function start() {
       if (mqReduce.matches || media) return;
-
       if (v.previewMode === 'clip' && v.preview) {
         media = document.createElement('video');
         media.className = 'work-preview';
-        media.src = v.preview;
-        media.muted = true;
-        media.loop = true;
-        media.playsInline = true;
-        media.setAttribute('aria-hidden', 'true');
+        media.src = v.preview; media.muted = true; media.loop = true;
+        media.playsInline = true; media.setAttribute('aria-hidden', 'true');
         thumb.appendChild(media);
-        var p = media.play();
-        if (p && p.catch) p.catch(function () {});
+        var p = media.play(); if (p && p.catch) p.catch(function () {});
       } else if (v.previewMode === 'youtube') {
         media = document.createElement('iframe');
         media.className = 'work-preview work-preview--yt';
-        media.src = getEmbedSrc(v).replace('autoplay=1', 'autoplay=0');
+        media.src = embedURL(v.id, { mute: 1, controls: 0, loop: 1, playlist: v.id, start: v.start || 0, disablekb: 1, iv_load_policy: 3 });
         media.setAttribute('tabindex', '-1');
         media.setAttribute('aria-hidden', 'true');
         media.setAttribute('allow', 'autoplay; encrypted-media');
         thumb.appendChild(media);
       }
-
       if (media) requestAnimationFrame(function () { thumb.classList.add('is-previewing'); });
     }
 
     function stop() {
       thumb.classList.remove('is-previewing');
       if (!media) return;
-      var m = media;
-      media = null;
+      var m = media; media = null;
       setTimeout(function () { if (m.parentNode) m.remove(); }, 300);
     }
 
+    // Automatic: the preview starts the moment the card is visibly on screen
+    // (desktop scroll or mobile scroll — no hover, no click needed) and stops
+    // when it scrolls back out, so only what's actually on screen is playing.
     if ('IntersectionObserver' in window) {
       new IntersectionObserver(function (entries) {
         entries.forEach(function (e) {
@@ -165,12 +141,14 @@
         });
       }, { threshold: [0, 0.5, 1] }).observe(thumb);
     } else {
+      // No IntersectionObserver support at all — fall back to just playing it.
       start();
     }
   }
 
-  /* ---------- open/close the sheet (with description + ratio fix) ------ */
+  /* ---------- open/close the EXISTING sheet ----------------------------- */
 
+  var sheetDescription = document.getElementById('sheet-description');
   var lastFocus = null;
 
   function openSheet(v) {
@@ -181,44 +159,30 @@
     var bits = [v.client, v.category, v.year].filter(Boolean);
     sheetDesc.textContent = bits.join(' · ');
 
-    // Add description if available
-    var metaWrap = sheetDesc.parentNode;
-    var oldLong = document.getElementById('sheet-long-desc');
-    if (oldLong) oldLong.remove();
-
-    if (v.description && v.description.trim()) {
-      var longP = document.createElement('p');
-      longP.id = 'sheet-long-desc';
-      longP.className = 'sheet-long-desc muted';
-      longP.style.marginTop = '0.5rem';
-      longP.style.fontSize = '0.9rem';
-      longP.style.lineHeight = '1.5';
-      longP.textContent = v.description;
-      metaWrap.appendChild(longP);
+    if (sheetDescription) {
+      sheetDescription.textContent = v.description || '';
+      sheetDescription.hidden = !v.description;
     }
 
-    // Build responsive player with correct ratio
+    // Same ratio-aware wrapper the hero player uses (.video-player-wrapper),
+    // so a 9:16 video gets a tall box and a 16:9 video gets a wide one —
+    // instead of both being squeezed into whatever box happened to be there.
     sheetPlayer.innerHTML = '';
-    var ratio = (v.aspect || '9:16').replace(/\s/g, '');
     var wrapper = document.createElement('div');
     wrapper.className = 'video-player-wrapper';
-    wrapper.setAttribute('data-ratio', ratio);
+    wrapper.setAttribute('data-ratio', v.aspect || '16:9');
 
     var iframe = document.createElement('iframe');
-    iframe.src = getEmbedSrc(v);
+    iframe.src = embedURL(v.id, v.start ? { start: v.start } : {});
     iframe.title = v.title || 'Video player';
     iframe.allow = 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share';
     iframe.allowFullscreen = true;
     iframe.referrerPolicy = 'strict-origin-when-cross-origin';
-    iframe.style.cssText = 'position:absolute;inset:0;width:100%;height:100%;border:0';
-
     wrapper.appendChild(iframe);
-    sheetPlayer.style.position = 'relative';
     sheetPlayer.appendChild(wrapper);
 
     document.documentElement.style.overflow = 'hidden';
     sheetOverlay.hidden = false;
-
     requestAnimationFrame(function () {
       sheetOverlay.classList.add('is-open');
       var sheet = sheetOverlay.querySelector('.sheet');
@@ -232,7 +196,7 @@
     document.documentElement.style.overflow = '';
     setTimeout(function () {
       sheetOverlay.hidden = true;
-      sheetPlayer.innerHTML = ''; // stops playback
+      sheetPlayer.innerHTML = '';           // stops playback
       if (lastFocus && lastFocus.focus) lastFocus.focus();
     }, 300);
   }
@@ -247,7 +211,47 @@
     if (e.key === 'Escape') closeSheet();
   });
 
-  /* ---------- filters -------------------------------------------------- */
+  /* ---------- mobile only: swipe the handle down to dismiss -------------- */
+
+  (function wireSwipeToDismiss() {
+    var sheetEl = sheetOverlay && sheetOverlay.querySelector('.sheet');
+    var handle = sheetOverlay && sheetOverlay.querySelector('.sheet-handle');
+    if (!sheetEl || !handle) return;
+
+    var isMobile = function () { return window.matchMedia('(max-width: 760px)').matches; };
+    var startY = 0, dy = 0, dragging = false;
+
+    handle.style.touchAction = 'none';
+
+    handle.addEventListener('pointerdown', function (e) {
+      if (!isMobile()) return;
+      dragging = true; dy = 0; startY = e.clientY;
+      sheetEl.classList.add('is-dragging');
+      try { handle.setPointerCapture(e.pointerId); } catch (err) {}
+    });
+
+    handle.addEventListener('pointermove', function (e) {
+      if (!dragging) return;
+      dy = Math.max(0, e.clientY - startY);   // only allow dragging downward
+      sheetEl.style.transform = 'translateY(' + dy + 'px)';
+    });
+
+    function endDrag() {
+      if (!dragging) return;
+      dragging = false;
+      sheetEl.classList.remove('is-dragging');
+      sheetEl.style.transform = '';
+      // Past ~18% of the sheet's height, or a decisive flick — dismiss it.
+      var threshold = sheetEl.offsetHeight * 0.18;
+      if (dy > threshold) closeSheet();
+      dy = 0;
+    }
+
+    handle.addEventListener('pointerup', endDrag);
+    handle.addEventListener('pointercancel', endDrag);
+  })();
+
+  /* ---------- filters: reuse the existing .filter-btn buttons ----------- */
 
   function wireFilters(cards) {
     var buttons = document.querySelectorAll('.filter-btn');
@@ -269,7 +273,7 @@
     });
   }
 
-  /* ---------- boot ----------------------------------------------------- */
+  /* ---------- boot -------------------------------------------------------- */
 
   (async function init() {
     grid.innerHTML = '<p class="work-empty">Loading work…</p>';
@@ -279,15 +283,17 @@
     if (data === null) {
       grid.innerHTML =
         '<p class="work-empty">' +
-        'Work isn’t loading right now — <code>data/videos.json</code> couldn’t be reached. ' +
-        'If you’re viewing this file locally, browsers block that on purpose — view it through your live site or a local server instead.' +
+        'Work isn\u2019t loading right now \u2014 <code>data/videos.json</code> couldn\u2019t be reached. ' +
+        'If you\u2019re viewing this file locally (double-clicked, address bar says <code>file://</code>), ' +
+        'browsers block that on purpose \u2014 view it through your live site or a local server instead. ' +
+        'Otherwise check that <code>data/videos.json</code> was actually uploaded next to this page.' +
         '</p>';
       return;
     }
 
     grid.innerHTML = '';
     if (!data.length) {
-      grid.innerHTML = '<p class="work-empty">No projects published yet — add one from admin.html.</p>';
+      grid.innerHTML = '<p class="work-empty">No projects published yet \u2014 add one from admin.html.</p>';
       return;
     }
 
