@@ -1,8 +1,9 @@
 {
-  "updated": "2026-07-12T13:29:41.834Z",
+  "updated": "2026-07-12T13:32:00.000Z",
   "videos": [
     {
       "id": "P5E2C3pyAZY",
+      "platform": "youtube",
       "title": "Drift Car Portfolio Video",
       "client": "Anmol Chandiok",
       "category": "",
@@ -14,10 +15,12 @@
       "previewMode": "youtube",
       "start": 0,
       "featured": false,
-      "hidden": false
+      "hidden": false,
+      "description": "High-energy drift car portfolio video showcasing dynamic camera work and cinematic editing."
     },
     {
       "id": "TMUJTFk4CeM",
+      "platform": "youtube",
       "title": "Recent Client Work",
       "client": "Anmol Chandiok",
       "category": "",
@@ -29,11 +32,13 @@
       "previewMode": "youtube",
       "start": 0,
       "featured": false,
-      "hidden": false
+      "hidden": false,
+      "description": "A collection of recent client projects highlighting short-form and brand video editing skills."
     },
     {
       "id": "p2wTxGeT2A0",
-      "title": "Swift 🔥 #videoeditingsoftware #automobile #swift #car #videoeditor",
+      "platform": "youtube",
+      "title": "Swift 🔥",
       "client": "Anmol Chandiok",
       "category": "",
       "year": "2026",
@@ -44,11 +49,13 @@
       "previewMode": "youtube",
       "start": 0,
       "featured": false,
-      "hidden": false
+      "hidden": false,
+      "description": "Fast-paced vertical reel featuring the Maruti Swift with engaging edits and trending audio."
     },
     {
       "id": "rbTEAwR6PIw",
-      "title": "how to install arm rest in swift 2018/universal arm rest/cheapest arm rest/the rider beast",
+      "platform": "youtube",
+      "title": "How to Install Arm Rest in Swift 2018",
       "client": "Anmol Chandiok",
       "category": "",
       "year": "2026",
@@ -59,7 +66,8 @@
       "previewMode": "youtube",
       "start": 0,
       "featured": false,
-      "hidden": false
+      "hidden": false,
+      "description": "Step-by-step installation guide for universal arm rest in Maruti Swift 2018 model."
     }
   ]
 }
