@@ -1,0 +1,431 @@
+/* ==========================================================================
+   work.css — Pluseshot work grid + bottom-sheet YouTube player
+   Drop into: css/work.css
+   All colours are variables. Override them in your own CSS to match the site.
+   ========================================================================== */
+
+:root {
+  --pw-card:      #14141a;
+  --pw-line:      rgba(255, 255, 255, 0.09);
+  --pw-line-hi:   rgba(255, 255, 255, 0.18);
+  --pw-text:      #e9e9ef;
+  --pw-muted:     #8c8c99;
+  --pw-accent:    #7c5cff;
+  --pw-scrim:     rgba(6, 6, 10, 0.82);
+  --pw-radius:    14px;
+  --pw-gap:       22px;
+  --pw-ease:      cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* ---------- Filters ------------------------------------------------------ */
+
+.pw-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 0 0 28px;
+}
+
+.pw-chip {
+  font: inherit;
+  font-size: 13px;
+  letter-spacing: 0.01em;
+  color: var(--pw-muted);
+  background: transparent;
+  border: 1px solid var(--pw-line);
+  border-radius: 999px;
+  padding: 7px 15px;
+  cursor: pointer;
+  transition: color 0.18s, border-color 0.18s, background 0.18s;
+}
+
+.pw-chip:hover {
+  color: var(--pw-text);
+  border-color: var(--pw-line-hi);
+}
+
+.pw-chip[aria-pressed="true"] {
+  color: #fff;
+  border-color: var(--pw-accent);
+  background: color-mix(in srgb, var(--pw-accent) 16%, transparent);
+}
+
+.pw-chip:focus-visible,
+.pw-card__hit:focus-visible,
+.pw-sheet [data-close]:focus-visible {
+  outline: 2px solid var(--pw-accent);
+  outline-offset: 3px;
+}
+
+/* ---------- Grid --------------------------------------------------------- */
+
+.pw-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: var(--pw-gap);
+}
+
+.pw-grid[data-loading] {
+  min-height: 240px;
+}
+
+.pw-card {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  min-width: 0;
+}
+
+.pw-card[hidden] {
+  display: none;
+}
+
+/* The whole thumbnail is the button. */
+.pw-card__hit {
+  display: block;
+  width: 100%;
+  padding: 0;
+  border: 0;
+  background: none;
+  cursor: pointer;
+  text-align: left;
+  border-radius: var(--pw-radius);
+}
+
+.pw-card__frame {
+  position: relative;
+  overflow: hidden;
+  border-radius: var(--pw-radius);
+  background: var(--pw-card);
+  border: 1px solid var(--pw-line);
+  aspect-ratio: 16 / 9;
+  transition: border-color 0.25s, transform 0.4s var(--pw-ease);
+}
+
+.pw-card[data-aspect="9:16"] .pw-card__frame { aspect-ratio: 9 / 16; }
+.pw-card[data-aspect="1:1"]  .pw-card__frame { aspect-ratio: 1 / 1; }
+.pw-card[data-aspect="4:5"]  .pw-card__frame { aspect-ratio: 4 / 5; }
+
+.pw-card__hit:hover .pw-card__frame,
+.pw-card__hit:focus-visible .pw-card__frame {
+  border-color: var(--pw-line-hi);
+  transform: translateY(-3px);
+}
+
+/* Poster + preview stack on top of each other. */
+.pw-card__poster,
+.pw-card__preview {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border: 0;
+  display: block;
+}
+
+.pw-card__poster {
+  transition: opacity 0.35s var(--pw-ease), transform 0.6s var(--pw-ease);
+  transform: scale(1.001); /* kills sub-pixel edge shimmer on scale */
+}
+
+.pw-card__preview {
+  opacity: 0;
+  transition: opacity 0.35s var(--pw-ease);
+  pointer-events: none;
+}
+
+/* A YouTube-iframe preview has to be blown up to hide its chrome. */
+.pw-card__preview--yt {
+  width: 300%;
+  height: 300%;
+  left: -100%;
+  top: -100%;
+}
+
+.pw-card.is-previewing .pw-card__preview { opacity: 1; }
+.pw-card.is-previewing .pw-card__poster  { opacity: 0; }
+
+/* No preview clip? Then hover just pushes the poster in a little. */
+.pw-card:not([data-preview]) .pw-card__hit:hover .pw-card__poster {
+  transform: scale(1.045);
+}
+
+/* Play button */
+.pw-card__play {
+  position: absolute;
+  right: 12px;
+  bottom: 12px;
+  width: 42px;
+  height: 42px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  color: #fff;
+  background: rgba(10, 10, 14, 0.55);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  transition: background 0.22s, transform 0.28s var(--pw-ease);
+}
+
+.pw-card__hit:hover .pw-card__play,
+.pw-card__hit:focus-visible .pw-card__play {
+  background: var(--pw-accent);
+  border-color: transparent;
+  transform: scale(1.08);
+}
+
+.pw-card__play svg { width: 14px; height: 14px; margin-left: 2px; }
+
+.pw-card__badge {
+  position: absolute;
+  left: 12px;
+  bottom: 12px;
+  font-size: 11px;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.04em;
+  color: #fff;
+  background: rgba(10, 10, 14, 0.62);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  padding: 4px 8px;
+  border-radius: 6px;
+}
+
+/* Meta */
+.pw-card__title {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 600;
+  line-height: 1.35;
+  color: var(--pw-text);
+}
+
+.pw-card__sub {
+  margin: 4px 0 0;
+  font-size: 13px;
+  color: var(--pw-muted);
+  line-height: 1.4;
+}
+
+.pw-card__sub span + span::before {
+  content: "·";
+  margin: 0 7px;
+  opacity: 0.55;
+}
+
+/* ---------- Bottom sheet / lightbox -------------------------------------- */
+
+.pw-sheet {
+  position: fixed;
+  inset: 0;
+  z-index: 9000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.pw-sheet[hidden] { display: none; }
+
+.pw-sheet__scrim {
+  position: absolute;
+  inset: 0;
+  background: var(--pw-scrim);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  opacity: 0;
+  transition: opacity 0.32s var(--pw-ease);
+  border: 0;
+  cursor: pointer;
+}
+
+.pw-sheet.is-open .pw-sheet__scrim { opacity: 1; }
+
+.pw-sheet__panel {
+  position: relative;
+  width: min(1040px, calc(100vw - 48px));
+  max-height: calc(100vh - 48px);
+  overflow: auto;
+  overscroll-behavior: contain;
+  background: #0e0e13;
+  border: 1px solid var(--pw-line);
+  border-radius: 18px;
+  padding: 14px;
+  transform: translateY(24px) scale(0.985);
+  opacity: 0;
+  transition: transform 0.4s var(--pw-ease), opacity 0.3s var(--pw-ease);
+}
+
+.pw-sheet.is-open .pw-sheet__panel {
+  transform: none;
+  opacity: 1;
+}
+
+/* Vertical videos get a phone-shaped stage instead of a wide one. */
+.pw-sheet__panel[data-aspect="9:16"],
+.pw-sheet__panel[data-aspect="4:5"],
+.pw-sheet__panel[data-aspect="1:1"] {
+  width: min(460px, calc(100vw - 48px));
+}
+
+.pw-sheet__stage {
+  position: relative;
+  aspect-ratio: 16 / 9;
+  border-radius: 10px;
+  overflow: hidden;
+  background: #000;
+}
+
+.pw-sheet__panel[data-aspect="9:16"] .pw-sheet__stage { aspect-ratio: 9 / 16; }
+.pw-sheet__panel[data-aspect="1:1"]  .pw-sheet__stage { aspect-ratio: 1 / 1; }
+.pw-sheet__panel[data-aspect="4:5"]  .pw-sheet__stage { aspect-ratio: 4 / 5; }
+
+.pw-sheet__stage iframe {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border: 0;
+}
+
+.pw-sheet__meta {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 20px;
+  padding: 16px 6px 6px;
+}
+
+.pw-sheet__meta h2 {
+  margin: 0;
+  font-size: 17px;
+  font-weight: 600;
+  color: var(--pw-text);
+  line-height: 1.35;
+}
+
+.pw-sheet__meta p {
+  margin: 5px 0 0;
+  font-size: 13px;
+  color: var(--pw-muted);
+}
+
+.pw-sheet__yt {
+  flex: none;
+  font-size: 13px;
+  color: var(--pw-muted);
+  text-decoration: none;
+  border-bottom: 1px solid transparent;
+  transition: color 0.2s, border-color 0.2s;
+  white-space: nowrap;
+}
+
+.pw-sheet__yt:hover {
+  color: var(--pw-text);
+  border-color: var(--pw-line-hi);
+}
+
+.pw-sheet__close {
+  position: absolute;
+  top: -6px;
+  right: -6px;
+  transform: translate(50%, -50%);
+  width: 36px;
+  height: 36px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  color: var(--pw-text);
+  background: #1b1b22;
+  border: 1px solid var(--pw-line-hi);
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s;
+}
+
+.pw-sheet__close:hover { background: var(--pw-accent); color: #fff; }
+.pw-sheet__close svg { width: 12px; height: 12px; }
+
+/* Grab handle — only visible on the mobile sheet. */
+.pw-sheet__grab { display: none; }
+
+/* ---------- Mobile: true bottom sheet ------------------------------------ */
+
+@media (max-width: 720px) {
+  .pw-sheet { align-items: flex-end; }
+
+  .pw-sheet__panel {
+    width: 100%;
+    max-height: 92vh;
+    border-radius: 20px 20px 0 0;
+    border-bottom: 0;
+    padding: 8px 12px calc(18px + env(safe-area-inset-bottom));
+    transform: translateY(100%);
+    transition: transform 0.42s var(--pw-ease), opacity 0.2s linear;
+    opacity: 1;
+  }
+
+  .pw-sheet.is-open .pw-sheet__panel { transform: translateY(0); }
+
+  /* While the finger is down, JS drives translateY directly. */
+  .pw-sheet.is-dragging .pw-sheet__panel { transition: none; }
+
+  .pw-sheet__panel[data-aspect] { width: 100%; }
+
+  .pw-sheet__grab {
+    display: block;
+    width: 40px;
+    height: 4px;
+    margin: 6px auto 12px;
+    padding: 0;
+    border: 0;
+    border-radius: 99px;
+    background: var(--pw-line-hi);
+    cursor: grab;
+    touch-action: none;
+  }
+
+  .pw-sheet__close { display: none; }
+
+  .pw-sheet__meta {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  .pw-grid { grid-template-columns: 1fr; }
+}
+
+/* ---------- Loading / empty / error -------------------------------------- */
+
+.pw-skeleton {
+  border-radius: var(--pw-radius);
+  aspect-ratio: 16 / 9;
+  background: linear-gradient(100deg, #14141a 30%, #1d1d25 50%, #14141a 70%);
+  background-size: 220% 100%;
+  animation: pw-shimmer 1.4s linear infinite;
+}
+
+@keyframes pw-shimmer {
+  to { background-position: -220% 0; }
+}
+
+.pw-note {
+  grid-column: 1 / -1;
+  color: var(--pw-muted);
+  font-size: 14px;
+  padding: 28px 0;
+}
+
+/* ---------- Reduced motion ----------------------------------------------- */
+
+@media (prefers-reduced-motion: reduce) {
+  .pw-card__frame,
+  .pw-card__poster,
+  .pw-card__play,
+  .pw-sheet__panel,
+  .pw-sheet__scrim {
+    transition-duration: 0.01ms !important;
+  }
+  .pw-skeleton { animation: none; }
+}
