@@ -100,9 +100,7 @@
 
   function wirePreview(article, v) {
     var thumb = article.querySelector('.work-thumb');
-    var img = article.querySelector('.work-poster');
     var media = null;
-    var mqHover = window.matchMedia('(hover: hover) and (pointer: fine)');
     var mqReduce = window.matchMedia('(prefers-reduced-motion: reduce)');
 
     function start() {
@@ -133,15 +131,18 @@
       setTimeout(function () { if (m.parentNode) m.remove(); }, 300);
     }
 
-    if (mqHover.matches) {
-      thumb.addEventListener('mouseenter', start);
-      thumb.addEventListener('mouseleave', stop);
-    } else if ('IntersectionObserver' in window) {
+    // Automatic: the preview starts the moment the card is visibly on screen
+    // (desktop scroll or mobile scroll — no hover, no click needed) and stops
+    // when it scrolls back out, so only what's actually on screen is playing.
+    if ('IntersectionObserver' in window) {
       new IntersectionObserver(function (entries) {
         entries.forEach(function (e) {
-          if (e.isIntersecting && e.intersectionRatio > 0.6) start(); else stop();
+          if (e.isIntersecting && e.intersectionRatio > 0.5) start(); else stop();
         });
-      }, { threshold: [0, 0.6, 1] }).observe(thumb);
+      }, { threshold: [0, 0.5, 1] }).observe(thumb);
+    } else {
+      // No IntersectionObserver support at all — fall back to just playing it.
+      start();
     }
   }
 
@@ -223,12 +224,24 @@
   /* ---------- boot -------------------------------------------------------- */
 
   (async function init() {
+    grid.innerHTML = '<p class="work-empty">Loading work…</p>';
+
     var data = await load();
-    if (data === null) return;               // leave the hardcoded cards, if any, untouched on failure
+
+    if (data === null) {
+      grid.innerHTML =
+        '<p class="work-empty">' +
+        'Work isn\u2019t loading right now \u2014 <code>data/videos.json</code> couldn\u2019t be reached. ' +
+        'If you\u2019re viewing this file locally (double-clicked, address bar says <code>file://</code>), ' +
+        'browsers block that on purpose \u2014 view it through your live site or a local server instead. ' +
+        'Otherwise check that <code>data/videos.json</code> was actually uploaded next to this page.' +
+        '</p>';
+      return;
+    }
 
     grid.innerHTML = '';
     if (!data.length) {
-      grid.innerHTML = '<p class="work-empty">No projects published yet.</p>';
+      grid.innerHTML = '<p class="work-empty">No projects published yet \u2014 add one from admin.html.</p>';
       return;
     }
 
