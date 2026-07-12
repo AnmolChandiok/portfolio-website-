@@ -1,0 +1,50 @@
+{
+  "updated": "2026-07-12T00:00:00.000Z",
+  "videos": [
+    {
+      "id": "aqz-KE-bpKQ",
+      "title": "EXAMPLE — delete me in the dashboard",
+      "client": "Pluseshot",
+      "category": "Brand Film",
+      "year": "2026",
+      "aspect": "16:9",
+      "duration": "1:24",
+      "poster": "",
+      "preview": "",
+      "previewMode": "none",
+      "start": 0,
+      "featured": true,
+      "hidden": false
+    },
+    {
+      "id": "eRsGyueVLvQ",
+      "title": "EXAMPLE — a 16:9 piece with a YouTube-loop preview",
+      "client": "Square Foot Story",
+      "category": "Motion Design",
+      "year": "2026",
+      "aspect": "16:9",
+      "duration": "0:52",
+      "poster": "",
+      "preview": "",
+      "previewMode": "youtube",
+      "start": 12,
+      "featured": false,
+      "hidden": false
+    },
+    {
+      "id": "R6MlUcmOul8",
+      "title": "EXAMPLE — a vertical Short",
+      "client": "Stained Glass House",
+      "category": "Short Form",
+      "year": "2025",
+      "aspect": "9:16",
+      "duration": "0:38",
+      "poster": "",
+      "preview": "",
+      "previewMode": "none",
+      "start": 0,
+      "featured": false,
+      "hidden": false
+    }
+  ]
+}
