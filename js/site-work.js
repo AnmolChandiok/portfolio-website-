@@ -174,76 +174,28 @@
   var lastFocus = null;
 
   function openSheet(v) {
-  if (!sheetOverlay) return;
+    if (!sheetOverlay) return;
+    lastFocus = document.activeElement;
 
-  lastFocus = document.activeElement;
+    sheetTitle.textContent = v.title || 'Untitled';
+    var bits = [v.client, v.category, v.year].filter(Boolean);
+    sheetDesc.textContent = bits.join(' · ');
 
-  sheetTitle.textContent = v.title || 'Untitled';
-  var bits = [v.client, v.category, v.year].filter(Boolean);
-  sheetDesc.textContent = bits.join(' · ');
+    // Add description if available
+    var metaWrap = sheetDesc.parentNode;
+    var oldLong = document.getElementById('sheet-long-desc');
+    if (oldLong) oldLong.remove();
 
-  // Add description if available
-  var metaWrap = sheetDesc.parentNode;
-  var oldLong = document.getElementById('sheet-long-desc');
-  if (oldLong) oldLong.remove();
-
-  if (v.description && v.description.trim()) {
-    var longP = document.createElement('p');
-    longP.id = 'sheet-long-desc';
-    longP.className = 'sheet-long-desc muted';
-    longP.style.marginTop = '0.5rem';
-    longP.style.fontSize = '0.9rem';
-    longP.style.lineHeight = '1.5';
-    longP.textContent = v.description;
-    metaWrap.appendChild(longP);
-  }
-
-  sheetPlayer.innerHTML = '';
-
-  // ==================== BEHANCE HANDLING ====================
-  if (v.platform === 'behance') {
-    var behanceBox = document.createElement('div');
-    behanceBox.style.cssText = 'padding:40px 30px; text-align:center; color:#ddd;';
-
-    behanceBox.innerHTML = `
-      <h3 style="margin-bottom:12px; color:#fff;">${v.title}</h3>
-      <p style="margin-bottom:30px; color:#aaa;">This is a Behance project.</p>
-      <a href="https://www.behance.net/gallery/${v.id}" 
-         target="_blank"
-         style="display:inline-block; background:#fb5607; color:white; 
-                padding:14px 32px; border-radius:8px; text-decoration:none; 
-                font-weight:600; font-size:15px;">
-        View Full Project on Behance →
-      </a>
-    `;
-    sheetPlayer.appendChild(behanceBox);
-
-  } else {
-    // ==================== YOUTUBE / INSTAGRAM ====================
-    var wrapper = document.createElement('div');
-    wrapper.className = 'video-player-wrapper';
-    wrapper.setAttribute('data-ratio', v.aspect || '9:16');
-
-    var iframe = document.createElement('iframe');
-    iframe.src = getEmbedSrc(v);
-    iframe.title = v.title || 'Video player';
-    iframe.allow = 'autoplay; fullscreen; picture-in-picture; encrypted-media';
-    iframe.allowFullscreen = true;
-    wrapper.appendChild(iframe);
-
-    sheetPlayer.appendChild(wrapper);
-  }
-
-  document.documentElement.style.overflow = 'hidden';
-  sheetOverlay.hidden = false;
-
-  requestAnimationFrame(function () {
-    sheetOverlay.classList.add('is-open');
-    if (lastFocus && lastFocus.focus) {
-      // optional: keep focus management
+    if (v.description && v.description.trim()) {
+      var longP = document.createElement('p');
+      longP.id = 'sheet-long-desc';
+      longP.className = 'sheet-long-desc muted';
+      longP.style.marginTop = '0.5rem';
+      longP.style.fontSize = '0.9rem';
+      longP.style.lineHeight = '1.5';
+      longP.textContent = v.description;
+      metaWrap.appendChild(longP);
     }
-  });
-}
 
     // Build responsive player with correct ratio
     sheetPlayer.innerHTML = '';
