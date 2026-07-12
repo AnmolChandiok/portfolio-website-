@@ -294,6 +294,7 @@
     <div class="brand"><span class="dot"></span> Work <small>/ pluseshot</small></div>
     <div class="spacer"></div>
     <button class="pill" id="connPill"><span class="led"></span><span id="connText">Not connected</span></button>
+    <button class="btn ghost sm" id="linksBtn" title="Instagram, YouTube, LinkedIn, Behance">Links</button>
     <button class="btn ghost sm" id="msgBtn" title="Where contact form messages go">Messages</button>
     <button class="btn ghost sm" id="pwBtn" title="Change the dashboard password">Password</button>
     <button class="btn primary" id="publishBtn" disabled>Publish to site</button>
@@ -430,6 +431,33 @@
 
     <div class="hint" style="margin-top:14px">Not set up yet? The endpoint goes in
       <code style="font-family:var(--mono)">js/config.js</code> \u2014 look for <code style="font-family:var(--mono)">CONTACT_FORM_ENDPOINT</code>.</div>
+  </div>
+</div>
+
+<!-- social links -->
+<div class="modal" id="linksModal">
+  <div class="modal__scrim" data-x></div>
+  <div class="modal__box">
+    <h2>Social links</h2>
+    <p>Publishes to <code style="font-family:var(--mono)">data/social.json</code> \u2014 the icons in your site\u2019s
+      footer read this. Leave any of these blank and that icon just hides itself rather than sitting there as a dead link.</p>
+
+    <div class="f"><label>Instagram</label>
+      <input id="linkInstagram" class="mono" placeholder="https://instagram.com/yourhandle"></div>
+    <div class="f"><label>YouTube</label>
+      <input id="linkYoutube" class="mono" placeholder="https://youtube.com/@yourhandle"></div>
+    <div class="f"><label>LinkedIn</label>
+      <input id="linkLinkedin" class="mono" placeholder="https://linkedin.com/in/yourname"></div>
+    <div class="f"><label>Behance</label>
+      <input id="linkBehance" class="mono" placeholder="https://behance.net/yourname"></div>
+
+    <div style="display:flex;gap:10px;margin-top:6px">
+      <button class="btn" id="linksPull">Pull current</button>
+      <div class="spacer"></div>
+      <button class="btn primary" id="linksSave">Publish links</button>
+    </div>
+
+    <div class="status" id="linksStatus"></div>
   </div>
 </div>
 
@@ -574,7 +602,7 @@
   function blank(id, vertical) {
     return {
       id: id, title: '', client: '', category: '', year: String(new Date().getFullYear()),
-      description: '',
+      description: '', instagramUrl: '',
       aspect: vertical ? '9:16' : '16:9', duration: '', poster: '', preview: '',
       previewMode: 'youtube', start: 0, featured: false, hidden: false
     };
@@ -708,6 +736,10 @@
       '<div class="f"><label>Poster override</label>' +
         '<input data-k="poster" class="mono" value="' + esc(v.poster) + '" placeholder="leave empty to use the YouTube thumbnail">' +
         '<div class="hint">Worth setting for vertical pieces — YouTube only ever gives you a 16:9 thumbnail, so a Short ends up letterboxed.</div></div>' +
+
+      '<div class="f"><label>Also on Instagram (optional)</label>' +
+        '<input data-k="instagramUrl" class="mono" value="' + esc(v.instagramUrl || '') + '" placeholder="https://instagram.com/reel/...">' +
+        '<div class="hint">Instagram doesn\u2019t allow embedding a reel that plays in place like YouTube does \u2014 this just adds a link next to the player so people can open it there too.</div></div>' +
 
       '<div class="switches">' +
         '<label class="sw"><input type="checkbox" data-k="featured"' + (v.featured ? ' checked' : '') + '> Featured</label>' +
@@ -1151,8 +1183,83 @@
     $('#msgModal').classList.remove('on');
   });
 
+  /* ---------- social links -------------------------------------------- */
+
+  var SOCIAL_PATH = 'data/social.json';
+  var SOCIAL_FIELDS = { instagram: '#linkInstagram', youtube: '#linkYoutube', linkedin: '#linkLinkedin', behance: '#linkBehance' };
+
+  async function pullLinks() {
+    var status = $('#linksStatus');
+    status.className = 'status busy';
+    status.textContent = 'Reading current links\u2026';
+    try {
+      var remote = await getRemote(SOCIAL_PATH);
+      var data = remote.text ? JSON.parse(remote.text) : {};
+      Object.keys(SOCIAL_FIELDS).forEach(function (k) { $(SOCIAL_FIELDS[k]).value = data[k] || ''; });
+      status.className = 'status';
+      status.textContent = remote.text ? 'Loaded.' : 'No links published yet \u2014 these are all blank.';
+    } catch (err) {
+      status.className = 'status err';
+      status.textContent = err.message || 'Could not read data/social.json.';
+    }
+  }
+
+  $('#linksBtn').addEventListener('click', function () {
+    $('#linksModal').classList.add('on');
+    $('#linksStatus').textContent = '';
+    if (cfg.token && cfg.owner && cfg.repo) pullLinks();
+  });
+  $('#linksModal').addEventListener('click', function (e) {
+    if (e.target.hasAttribute('data-x')) $('#linksModal').classList.remove('on');
+  });
+  $('#linksPull').addEventListener('click', pullLinks);
+
+  $('#linksSave').addEventListener('click', async function () {
+    var status = $('#linksStatus');
+    if (!cfg.token || !cfg.owner || !cfg.repo) {
+      status.className = 'status err';
+      status.textContent = 'Connect to your repo first \u2014 use the connection pill, top right.';
+      return;
+    }
+
+    var data = {};
+    Object.keys(SOCIAL_FIELDS).forEach(function (k) { data[k] = $(SOCIAL_FIELDS[k]).value.trim(); });
+
+    var btn = $('#linksSave');
+    btn.disabled = true;
+    status.className = 'status busy';
+    status.textContent = 'Publishing\u2026';
+
+    try {
+      var remote = await getRemote(SOCIAL_PATH);
+      var body = {
+        message: 'Update social links',
+        content: b64enc(JSON.stringify(data, null, 2)),
+        branch: cfg.branch
+      };
+      if (remote.sha) body.sha = remote.sha;
+
+      var res = await gh(filePath(SOCIAL_PATH), { method: 'PUT', body: JSON.stringify(body) });
+      if (!res.ok) throw new Error(ghError(res));
+
+      status.className = 'status ok';
+      status.textContent = 'Published. Live on the site shortly.';
+      toast('Links published.', 'ok');
+    } catch (err) {
+      status.className = 'status err';
+      status.textContent = err.message || 'Could not publish links.';
+    } finally {
+      btn.disabled = false;
+    }
+  });
+
   document.addEventListener('keydown', function (e) {
-    if (e.key === 'Escape') { $('#connModal').classList.remove('on'); $('#pwModal').classList.remove('on'); $('#msgModal').classList.remove('on'); }
+    if (e.key === 'Escape') {
+      $('#connModal').classList.remove('on');
+      $('#pwModal').classList.remove('on');
+      $('#msgModal').classList.remove('on');
+      $('#linksModal').classList.remove('on');
+    }
   });
 
   window.addEventListener('beforeunload', function (e) {
