@@ -15,6 +15,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Syne:wght@600;700;800&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
   <link rel="stylesheet" href="css/styles.css" />
+  <link rel="stylesheet" href="css/work-integration.css" />
 </head>
 <body>
   <a class="skip-link" href="#main">Skip to content</a>
@@ -160,79 +161,11 @@
           <button type="button" class="filter-btn" data-filter="motion" role="tab" aria-selected="false">Motion</button>
         </div>
 
-        <div class="work-grid" id="work-grid">
-          <article class="work-card" data-cat="reel brand" style="--i:0" data-video="luxury">
-            <div class="work-thumb ratio-9-16">
-              <div class="thumb-gradient g1"></div>
-              <span class="work-badge">9:16</span>
-              <button type="button" class="work-play" aria-label="Preview Luxury Outdoor Living reel"><i class="fa-solid fa-play"></i></button>
-            </div>
-            <div class="work-meta">
-              <h3>Luxury Outdoor Living</h3>
-              <p>Reel · Color · Pace edit</p>
-            </div>
-          </article>
-
-          <article class="work-card featured" data-cat="brand" style="--i:1" data-video="stain-glass">
-            <div class="work-thumb ratio-16-9">
-              <div class="thumb-gradient g2"></div>
-              <span class="work-badge">16:9</span>
-              <button type="button" class="work-play" aria-label="Preview Stain Glass House film"><i class="fa-solid fa-play"></i></button>
-            </div>
-            <div class="work-meta">
-              <h3>Stain Glass House</h3>
-              <p>Brand film · Cinematic grade</p>
-            </div>
-          </article>
-
-          <article class="work-card" data-cat="reel" style="--i:2" data-video="nav-bharat">
-            <div class="work-thumb ratio-9-16">
-              <div class="thumb-gradient g3"></div>
-              <span class="work-badge">9:16</span>
-              <button type="button" class="work-play" aria-label="Preview Nav Bharat reel"><i class="fa-solid fa-play"></i></button>
-            </div>
-            <div class="work-meta">
-              <h3>Nav Bharat Series</h3>
-              <p>Social cutdowns · Hook-first</p>
-            </div>
-          </article>
-
-          <article class="work-card" data-cat="motion" style="--i:3" data-video="sfs-logo">
-            <div class="work-thumb ratio-16-9">
-              <div class="thumb-gradient g4"></div>
-              <span class="work-badge">MOTION</span>
-              <button type="button" class="work-play" aria-label="Preview logo animation"><i class="fa-solid fa-play"></i></button>
-            </div>
-            <div class="work-meta">
-              <h3>SFS Logo Animation</h3>
-              <p>After Effects · Identity</p>
-            </div>
-          </article>
-
-          <article class="work-card" data-cat="reel brand" style="--i:4" data-video="look-book">
-            <div class="work-thumb ratio-9-16">
-              <div class="thumb-gradient g5"></div>
-              <span class="work-badge">9:16</span>
-              <button type="button" class="work-play" aria-label="Preview look book reel"><i class="fa-solid fa-play"></i></button>
-            </div>
-            <div class="work-meta">
-              <h3>Look Book Reels</h3>
-              <p>Fashion pace · Music-led</p>
-            </div>
-          </article>
-
-          <article class="work-card" data-cat="brand motion" style="--i:5" data-video="drywall">
-            <div class="work-thumb ratio-16-9">
-              <div class="thumb-gradient g6"></div>
-              <span class="work-badge">16:9</span>
-              <button type="button" class="work-play" aria-label="Preview drywall solutions film"><i class="fa-solid fa-play"></i></button>
-            </div>
-            <div class="work-meta">
-              <h3>Drywall Solutions</h3>
-              <p>Corporate film · Clean cuts</p>
-            </div>
-          </article>
-        </div>
+        <!--
+          These cards are now built by js/site-work.js from data/videos.json.
+          Edit your work through admin.html — never hand-edit this markup again.
+        -->
+        <div class="work-grid" id="work-grid" data-src="data/videos.json"></div>
       </div>
     </section>
 
@@ -444,6 +377,7 @@
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
   <script src="js/config.js"></script>
+  <script src="js/site-work.js"></script>
   <script src="js/main.js"></script>
 </body>
 </html>
