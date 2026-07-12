@@ -50,7 +50,7 @@ window.SITE_VIDEOS = {
       title: "Reel 1 ",
       meta: "Reel · Color · Pace edit",
       src: "https://res.cloudinary.com/lkpluhb7/video/upload/v1783853487/Video-249_dff98k.mp4",
-      poster: "",
+      poster: "https://res.cloudinary.com/lkpluhb7/video/upload/v1783853487/Video-249_dff98k.mp4",
     },
     "stain-glass": {
       title: "Stain Glass House",
