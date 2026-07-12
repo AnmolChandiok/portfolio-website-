@@ -1802,6 +1802,9 @@ html[data-theme="light"] .theme-icon-light {
 .sheet-overlay.is-open .sheet {
   transform: translateY(0);
 }
+.sheet.is-dragging {
+  transition: none;
+}
 
 .sheet-handle {
   flex: none;
@@ -1810,6 +1813,18 @@ html[data-theme="light"] .theme-icon-light {
   border-radius: 999px;
   background: var(--line-strong);
   margin: 0.15rem auto 0.75rem;
+}
+
+@media (max-width: 760px) {
+  .sheet-handle {
+    width: 56px;
+    height: 6px;
+    cursor: grab;
+  }
+  .sheet-handle:active {
+    cursor: grabbing;
+    background: var(--accent);
+  }
 }
 
 .sheet-close {
@@ -1907,6 +1922,17 @@ html[data-theme="light"] .theme-icon-light {
   margin: 0;
   color: var(--text-2);
   font-size: 0.9rem;
+}
+
+.sheet-description {
+  flex: 1 0 100%;
+  margin: 0.35rem 0.25rem 0;
+  padding-top: 0.6rem;
+  border-top: 1px solid var(--line-strong);
+  color: var(--text-2);
+  font-size: 0.92rem;
+  line-height: 1.6;
+  max-width: 68ch;
 }
 
 /* =========================================================
