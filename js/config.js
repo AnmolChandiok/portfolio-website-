@@ -49,7 +49,7 @@ window.SITE_VIDEOS = {
     "luxury": {
       title: "Luxury Outdoor Living",
       meta: "Reel · Color · Pace edit",
-      src: "https://www.instagram.com/reel/DaSmFTcPdIA/?utm_source=ig_web_copy_link&igsh=MzRlODBiNWFlZA==",
+      src: "https://res.cloudinary.com/lkpluhb7/video/upload/v1783853487/Video-249_dff98k.mp4",
       poster: "",
     },
     "stain-glass": {
