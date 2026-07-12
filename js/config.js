@@ -34,7 +34,7 @@ window.SITE_VIDEOS = {
      Tip: YouTube/Vimeo links can't texture onto 3D cards,
      so hero clips must be real files or direct .mp4 URLs. */
   hero: [
-    { src: "media/luxury.mp4",      ratio: "9:16", title: "Luxury Outdoor Living" },
+    { src: "https://www.instagram.com/reel/DaSmFTcPdIA/?utm_source=ig_web_copy_link&igsh=MzRlODBiNWFlZA==",      ratio: "9:16", title: "Luxury Outdoor Living" },
     { src: "media/stain-glass.mp4", ratio: "16:9", title: "Stain Glass House" },
     { src: "media/hero-anim.mp4",   ratio: "16:9", title: "Hero Animation" },
     { src: "media/animation.mp4",   ratio: "9:16", title: "Motion Study" },
