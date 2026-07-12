@@ -457,80 +457,23 @@
 
   /* ---------- Multi-platform video parser (YouTube + Vimeo + Instagram Reels) ---- */
   function parseVideoUrl(input) {
-    var s = String(input || '').trim();
-    if (!s) return null;
+  var s = String(input || '').trim();
+  if (!s) return null;
 
-    // YouTube
-    var yt = s.match(/(?:youtu\.be\/|youtube\.com\/(?:watch\?(?:.*&)?v=|embed\/|shorts\/|live\/|v\/))([A-Za-z0-9_-]{11})/);
-    if (yt) {
-      return {
-        platform: 'youtube',
-        id: yt[1],
-        vertical: /\/shorts\//.test(s),
-        originalUrl: s
-      };
-    }
-    if (/^[A-Za-z0-9_-]{11}$/.test(s)) {
-      return { platform: 'youtube', id: s, vertical: false, originalUrl: s };
-    }
+  // YouTube
+  var yt = s.match(/(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|embed\/|shorts\/))([A-Za-z0-9_-]{11})/);
+  if (yt) return { platform: 'youtube', id: yt[1], vertical: /shorts/.test(s) };
 
-    // Vimeo
-    var vm = s.match(/vimeo\.com\/(?:video\/)?(\d+)/);
-    if (vm) {
-      return {
-        platform: 'vimeo',
-        id: vm[1],
-        vertical: false,
-        originalUrl: s
-      };
-    }
+  // Instagram Reel
+  var ig = s.match(/instagram\.com\/reel\/([A-Za-z0-9_-]+)/);
+  if (ig) return { platform: 'instagram', id: ig[1], vertical: true };
 
-    // Instagram Reels / Posts
-    var ig = s.match(/instagram\.com\/(?:reel|p)\/([A-Za-z0-9_-]+)/);
-    if (ig) {
-      return {
-        platform: 'instagram',
-        id: ig[1],
-        vertical: true,
-        originalUrl: s
-      };
-    }
+  // Behance
+  var bh = s.match(/behance\.net\/gallery\/(\d+)/);
+  if (bh) return { platform: 'behance', id: bh[1], vertical: false };
 
-    return null;
-  }
-
-  function thumb(v) {
-    if (v.poster) return v.poster;
-    if (v.platform === 'youtube' || !v.platform) return 'https://i.ytimg.com/vi/' + v.id + '/hqdefault.jpg';
-    if (v.platform === 'vimeo') return 'https://vumbnail.com/' + v.id + '.jpg';
-    return '';
-  }
-
-  async function fetchTitle(info) {
-    if (info.platform === 'youtube') {
-      try {
-        var u = 'https://www.youtube.com/oembed?url=' +
-                encodeURIComponent('https://www.youtube.com/watch?v=' + info.id) + '&format=json';
-        var r = await fetch(u);
-        if (r.ok) {
-          var j = await r.json();
-          return j.title || '';
-        }
-      } catch (e) {}
-    }
-    if (info.platform === 'vimeo') {
-      try {
-        var u = 'https://vimeo.com/api/oembed.json?url=' +
-                encodeURIComponent('https://vimeo.com/' + info.id);
-        var r = await fetch(u);
-        if (r.ok) {
-          var j = await r.json();
-          return j.title || '';
-        }
-      } catch (e) {}
-    }
-    return '';
-  }
+  return null;
+}
 
   /* ---------- state ------------------------------------------------------ */
   var items = [];
