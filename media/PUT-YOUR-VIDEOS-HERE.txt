@@ -1,6 +1,0 @@
-Drop your actual video files in this folder (real files, not Finder aliases!)
-then point to them in js/config.js like:  src: "media/your-file.mp4"
-
-Web-friendly export from Premiere/AE:
-  H.264 .mp4, target ~5-10 Mbps, ideally under ~20 MB per clip.
-  Hero loop clips can be much smaller (short, muted, 720p is fine).
