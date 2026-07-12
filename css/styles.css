@@ -1908,3 +1908,337 @@ html[data-theme="light"] .theme-icon-light {
   color: var(--text-2);
   font-size: 0.9rem;
 }
+
+/* =========================================================
+   v3 — 3D reel carousel hero + masonry work grid
+   ========================================================= */
+
+/* The canvas IS the stage now: it takes the right half on desktop
+   and the top band on phones, so it never sits behind the copy. */
+.hero-canvas {
+  cursor: grab;
+}
+.hero-canvas.is-dragging {
+  cursor: grabbing;
+}
+
+/* Let pointer events reach the canvas everywhere except the copy */
+.hero-grid {
+  pointer-events: none;
+}
+.hero-copy,
+.hero-copy a,
+.hero-copy button {
+  pointer-events: auto;
+}
+
+/* Stage layer = carousel controls only */
+.hero-stage {
+  position: relative;
+  z-index: 3;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.85rem;
+  min-height: min(58vh, 440px);
+  padding-bottom: 0.35rem;
+  pointer-events: none;
+  opacity: 0;
+  animation: fade-up 1s var(--ease) 0.45s forwards;
+}
+
+.play-orb {
+  position: relative;
+  inset: auto;
+  right: auto;
+  bottom: auto;
+  top: auto;
+  left: auto;
+  margin: 0;
+  pointer-events: auto;
+}
+
+.stage-hint {
+  margin: 0;
+  pointer-events: auto;
+  text-align: center;
+}
+
+@media (min-width: 900px) {
+  .hero-stage {
+    min-height: 480px;
+  }
+}
+@media (orientation: portrait) and (max-width: 700px) {
+  .hero-stage {
+    min-height: 320px;
+    justify-content: flex-end;
+  }
+}
+@media (orientation: landscape) and (max-height: 500px) {
+  .hero-stage {
+    min-height: 220px;
+  }
+}
+
+/* ---------- Work grid: true masonry ---------- */
+.work-grid {
+  display: block;
+  columns: 2;
+  column-gap: clamp(0.7rem, 1.6vw, 1.15rem);
+}
+@media (min-width: 900px) {
+  .work-grid {
+    columns: 3;
+  }
+}
+@media (min-width: 1240px) {
+  .work-grid {
+    columns: 4;
+  }
+}
+
+.work-card {
+  display: inline-block;
+  width: 100%;
+  margin: 0 0 clamp(0.7rem, 1.6vw, 1.15rem);
+  break-inside: avoid;
+  -webkit-column-break-inside: avoid;
+  page-break-inside: avoid;
+}
+
+/* Let the cards keep their true shape — that's the point of masonry */
+.ratio-9-16 {
+  max-height: none;
+}
+.work-card.featured .ratio-16-9 {
+  min-height: 0;
+}
+
+.work-thumb {
+  transition: transform 0.35s var(--ease), box-shadow 0.35s ease, border-color 0.25s ease;
+}
+.work-card:hover .work-thumb {
+  transform: translateY(-5px);
+  border-color: var(--line-strong);
+  box-shadow: 0 22px 60px rgba(0, 0, 0, 0.45);
+}
+
+/* Hover preview video + optional poster still */
+.work-poster,
+.work-preview {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  z-index: 1;
+}
+.work-preview {
+  opacity: 0;
+  transition: opacity 0.4s ease;
+}
+.work-card.is-previewing .work-preview {
+  opacity: 1;
+}
+
+/* Featured card earns a mark instead of a column span */
+.work-card.featured .work-thumb {
+  border-color: rgba(251, 86, 7, 0.42);
+  box-shadow: 0 0 0 1px rgba(251, 86, 7, 0.16);
+}
+.work-card.featured .work-thumb::after {
+  content: "Featured";
+  position: absolute;
+  top: 0.85rem;
+  right: 0.85rem;
+  z-index: 3;
+  padding: 0.3rem 0.6rem;
+  border-radius: 999px;
+  background: var(--accent);
+  color: #fff;
+  font-size: 0.62rem;
+  font-weight: 800;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .work-preview {
+    display: none;
+  }
+}
+
+/* =========================================================
+   v4 — no orb, custom cursor, button refinement, contact
+   ========================================================= */
+
+/* Orb removed; a soft glow sits where it used to, behind the ring */
+.play-orb { display: none !important; }
+
+.stage-glow {
+  position: absolute;
+  left: 50%;
+  top: 46%;
+  width: 15rem;
+  height: 15rem;
+  margin: -7.5rem 0 0 -7.5rem;
+  border-radius: 999px;
+  pointer-events: none;
+  background: radial-gradient(circle, var(--accent-soft), transparent 68%);
+  opacity: 0.7;
+}
+
+/* ---------- Custom round cursor ---------- */
+.cursor-dot,
+.cursor-ring {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 999;
+  pointer-events: none;
+  border-radius: 999px;
+  opacity: 0;
+  will-change: transform;
+}
+
+.cursor-dot {
+  width: 6px;
+  height: 6px;
+  background: var(--accent);
+  transition: opacity 0.2s ease, width 0.2s var(--ease), height 0.2s var(--ease);
+}
+
+.cursor-ring {
+  width: 34px;
+  height: 34px;
+  border: 1.5px solid var(--accent);
+  background: rgba(251, 86, 7, 0.06);
+  backdrop-filter: invert(6%);
+  -webkit-backdrop-filter: invert(6%);
+  transition:
+    width 0.28s var(--ease),
+    height 0.28s var(--ease),
+    background 0.28s ease,
+    border-color 0.28s ease,
+    opacity 0.2s ease;
+}
+
+html.cursor-active .cursor-dot,
+html.cursor-active .cursor-ring {
+  opacity: 1;
+}
+
+/* Grows and fills over anything clickable */
+.cursor-ring.is-hover {
+  width: 58px;
+  height: 58px;
+  background: rgba(251, 86, 7, 0.16);
+  border-color: var(--accent-2);
+}
+.cursor-ring.is-grab {
+  width: 46px;
+  height: 46px;
+  border-style: dashed;
+}
+.cursor-ring.is-down {
+  width: 26px;
+  height: 26px;
+  background: rgba(251, 86, 7, 0.3);
+}
+.cursor-ring.is-text {
+  width: 2px;
+  height: 26px;
+  border-radius: 2px;
+  background: var(--accent);
+}
+
+/* Hide the native pointer only where we've replaced it */
+html.has-custom-cursor,
+html.has-custom-cursor a,
+html.has-custom-cursor button,
+html.has-custom-cursor .work-card,
+html.has-custom-cursor .hero-canvas,
+html.has-custom-cursor .hero-canvas.is-dragging {
+  cursor: none;
+}
+html.has-custom-cursor input,
+html.has-custom-cursor textarea,
+html.has-custom-cursor select {
+  cursor: text;
+}
+
+/* ---------- Buttons: fill sweeps up, arrow slides ---------- */
+.btn {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+  letter-spacing: 0.01em;
+}
+
+.btn::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-radius: inherit;
+  transform: translateY(101%);
+  transition: transform 0.45s var(--ease);
+}
+
+.btn:hover::before {
+  transform: translateY(0);
+}
+
+.btn i {
+  transition: transform 0.35s var(--ease);
+}
+.btn:hover i {
+  transform: translateX(3px);
+}
+.btn:hover .fa-arrow-down {
+  transform: translateY(3px);
+}
+
+.btn-primary {
+  background: var(--accent);
+  color: #fff;
+  box-shadow: 0 10px 30px rgba(251, 86, 7, 0.28);
+}
+.btn-primary::before {
+  background: #ffffff;
+}
+.btn-primary:hover {
+  color: var(--accent-deep);
+  background: var(--accent);
+  box-shadow: 0 16px 44px rgba(251, 86, 7, 0.4);
+}
+
+.btn-ghost {
+  background: transparent;
+  border-color: var(--line-strong);
+  color: var(--text);
+}
+.btn-ghost::before {
+  background: var(--accent);
+}
+.btn-ghost:hover {
+  color: #fff;
+  border-color: var(--accent);
+  background: transparent;
+}
+
+/* ---------- Contact aside ---------- */
+.aside-block .aside-link + .aside-link {
+  margin-top: 0.55rem;
+}
+
+/* ---------- v5: live counter ---------- */
+.stat-value {
+  font-variant-numeric: tabular-nums;
+  transition: color 0.3s ease;
+}
+.stat-value.is-ticking {
+  color: var(--accent-2);
+}

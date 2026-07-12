@@ -104,12 +104,12 @@
 
           <div class="hero-stats" role="list">
             <div class="stat" role="listitem">
-              <div class="stat-value">50+</div>
+              <div class="stat-value" data-count="50" data-suffix="+">50+</div>
               <div class="stat-label">Projects edited</div>
             </div>
             <div class="stat" role="listitem">
-              <div class="stat-value">4K</div>
-              <div class="stat-label">Delivery ready</div>
+              <div class="stat-value" data-count="200000" data-suffix="+" data-live="1">2,00,000+</div>
+              <div class="stat-label">Videos delivered</div>
             </div>
             <div class="stat" role="listitem">
               <div class="stat-value">∞</div>
@@ -118,68 +118,9 @@
           </div>
         </div>
 
-        <!-- 3D floating stage — your real clips -->
-        <div class="hero-stage" aria-hidden="true">
-          <!-- Hidden source videos for Three.js textures (kept off-DOM layout) -->
-          <div class="hero-video-bank" id="hero-video-bank">
-            <video data-src="media/luxury.mp4" muted loop playsinline preload="metadata" crossorigin="anonymous"></video>
-            <video data-src="media/stain-glass.mp4" muted loop playsinline preload="metadata" crossorigin="anonymous"></video>
-            <video data-src="media/hero-anim.mp4" muted loop playsinline preload="metadata" crossorigin="anonymous"></video>
-            <video data-src="media/animation.mp4" muted loop playsinline preload="metadata" crossorigin="anonymous"></video>
-            <video data-src="media/knowledge.mp4" muted loop playsinline preload="metadata" crossorigin="anonymous"></video>
-          </div>
-
-          <div class="stage-orbit" id="stage-orbit">
-            <div class="film-card card-a">
-              <video
-                class="film-video"
-                src="media/luxury.mp4"
-                muted
-                loop
-                playsinline
-                autoplay
-                preload="auto"
-              ></video>
-              <div class="film-card-overlay">
-                <span class="timecode">REEL</span>
-                <span class="card-label">LUXURY OUTDOOR · 9:16</span>
-              </div>
-            </div>
-            <div class="film-card card-b">
-              <video
-                class="film-video"
-                src="media/stain-glass.mp4"
-                muted
-                loop
-                playsinline
-                autoplay
-                preload="auto"
-              ></video>
-              <div class="film-card-overlay">
-                <span class="timecode">BRAND</span>
-                <span class="card-label">STAIN GLASS HOUSE · 16:9</span>
-              </div>
-            </div>
-            <div class="film-card card-c">
-              <video
-                class="film-video"
-                src="media/hero-anim.mp4"
-                muted
-                loop
-                playsinline
-                autoplay
-                preload="auto"
-              ></video>
-              <div class="film-card-overlay">
-                <span class="timecode">MOTION</span>
-                <span class="card-label">HERO ANIMATION</span>
-              </div>
-            </div>
-            <button type="button" class="play-orb" id="hero-audio-toggle" title="Unmute previews" aria-label="Toggle sound on hero previews">
-              <i class="fa-solid fa-volume-xmark" aria-hidden="true"></i>
-            </button>
-          </div>
-          <p class="stage-hint">Your work · Drag to orbit · Tap orb to unmute</p>
+        <!-- 3D reel carousel lives on the canvas; this holds its controls -->
+        <div class="hero-stage">
+          <span class="stage-glow" aria-hidden="true"></span>
         </div>
       </div>
 
@@ -439,11 +380,14 @@
         <aside class="contact-aside">
           <div class="aside-block">
             <h3>Prefer direct?</h3>
-            <a class="aside-link" href="mailto:hello@anmol.studio">
+            <a class="aside-link" href="mailto:anmol.chandiok9@gmail.com">
               <i class="fa-regular fa-envelope" aria-hidden="true"></i>
-              hello@anmol.studio
+              anmol.chandiok9@gmail.com
             </a>
-            <p class="muted small">Replace with your real email anytime.</p>
+            <a class="aside-link" href="tel:+918130259174">
+              <i class="fa-solid fa-phone" aria-hidden="true"></i>
+              +91 81302 59174
+            </a>
           </div>
           <div class="aside-block">
             <h3>Social</h3>
@@ -476,6 +420,10 @@
 
   <!-- Toast -->
   <div class="toast-stack" id="toast-stack" aria-live="polite"></div>
+
+  <!-- Custom round cursor -->
+  <div class="cursor-ring" id="cursor-ring" aria-hidden="true"></div>
+  <div class="cursor-dot" id="cursor-dot" aria-hidden="true"></div>
 
   <!-- Bottom-sheet video player -->
   <div class="sheet-overlay" id="video-sheet" hidden>
