@@ -93,106 +93,137 @@
   });
 
   /* ---------- Preview modal ---------- */
-  const sheetOverlay = document.getElementById("video-sheet");
-  const sheetPlayer = document.getElementById("sheet-player");
-  const sheetTitle = document.getElementById("sheet-title");
-  const sheetDesc = document.getElementById("sheet-desc");
-  let sheetCloseTimer = null;
+  /* ---------- Preview modal (Improved for 9:16 + 16:9) ---------- */
+const sheetOverlay = document.getElementById("video-sheet");
+const sheetPlayer = document.getElementById("sheet-player");
+const sheetTitle = document.getElementById("sheet-title");
+const sheetDesc = document.getElementById("sheet-desc");
+let sheetCloseTimer = null;
 
-  function toEmbed(url) {
-    if (!url) return null;
-    const yt = url.match(/(?:youtube\.com\/(?:watch\?v=|shorts\/|embed\/)|youtu\.be\/)([\w-]{6,})/);
-    if (yt) return "https://www.youtube-nocookie.com/embed/" + yt[1] + "?autoplay=1&rel=0&playsinline=1";
-    const vm = url.match(/vimeo\.com\/(?:video\/)?(\d+)/);
-    if (vm) return "https://player.vimeo.com/video/" + vm[1] + "?autoplay=1";
-    return null;
+function toEmbed(url) {
+  if (!url) return null;
+  const yt = url.match(/(?:youtube\.com\/(?:watch\?v=|shorts\/|embed\/)|youtu\.be\/)([\w-]{6,})/);
+  if (yt) return "https://www.youtube-nocookie.com/embed/" + yt[1] + "?autoplay=1&rel=0&playsinline=1";
+  const vm = url.match(/vimeo\.com\/(?:video\/)?(\d+)/);
+  if (vm) return "https://player.vimeo.com/video/" + vm[1] + "?autoplay=1";
+  return null;
+}
+
+function showSheetEmpty(title, msg) {
+  sheetPlayer.innerHTML =
+    '<div class="sheet-empty"><i class="fa-solid fa-clapperboard" aria-hidden="true"></i><strong>' +
+    title +
+    "</strong><span>" +
+    msg +
+    "</span></div>";
+}
+
+/* NEW: Creates a responsive wrapper based on video ratio */
+function createPlayerWrapper(ratio = "9:16") {
+  const wrapper = document.createElement("div");
+  wrapper.className = "video-player-wrapper";
+  wrapper.setAttribute("data-ratio", ratio);
+  return wrapper;
+}
+
+function buildPlayer(src, ratio = "9:16") {
+  sheetPlayer.innerHTML = "";
+
+  const wrapper = createPlayerWrapper(ratio);
+  sheetPlayer.appendChild(wrapper);
+
+  if (!src) {
+    showSheetEmpty("Link coming soon", "Paste this project’s video link in js/config.js and it plays here.");
+    return;
   }
 
-  function showSheetEmpty(title, msg) {
-    sheetPlayer.innerHTML =
-      '<div class="sheet-empty"><i class="fa-solid fa-clapperboard" aria-hidden="true"></i><strong>' +
-      title +
-      "</strong><span>" +
-      msg +
-      "</span></div>";
+  const embed = toEmbed(src);
+
+  if (embed) {
+    const f = document.createElement("iframe");
+    f.src = embed;
+    f.allow = "autoplay; fullscreen; picture-in-picture; encrypted-media";
+    f.allowFullscreen = true;
+    f.title = "Video player";
+    wrapper.appendChild(f);
+    return;
   }
 
-  function buildPlayer(src) {
-    sheetPlayer.innerHTML = "";
-    if (!src) {
-      showSheetEmpty("Link coming soon", "Paste this project\u2019s video link in js/config.js and it plays here.");
-      return;
-    }
-    const embed = toEmbed(src);
-    if (embed) {
-      const f = document.createElement("iframe");
-      f.src = embed;
-      f.allow = "autoplay; fullscreen; picture-in-picture; encrypted-media";
-      f.allowFullscreen = true;
-      f.title = "Video player";
-      sheetPlayer.appendChild(f);
-      return;
-    }
-    const v = document.createElement("video");
-    v.src = src;
-    v.controls = true;
-    v.autoplay = true;
-    v.playsInline = true;
-    v.setAttribute("playsinline", "");
-    v.addEventListener(
-      "error",
-      () => showSheetEmpty("Video not found", "Check this project\u2019s file path or link in js/config.js."),
-      { once: true }
-    );
-    sheetPlayer.appendChild(v);
-    v.play().catch(() => {});
-  }
+  // Self-hosted video
+  const v = document.createElement("video");
+  v.src = src;
+  v.controls = true;
+  v.autoplay = true;
+  v.playsInline = true;
+  v.setAttribute("playsinline", "");
 
-  function openSheetRaw(title, meta, src) {
-    if (!sheetOverlay) return;
-    sheetTitle.textContent = title || "Project";
-    sheetDesc.textContent = meta || "";
-    buildPlayer(src || "");
-    clearTimeout(sheetCloseTimer);
-    sheetOverlay.hidden = false;
-    requestAnimationFrame(() =>
-      requestAnimationFrame(() => sheetOverlay.classList.add("is-open"))
-    );
-    document.body.style.overflow = "hidden";
-    document.getElementById("sheet-close")?.focus({ preventScroll: true });
-  }
+  v.addEventListener(
+    "error",
+    () => showSheetEmpty("Video not found", "Check this project’s file path or link in js/config.js."),
+    { once: true }
+  );
 
-  function closeSheet() {
-    if (!sheetOverlay || sheetOverlay.hidden) return;
-    sheetOverlay.classList.remove("is-open");
-    document.body.style.overflow = "";
-    sheetCloseTimer = setTimeout(() => {
-      sheetOverlay.hidden = true;
-      sheetPlayer.innerHTML = ""; // stops playback
-    }, 480);
-  }
+  wrapper.appendChild(v);
+  v.play().catch(() => {});
+}
 
-  function openSheet(id, fallbackTitle, fallbackDesc) {
-    const item = (CFG.work || {})[id] || {};
-    openSheetRaw(item.title || fallbackTitle, item.meta || fallbackDesc, item.src || "");
-  }
+function openSheetRaw(title, meta, src, ratio = "9:16") {
+  if (!sheetOverlay) return;
 
-  document.querySelectorAll(".work-card").forEach((card) => {
-    const id = card.dataset.video || "";
-    const title = card.querySelector("h3")?.textContent || "Project";
-    const desc = card.querySelector(".work-meta p")?.textContent || "";
-    const open = (e) => {
-      e.stopPropagation();
-      openSheet(id, title, desc);
-    };
-    card.querySelector(".work-play")?.addEventListener("click", open);
-    card.querySelector(".work-thumb")?.addEventListener("click", open);
-  });
+  sheetTitle.textContent = title || "Project";
+  sheetDesc.textContent = meta || "";
 
-  document.getElementById("sheet-close")?.addEventListener("click", closeSheet);
-  sheetOverlay?.addEventListener("click", (e) => {
-    if (e.target === sheetOverlay) closeSheet();
-  });
+  buildPlayer(src || "", ratio);
+
+  clearTimeout(sheetCloseTimer);
+  sheetOverlay.hidden = false;
+
+  requestAnimationFrame(() =>
+    requestAnimationFrame(() => sheetOverlay.classList.add("is-open"))
+  );
+
+  document.body.style.overflow = "hidden";
+  document.getElementById("sheet-close")?.focus({ preventScroll: true });
+}
+
+function closeSheet() {
+  if (!sheetOverlay || sheetOverlay.hidden) return;
+  sheetOverlay.classList.remove("is-open");
+  document.body.style.overflow = "";
+
+  sheetCloseTimer = setTimeout(() => {
+    sheetOverlay.hidden = true;
+    sheetPlayer.innerHTML = ""; // stops playback
+  }, 480);
+}
+
+/* Updated to read ratio from config */
+function openSheet(id, fallbackTitle, fallbackDesc) {
+  const item = (CFG.work || {})[id] || {};
+  const ratio = item.ratio || "9:16";
+  openSheetRaw(item.title || fallbackTitle, item.meta || fallbackDesc, item.src || "", ratio);
+}
+
+/* Work card click handlers */
+document.querySelectorAll(".work-card").forEach((card) => {
+  const id = card.dataset.video || "";
+  const title = card.querySelector("h3")?.textContent || "Project";
+  const desc = card.querySelector(".work-meta p")?.textContent || "";
+
+  const open = (e) => {
+    e.stopPropagation();
+    openSheet(id, title, desc);
+  };
+
+  card.querySelector(".work-play")?.addEventListener("click", open);
+  card.querySelector(".work-thumb")?.addEventListener("click", open);
+});
+
+document.getElementById("sheet-close")?.addEventListener("click", closeSheet);
+
+sheetOverlay?.addEventListener("click", (e) => {
+  if (e.target === sheetOverlay) closeSheet();
+});
 
   /* ---------- Contact form ---------- */
   document.getElementById("contact-form")?.addEventListener("submit", (e) => {
