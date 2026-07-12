@@ -47,3 +47,24 @@ window.SITE_VIDEOS = {
      data/videos.json, which you edit through admin.html — paste a
      YouTube link, publish, done. See README.md. */
 };
+
+/* ============================================================
+   CONTACT FORM
+   ------------------------------------------------------------
+   This site has no server, so the form can't save messages into
+   the repo by itself — there's nowhere safe to put a "write"
+   credential that a stranger's browser could use without also
+   being able to steal it. Formspree solves this: it's a small
+   free service built for exactly this — a form endpoint that
+   emails you every submission, no backend required.
+
+   Setup (~2 minutes):
+     1. https://formspree.io → sign up free → New Form
+     2. Enter the email you want submissions sent to
+     3. Copy the endpoint it gives you — looks like:
+        https://formspree.io/f/abcdwxyz
+     4. Paste it below.
+
+   Until you do, the form still validates and shows a message,
+   it just doesn't go anywhere yet. */
+window.CONTACT_FORM_ENDPOINT = ""; // e.g. "https://formspree.io/f/abcdwxyz"
