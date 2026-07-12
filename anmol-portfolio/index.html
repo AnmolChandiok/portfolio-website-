@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>Anmol Chandiok — Video Editor & Motion Designer</title>
+  <meta name="description" content="Anmol Chandiok — video editor and motion designer. Reels, brand films, title sequences, and high-impact short-form storytelling." />
+  <meta name="theme-color" content="#0a0a0a" />
+  <meta property="og:title" content="Anmol Chandiok — Video Editor" />
+  <meta property="og:description" content="Cuts that hit. Motion that moves. Portfolio of a video editor & motion designer." />
+  <meta property="og:type" content="website" />
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%23fb5607'/%3E%3Cpath d='M12 9v14l12-7-12-7z' fill='white'/%3E%3C/svg%3E" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Syne:wght@600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+  <link rel="stylesheet" href="css/styles.css" />
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+
+  <!-- Ambient glow layers -->
+  <div class="bg-glow" aria-hidden="true"></div>
+  <div class="bg-grid" aria-hidden="true"></div>
+
+  <header class="site-header" id="top">
+    <div class="container header-inner">
+      <a href="#top" class="logo" aria-label="Anmol Chandiok home">
+        <span class="logo-mark" aria-hidden="true"><i class="fa-solid fa-play"></i></span>
+        <span class="logo-text">Anmol<span class="accent">.</span></span>
+      </a>
+
+      <nav class="nav-desktop" aria-label="Primary">
+        <a href="#work">Work</a>
+        <a href="#services">Services</a>
+        <a href="#about">About</a>
+        <a href="#process">Process</a>
+        <a href="#contact">Contact</a>
+      </nav>
+
+      <div class="header-actions">
+        <button type="button" class="theme-toggle" id="theme-toggle" aria-label="Switch to light mode" title="Toggle theme">
+          <i class="fa-solid fa-sun theme-icon-light" aria-hidden="true"></i>
+          <i class="fa-solid fa-moon theme-icon-dark" aria-hidden="true"></i>
+        </button>
+        <a href="#contact" class="btn btn-primary btn-sm header-cta">Hire me</a>
+        <button type="button" class="nav-toggle" id="nav-toggle" aria-label="Open menu" aria-expanded="false" aria-controls="mobile-nav">
+          <span></span><span></span><span></span>
+        </button>
+      </div>
+    </div>
+
+    <div class="mobile-nav" id="mobile-nav" hidden>
+      <a href="#work">Work</a>
+      <a href="#services">Services</a>
+      <a href="#about">About</a>
+      <a href="#process">Process</a>
+      <a href="#contact">Contact</a>
+      <a href="#contact" class="btn btn-primary btn-block">Let’s work together</a>
+    </div>
+  </header>
+
+  <main id="main">
+    <!-- ========== HERO ========== -->
+    <section class="hero" aria-label="Introduction">
+      <canvas id="hero-canvas" class="hero-canvas" aria-hidden="true"></canvas>
+      <div class="hero-vignette" aria-hidden="true"></div>
+
+      <div class="container hero-grid">
+        <div class="hero-copy">
+          <p class="eyebrow">
+            <span class="pulse-dot" aria-hidden="true"></span>
+            Available for projects · Video Editor
+          </p>
+
+          <h1 class="hero-title">
+            <span class="line">
+              <span class="word">Cuts</span>
+              <span class="word">that</span>
+              <span class="word accent-text">hit.</span>
+            </span>
+            <span class="line">
+              <span class="word">Motion</span>
+              <span class="word">that</span>
+              <span class="word accent-text">moves.</span>
+            </span>
+          </h1>
+
+          <p class="hero-sub">
+            I’m <strong>Anmol Chandiok</strong> — a video editor &amp; motion designer crafting reels,
+            brand films, and scroll-stopping short-form that feel premium on every screen.
+          </p>
+
+          <div class="hero-cta">
+            <a href="#work" class="btn btn-primary btn-lg">
+              View selected work
+              <i class="fa-solid fa-arrow-down" aria-hidden="true"></i>
+            </a>
+            <a href="#contact" class="btn btn-ghost btn-lg">
+              <i class="fa-regular fa-envelope" aria-hidden="true"></i>
+              Start a project
+            </a>
+          </div>
+
+          <div class="hero-stats" role="list">
+            <div class="stat" role="listitem">
+              <div class="stat-value">50+</div>
+              <div class="stat-label">Projects edited</div>
+            </div>
+            <div class="stat" role="listitem">
+              <div class="stat-value">4K</div>
+              <div class="stat-label">Delivery ready</div>
+            </div>
+            <div class="stat" role="listitem">
+              <div class="stat-value">∞</div>
+              <div class="stat-label">Frame obsession</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 3D floating stage — your real clips -->
+        <div class="hero-stage" aria-hidden="true">
+          <!-- Hidden source videos for Three.js textures (kept off-DOM layout) -->
+          <div class="hero-video-bank" id="hero-video-bank">
+            <video data-src="media/luxury.mp4" muted loop playsinline preload="metadata" crossorigin="anonymous"></video>
+            <video data-src="media/stain-glass.mp4" muted loop playsinline preload="metadata" crossorigin="anonymous"></video>
+            <video data-src="media/hero-anim.mp4" muted loop playsinline preload="metadata" crossorigin="anonymous"></video>
+            <video data-src="media/animation.mp4" muted loop playsinline preload="metadata" crossorigin="anonymous"></video>
+            <video data-src="media/knowledge.mp4" muted loop playsinline preload="metadata" crossorigin="anonymous"></video>
+          </div>
+
+          <div class="stage-orbit" id="stage-orbit">
+            <div class="film-card card-a">
+              <video
+                class="film-video"
+                src="media/luxury.mp4"
+                muted
+                loop
+                playsinline
+                autoplay
+                preload="auto"
+              ></video>
+              <div class="film-card-overlay">
+                <span class="timecode">REEL</span>
+                <span class="card-label">LUXURY OUTDOOR · 9:16</span>
+              </div>
+            </div>
+            <div class="film-card card-b">
+              <video
+                class="film-video"
+                src="media/stain-glass.mp4"
+                muted
+                loop
+                playsinline
+                autoplay
+                preload="auto"
+              ></video>
+              <div class="film-card-overlay">
+                <span class="timecode">BRAND</span>
+                <span class="card-label">STAIN GLASS HOUSE · 16:9</span>
+              </div>
+            </div>
+            <div class="film-card card-c">
+              <video
+                class="film-video"
+                src="media/hero-anim.mp4"
+                muted
+                loop
+                playsinline
+                autoplay
+                preload="auto"
+              ></video>
+              <div class="film-card-overlay">
+                <span class="timecode">MOTION</span>
+                <span class="card-label">HERO ANIMATION</span>
+              </div>
+            </div>
+            <button type="button" class="play-orb" id="hero-audio-toggle" title="Unmute previews" aria-label="Toggle sound on hero previews">
+              <i class="fa-solid fa-volume-xmark" aria-hidden="true"></i>
+            </button>
+          </div>
+          <p class="stage-hint">Your work · Drag to orbit · Tap orb to unmute</p>
+        </div>
+      </div>
+
+      <div class="hero-marquee" aria-hidden="true">
+        <div class="marquee-track">
+          <span>Premiere Pro</span><span>•</span>
+          <span>After Effects</span><span>•</span>
+          <span>Color</span><span>•</span>
+          <span>Sound Design</span><span>•</span>
+          <span>Reels</span><span>•</span>
+          <span>Brand Films</span><span>•</span>
+          <span>Motion Graphics</span><span>•</span>
+          <span>Premiere Pro</span><span>•</span>
+          <span>After Effects</span><span>•</span>
+          <span>Color</span><span>•</span>
+          <span>Sound Design</span><span>•</span>
+          <span>Reels</span><span>•</span>
+          <span>Brand Films</span><span>•</span>
+          <span>Motion Graphics</span><span>•</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========== WORK ========== -->
+    <section class="section" id="work">
+      <div class="container">
+        <div class="section-head">
+          <p class="section-eyebrow">Selected work</p>
+          <h2 class="section-title">Frames that earn the scroll.</h2>
+          <p class="section-sub">A mix of short-form heat, brand polish, and motion that sells the story.</p>
+        </div>
+
+        <div class="work-filters" role="tablist" aria-label="Filter work">
+          <button type="button" class="filter-btn active" data-filter="all" role="tab" aria-selected="true">All</button>
+          <button type="button" class="filter-btn" data-filter="reel" role="tab" aria-selected="false">Reels</button>
+          <button type="button" class="filter-btn" data-filter="brand" role="tab" aria-selected="false">Brand</button>
+          <button type="button" class="filter-btn" data-filter="motion" role="tab" aria-selected="false">Motion</button>
+        </div>
+
+        <div class="work-grid" id="work-grid">
+          <article class="work-card" data-cat="reel brand" style="--i:0">
+            <div class="work-thumb ratio-9-16">
+              <div class="thumb-gradient g1"></div>
+              <span class="work-badge">9:16</span>
+              <button type="button" class="work-play" aria-label="Preview Luxury Outdoor Living reel"><i class="fa-solid fa-play"></i></button>
+            </div>
+            <div class="work-meta">
+              <h3>Luxury Outdoor Living</h3>
+              <p>Reel · Color · Pace edit</p>
+            </div>
+          </article>
+
+          <article class="work-card featured" data-cat="brand" style="--i:1">
+            <div class="work-thumb ratio-16-9">
+              <div class="thumb-gradient g2"></div>
+              <span class="work-badge">16:9</span>
+              <button type="button" class="work-play" aria-label="Preview Stain Glass House film"><i class="fa-solid fa-play"></i></button>
+            </div>
+            <div class="work-meta">
+              <h3>Stain Glass House</h3>
+              <p>Brand film · Cinematic grade</p>
+            </div>
+          </article>
+
+          <article class="work-card" data-cat="reel" style="--i:2">
+            <div class="work-thumb ratio-9-16">
+              <div class="thumb-gradient g3"></div>
+              <span class="work-badge">9:16</span>
+              <button type="button" class="work-play" aria-label="Preview Nav Bharat reel"><i class="fa-solid fa-play"></i></button>
+            </div>
+            <div class="work-meta">
+              <h3>Nav Bharat Series</h3>
+              <p>Social cutdowns · Hook-first</p>
+            </div>
+          </article>
+
+          <article class="work-card" data-cat="motion" style="--i:3">
+            <div class="work-thumb ratio-16-9">
+              <div class="thumb-gradient g4"></div>
+              <span class="work-badge">MOTION</span>
+              <button type="button" class="work-play" aria-label="Preview logo animation"><i class="fa-solid fa-play"></i></button>
+            </div>
+            <div class="work-meta">
+              <h3>SFS Logo Animation</h3>
+              <p>After Effects · Identity</p>
+            </div>
+          </article>
+
+          <article class="work-card" data-cat="reel brand" style="--i:4">
+            <div class="work-thumb ratio-9-16">
+              <div class="thumb-gradient g5"></div>
+              <span class="work-badge">9:16</span>
+              <button type="button" class="work-play" aria-label="Preview look book reel"><i class="fa-solid fa-play"></i></button>
+            </div>
+            <div class="work-meta">
+              <h3>Look Book Reels</h3>
+              <p>Fashion pace · Music-led</p>
+            </div>
+          </article>
+
+          <article class="work-card" data-cat="brand motion" style="--i:5">
+            <div class="work-thumb ratio-16-9">
+              <div class="thumb-gradient g6"></div>
+              <span class="work-badge">16:9</span>
+              <button type="button" class="work-play" aria-label="Preview drywall solutions film"><i class="fa-solid fa-play"></i></button>
+            </div>
+            <div class="work-meta">
+              <h3>Drywall Solutions</h3>
+              <p>Corporate film · Clean cuts</p>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========== SERVICES ========== -->
+    <section class="section section-alt" id="services">
+      <div class="container">
+        <div class="section-head">
+          <p class="section-eyebrow">Services</p>
+          <h2 class="section-title">What I deliver.</h2>
+        </div>
+        <div class="services-grid">
+          <article class="service-card">
+            <div class="service-icon"><i class="fa-solid fa-scissors" aria-hidden="true"></i></div>
+            <h3>Short-form &amp; Reels</h3>
+            <p>Hook in 1 second. Retention edits, captions, platform-native cuts for IG, YT Shorts &amp; TikTok.</p>
+          </article>
+          <article class="service-card">
+            <div class="service-icon"><i class="fa-solid fa-film" aria-hidden="true"></i></div>
+            <h3>Brand films</h3>
+            <p>Story-led edits with cinematic pacing, sound design, and color that matches your brand world.</p>
+          </article>
+          <article class="service-card">
+            <div class="service-icon"><i class="fa-solid fa-wand-magic-sparkles" aria-hidden="true"></i></div>
+            <h3>Motion graphics</h3>
+            <p>Logo reveals, title sequences, lower thirds, and animated identities in After Effects.</p>
+          </article>
+          <article class="service-card">
+            <div class="service-icon"><i class="fa-solid fa-sliders" aria-hidden="true"></i></div>
+            <h3>Color &amp; finish</h3>
+            <p>Look development, consistency across multi-clip packages, export for web, ads, and 4K.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========== ABOUT ========== -->
+    <section class="section" id="about">
+      <div class="container about-grid">
+        <div class="about-visual">
+          <div class="about-frame">
+            <div class="about-photo">
+              <span class="about-initials">AC</span>
+            </div>
+            <div class="about-float f1">Premiere</div>
+            <div class="about-float f2">AE</div>
+            <div class="about-float f3">DaVinci</div>
+          </div>
+        </div>
+        <div class="about-copy">
+          <p class="section-eyebrow">About</p>
+          <h2 class="section-title">Editor by craft.<br />Director of feeling.</h2>
+          <p>
+            I treat every cut like a decision the viewer will feel — even if they never notice it.
+            From real-estate luxury reels to knowledge-center socials and product stories,
+            I build edits that look expensive and move fast.
+          </p>
+          <p>
+            Tools I live in: <strong>Premiere Pro</strong>, <strong>After Effects</strong>,
+            color, sound, and a ruthless timeline.
+          </p>
+          <ul class="about-list">
+            <li>Vertical + landscape delivery from one story</li>
+            <li>Music-led pacing &amp; caption-ready exports</li>
+            <li>Fast feedback loops, clear revisions</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========== PROCESS ========== -->
+    <section class="section section-alt" id="process">
+      <div class="container">
+        <div class="section-head">
+          <p class="section-eyebrow">Process</p>
+          <h2 class="section-title">From raw to ready.</h2>
+        </div>
+        <ol class="process-steps">
+          <li>
+            <span class="step-num">01</span>
+            <h3>Brief</h3>
+            <p>Goals, references, platforms, aspect ratios, and the feeling you want people to leave with.</p>
+          </li>
+          <li>
+            <span class="step-num">02</span>
+            <h3>Rough cut</h3>
+            <p>Structure, hooks, and story first. You’ll see the bones before the polish.</p>
+          </li>
+          <li>
+            <span class="step-num">03</span>
+            <h3>Finish</h3>
+            <p>Motion, grade, sound, captions — then exports for every format you need.</p>
+          </li>
+          <li>
+            <span class="step-num">04</span>
+            <h3>Deliver</h3>
+            <p>Master files + platform-ready cuts. Optional thumbnails and cutdowns.</p>
+          </li>
+        </ol>
+      </div>
+    </section>
+
+    <!-- ========== CONTACT ========== -->
+    <section class="section" id="contact">
+      <div class="container contact-wrap">
+        <div class="contact-card">
+          <p class="section-eyebrow">Contact</p>
+          <h2 class="section-title">Let’s make something people finish watching.</h2>
+          <p class="section-sub">
+            Tell me about your project — reels, brand film, motion package, or ongoing content.
+          </p>
+
+          <form class="contact-form" id="contact-form" novalidate>
+            <div class="form-row">
+              <div class="field">
+                <label for="name">Name</label>
+                <input id="name" name="name" type="text" autocomplete="name" placeholder="Your name" required />
+              </div>
+              <div class="field">
+                <label for="email">Email</label>
+                <input id="email" name="email" type="email" autocomplete="email" placeholder="you@email.com" required />
+              </div>
+            </div>
+            <div class="field">
+              <label for="project">Project type</label>
+              <select id="project" name="project">
+                <option value="reel">Reels / short-form</option>
+                <option value="brand">Brand film</option>
+                <option value="motion">Motion graphics</option>
+                <option value="ongoing">Ongoing content</option>
+                <option value="other">Something else</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="message">Message</label>
+              <textarea id="message" name="message" rows="4" placeholder="Timeline, links, vibe…" required></textarea>
+            </div>
+            <button type="submit" class="btn btn-primary btn-lg btn-block">
+              Send message
+              <i class="fa-solid fa-paper-plane" aria-hidden="true"></i>
+            </button>
+            <p class="form-note" id="form-note" role="status" aria-live="polite"></p>
+          </form>
+        </div>
+
+        <aside class="contact-aside">
+          <div class="aside-block">
+            <h3>Prefer direct?</h3>
+            <a class="aside-link" href="mailto:hello@anmol.studio">
+              <i class="fa-regular fa-envelope" aria-hidden="true"></i>
+              hello@anmol.studio
+            </a>
+            <p class="muted small">Replace with your real email anytime.</p>
+          </div>
+          <div class="aside-block">
+            <h3>Social</h3>
+            <div class="socials">
+              <a href="#" aria-label="Instagram" class="social"><i class="fa-brands fa-instagram"></i></a>
+              <a href="#" aria-label="YouTube" class="social"><i class="fa-brands fa-youtube"></i></a>
+              <a href="#" aria-label="LinkedIn" class="social"><i class="fa-brands fa-linkedin-in"></i></a>
+              <a href="#" aria-label="Behance" class="social"><i class="fa-brands fa-behance"></i></a>
+            </div>
+          </div>
+          <div class="aside-block accent-panel">
+            <p class="accent-panel-label">Status</p>
+            <p class="accent-panel-text">Open for freelance &amp; collabs</p>
+          </div>
+        </aside>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container footer-inner">
+      <div class="footer-brand">
+        <span class="logo-mark sm" aria-hidden="true"><i class="fa-solid fa-play"></i></span>
+        <span>Anmol Chandiok © <span id="year"></span></span>
+      </div>
+      <p class="muted small">Video editor · Motion designer · Built for every screen</p>
+      <a href="#top" class="back-top">Back to top <i class="fa-solid fa-arrow-up" aria-hidden="true"></i></a>
+    </div>
+  </footer>
+
+  <!-- Toast -->
+  <div class="toast-stack" id="toast-stack" aria-live="polite"></div>
+
+  <!-- Preview modal -->
+  <div class="modal-overlay" id="preview-modal" hidden>
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="preview-title">
+      <button type="button" class="modal-close" id="preview-close" aria-label="Close preview">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+      <div class="modal-preview">
+        <div class="modal-preview-inner" id="preview-visual"></div>
+      </div>
+      <h3 id="preview-title">Project preview</h3>
+      <p class="muted" id="preview-desc">Demo preview — drop your real video links here later.</p>
+    </div>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script src="js/main.js"></script>
+</body>
+</html>
