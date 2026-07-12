@@ -285,6 +285,7 @@
     <div class="brand"><span class="dot"></span> Work <small>/ pluseshot</small></div>
     <div class="spacer"></div>
     <button class="pill" id="connPill"><span class="led"></span><span id="connText">Not connected</span></button>
+    <button class="btn ghost sm" id="pwBtn" title="Change the dashboard password">Password</button>
     <button class="btn primary" id="publishBtn" disabled>Publish to site</button>
   </header>
 
@@ -353,6 +354,43 @@
     </div>
 
     <div class="status" id="connStatus"></div>
+  </div>
+</div>
+
+<!-- change password -->
+<div class="modal" id="pwModal">
+  <div class="modal__scrim" data-x></div>
+  <div class="modal__box">
+    <h2>Change password</h2>
+    <p>Saves straight into <code style="font-family:var(--mono)" id="pwFileLabel">admin.html</code> using the same connection as publishing. Live the moment it's pushed.</p>
+
+    <div class="f"><label>Current password</label>
+      <input id="pwCurrent" type="password" autocomplete="current-password"></div>
+
+    <div class="f"><label>New password</label>
+      <input id="pwNew" type="password" autocomplete="new-password"></div>
+
+    <div class="f"><label>Confirm new password</label>
+      <input id="pwConfirm" type="password" autocomplete="new-password"></div>
+
+    <details style="margin:14px 0">
+      <summary style="cursor:pointer;font-size:12.5px;color:var(--dim)">This dashboard's file path, if not admin.html</summary>
+      <div class="f" style="margin-top:10px">
+        <input id="pwPath" class="mono" placeholder="admin.html">
+        <div class="hint">Only change this if you renamed the dashboard file or moved it into a folder.</div>
+      </div>
+    </details>
+
+    <div class="note">
+      Needs the same repo connection as publishing — token, owner, and repo already saved. If that's not set up yet, do it from the connection pill first.
+    </div>
+
+    <div style="display:flex;gap:10px;margin-top:6px">
+      <div class="spacer"></div>
+      <button class="btn primary" id="pwSave">Save new password</button>
+    </div>
+
+    <div class="status" id="pwStatus"></div>
   </div>
 </div>
 
@@ -771,9 +809,9 @@
     });
   }
 
-  function filePath() {
+  function filePath(path) {
     return '/repos/' + cfg.owner + '/' + cfg.repo + '/contents/' +
-           cfg.path.split('/').map(encodeURIComponent).join('/');
+           (path || cfg.path).split('/').map(encodeURIComponent).join('/');
   }
 
   function ghError(res) {
@@ -785,8 +823,8 @@
     return 'GitHub said ' + res.status + '.';
   }
 
-  async function getRemote() {
-    var res = await gh(filePath() + '?ref=' + encodeURIComponent(cfg.branch) + '&t=' + Date.now());
+  async function getRemote(path) {
+    var res = await gh(filePath(path) + '?ref=' + encodeURIComponent(cfg.branch) + '&t=' + Date.now());
     if (res.status === 404) return { sha: null, text: null };
     if (!res.ok) throw new Error(ghError(res));
     var j = await res.json();
@@ -955,8 +993,113 @@
   $('#testBtn').addEventListener('click', test);
   $('#pullBtn').addEventListener('click', async function () { readConn(); await pull(); });
 
+  /* ---------- change password ------------------------------------------- */
+
+  var ADMIN_PATH_KEY = 'pw.adminPath';
+
+  function adminPath() {
+    return store.get(ADMIN_PATH_KEY) || 'admin.html';
+  }
+
+  $('#pwBtn').addEventListener('click', function () {
+    $('#pwCurrent').value = '';
+    $('#pwNew').value = '';
+    $('#pwConfirm').value = '';
+    $('#pwPath').value = adminPath();
+    $('#pwFileLabel').textContent = adminPath();
+    $('#pwStatus').className = 'status';
+    $('#pwStatus').textContent = '';
+    $('#pwModal').classList.add('on');
+    $('#pwCurrent').focus();
+  });
+
+  $('#pwModal').addEventListener('click', function (e) {
+    if (e.target.hasAttribute('data-x')) $('#pwModal').classList.remove('on');
+  });
+
+  $('#pwSave').addEventListener('click', async function () {
+    var status = $('#pwStatus');
+    var current = $('#pwCurrent').value;
+    var next = $('#pwNew').value;
+    var confirm = $('#pwConfirm').value;
+    var path = $('#pwPath').value.trim() || 'admin.html';
+    store.set(ADMIN_PATH_KEY, path);
+    $('#pwFileLabel').textContent = path;
+
+    if (!current || !next || !confirm) {
+      status.className = 'status err';
+      status.textContent = 'Fill in all three fields.';
+      return;
+    }
+    if (next !== confirm) {
+      status.className = 'status err';
+      status.textContent = 'New password and confirmation don\u2019t match.';
+      return;
+    }
+    if (next.length < 6) {
+      status.className = 'status err';
+      status.textContent = 'Pick something a little longer \u2014 6 characters minimum.';
+      return;
+    }
+
+    var currentHash = await sha256Hex(current);
+    if (currentHash !== PW_HASH) {
+      status.className = 'status err';
+      status.textContent = 'Current password is wrong.';
+      return;
+    }
+
+    if (!cfg.token || !cfg.owner || !cfg.repo) {
+      status.className = 'status err';
+      status.textContent = 'Connect to your repo first \u2014 use the connection pill, top right.';
+      return;
+    }
+
+    var btn = $('#pwSave');
+    btn.disabled = true;
+    status.className = 'status busy';
+    status.textContent = 'Reading ' + path + '\u2026';
+
+    try {
+      var remote = await getRemote(path);
+      if (remote.text === null) throw new Error('Can\u2019t find ' + path + ' in the repo. Check the file path above.');
+
+      if (!/var PW_HASH = '[0-9a-f]{64}';/.test(remote.text)) {
+        throw new Error('Could not find the password line in ' + path + '. If you renamed or heavily edited the file, this won\u2019t find it.');
+      }
+
+      var newHash = await sha256Hex(next);
+      var updated = remote.text.replace(
+        /var PW_HASH = '[0-9a-f]{64}';/,
+        "var PW_HASH = '" + newHash + "';"
+      );
+
+      status.textContent = 'Saving\u2026';
+
+      var body = {
+        message: 'Update dashboard password',
+        content: b64enc(updated),
+        branch: cfg.branch,
+        sha: remote.sha
+      };
+      var res = await gh(filePath(path), { method: 'PUT', body: JSON.stringify(body) });
+      if (!res.ok) throw new Error(ghError(res));
+
+      PW_HASH = newHash;   // takes effect immediately, no reload needed
+      status.className = 'status ok';
+      status.textContent = 'Password changed. Live on ' + path + ' now.';
+      toast('Password changed.', 'ok');
+      setTimeout(function () { $('#pwModal').classList.remove('on'); }, 1100);
+    } catch (err) {
+      status.className = 'status err';
+      status.textContent = err.message || 'Could not save the new password.';
+    } finally {
+      btn.disabled = false;
+    }
+  });
+
   document.addEventListener('keydown', function (e) {
-    if (e.key === 'Escape') $('#connModal').classList.remove('on');
+    if (e.key === 'Escape') { $('#connModal').classList.remove('on'); $('#pwModal').classList.remove('on'); }
   });
 
   window.addEventListener('beforeunload', function (e) {
