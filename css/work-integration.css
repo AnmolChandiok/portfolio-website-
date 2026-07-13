@@ -31,12 +31,11 @@
   transition: opacity .35s ease;
 }
 
-.work-preview--yt {
-  width: 300%;
-  height: 300%;
-  left: -100%;
-  top: -100%;
-}
+/* YouTube's embed player already fills the iframe's own box at whatever
+   aspect that box is — a 9:16 thumb gets a full-bleed vertical video with
+   no letterboxing, same as a 16:9 thumb gets full-bleed landscape. So the
+   preview iframe just needs a plain 100% fill, same as .work-preview above;
+   no oversize/crop needed for either orientation. */
 
 .work-thumb.is-previewing .work-preview { opacity: 1; }
 .work-thumb.is-previewing .work-poster  { opacity: 0; }

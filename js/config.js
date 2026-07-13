@@ -51,20 +51,15 @@ window.SITE_VIDEOS = {
 /* ============================================================
    CONTACT FORM
    ------------------------------------------------------------
-   This site has no server, so the form can't save messages into
-   the repo by itself — there's nowhere safe to put a "write"
-   credential that a stranger's browser could use without also
-   being able to steal it. Formspree solves this: it's a small
-   free service built for exactly this — a form endpoint that
-   emails you every submission, no backend required.
+   Messages are stored in YOUR repo, at data/messages.json — not on any
+   third-party service. A small free Cloudflare Worker does the actual
+   writing (a public form can't safely hold a repo-write credential
+   itself, since anyone could steal it from the browser — the Worker
+   keeps that credential private on Cloudflare's side instead).
 
-   Setup (~2 minutes):
-     1. https://formspree.io → sign up free → New Form
-     2. Enter the email you want submissions sent to
-     3. Copy the endpoint it gives you — looks like:
-        https://formspree.io/f/abcdwxyz
-     4. Paste it below.
+   Setup: see cloudflare-worker.js in the root of this repo for the
+   5-minute deploy steps. Once deployed, paste its URL below.
 
-   Until you do, the form still validates and shows a message,
-   it just doesn't go anywhere yet. */
-window.CONTACT_FORM_ENDPOINT = ""; // e.g. "https://formspree.io/f/abcdwxyz"
+   Until this is set, the form still validates and tells the visitor
+   it isn't connected yet — it won't pretend to send. */
+window.CONTACT_FORM_ENDPOINT = ""; // e.g. "https://contact-to-github-worker.you.workers.dev"

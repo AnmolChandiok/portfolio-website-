@@ -267,6 +267,29 @@
   }
   .lock__err{font-size:12.5px;color:var(--bad);min-height:18px;margin-bottom:10px}
   #app.hidden{display:none}
+
+  /* ---- messages inbox ---- */
+  .msg-item{
+    border:1px solid var(--line);border-radius:10px;padding:12px 14px;margin-bottom:10px;
+    background:var(--sunk);position:relative;
+  }
+  .msg-item.unread{border-left:2px solid var(--accent)}
+  .msg-item__head{display:flex;align-items:baseline;gap:8px;flex-wrap:wrap;margin-bottom:6px}
+  .msg-item__name{font-weight:600;font-size:13.5px}
+  .msg-item__email{font-size:12px;color:var(--dim);font-family:var(--mono)}
+  .msg-item__date{font-size:11px;color:var(--faint);margin-left:auto;font-family:var(--mono)}
+  .msg-item__project{
+    font-size:10.5px;text-transform:uppercase;letter-spacing:.06em;color:var(--accent);
+    background:var(--accent-soft);padding:2px 7px;border-radius:5px;
+  }
+  .msg-item__body{font-size:13px;line-height:1.6;color:var(--text);white-space:pre-wrap}
+  .msg-item__del{
+    position:absolute;top:10px;right:10px;color:var(--faint);padding:4px;border-radius:6px;
+    opacity:0;transition:opacity .13s,background .13s,color .13s;
+  }
+  .msg-item:hover .msg-item__del{opacity:1}
+  .msg-item__del:hover{background:#2a1519;color:var(--bad)}
+  .msg-empty{color:var(--faint);font-size:13px;padding:20px 0;text-align:center}
 </style>
 </head>
 <body>
@@ -301,7 +324,7 @@
   </header>
 
   <div class="add">
-    <input id="urlIn" placeholder="Paste a YouTube link — watch, youtu.be, or /shorts — and press Enter" autocomplete="off" spellcheck="false">
+    <input id="urlIn" placeholder="Paste a YouTube, Instagram, or Behance link — and press Enter" autocomplete="off" spellcheck="false">
     <button class="btn" id="addBtn">Add</button>
   </div>
 
@@ -408,29 +431,27 @@
 <!-- messages -->
 <div class="modal" id="msgModal">
   <div class="modal__scrim" data-x></div>
-  <div class="modal__box">
-    <h2>Contact form messages</h2>
-    <p>Being straight with you about how this actually works, since it matters:</p>
+  <div class="modal__box" style="max-width:640px">
+    <h2>Messages</h2>
+    <p>Enquiries from your contact form \u2014 stored in <code style="font-family:var(--mono)">data/messages.json</code>
+      in this repo. Nothing third-party, nothing external.</p>
 
-    <div class="note">
-      This site has no server \u2014 there\u2019s nowhere safe on a static GitHub Pages site to store
-      a credential a stranger\u2019s browser could use to write into this dashboard without also being
-      able to steal that same credential. So messages don\u2019t appear inside admin.html directly.
+    <div id="msgList" style="margin-top:16px"></div>
+
+    <div class="note" id="msgSetupNote" style="margin-top:16px">
+      Not receiving anything yet? The form needs a one-time Worker deploy \u2014 see
+      <code style="font-family:var(--mono)">cloudflare-worker.js</code> in the repo root for the 5-minute setup,
+      then paste its URL into <code style="font-family:var(--mono)">CONTACT_FORM_ENDPOINT</code> in
+      <code style="font-family:var(--mono)">js/config.js</code>.
     </div>
-
-    <p style="margin-top:16px">What actually happens: your contact form sends through
-      <a href="https://formspree.io" target="_blank" rel="noopener" style="color:var(--accent)">Formspree</a>
-      (free), which does two things \u2014 emails you every submission immediately, and keeps a copy in
-      its own inbox as backup.</p>
 
     <div style="display:flex;gap:10px;margin-top:18px">
-      <a class="btn" href="https://formspree.io/login" target="_blank" rel="noopener">Open Formspree inbox \u2197</a>
+      <button class="btn" id="msgRefresh">Refresh</button>
       <div class="spacer"></div>
-      <button class="btn primary" id="msgClose">Got it</button>
+      <button class="btn primary" id="msgClose">Close</button>
     </div>
 
-    <div class="hint" style="margin-top:14px">Not set up yet? The endpoint goes in
-      <code style="font-family:var(--mono)">js/config.js</code> \u2014 look for <code style="font-family:var(--mono)">CONTACT_FORM_ENDPOINT</code>.</div>
+    <div class="status" id="msgStatus"></div>
   </div>
 </div>
 
@@ -571,7 +592,33 @@
     return null;
   }
 
+  /* ---------- Instagram / Behance ----------------------------------------
+     These aren't embeddable video players the way YouTube is — Instagram
+     has no public autoplay embed, and Behance shows case studies, not
+     video. Both get added as "external" cards: they show a thumbnail you
+     provide, and clicking one opens the piece on Instagram or Behance
+     itself, in a new tab, instead of playing inline. */
+
+  var RE_INSTAGRAM = /instagram\.com\/(?:reel|p|tv)\/([A-Za-z0-9_-]+)/;
+  var RE_BEHANCE = /behance\.net\/gallery\/(\d+)/;
+
+  function parseExternal(input) {
+    var s = String(input || '').trim();
+    if (!/^https?:\/\//i.test(s)) return null;
+
+    var ig = s.match(RE_INSTAGRAM);
+    if (ig) return { kind: 'instagram', url: s, vertical: true, slug: ig[1] };
+
+    if (/instagram\.com\//i.test(s)) return { kind: 'instagram', url: s, vertical: true, slug: '' };
+
+    var be = s.match(RE_BEHANCE);
+    if (be || /behance\.net\//i.test(s)) return { kind: 'behance', url: s, vertical: false, slug: be ? be[1] : '' };
+
+    return null;
+  }
+
   function thumb(v) {
+    if (v.type === 'external') return v.poster || '';
     return v.poster || ('https://i.ytimg.com/vi/' + v.id + '/hqdefault.jpg');
   }
 
@@ -601,10 +648,24 @@
 
   function blank(id, vertical) {
     return {
+      type: 'youtube',
       id: id, title: '', client: '', category: '', year: String(new Date().getFullYear()),
       description: '', instagramUrl: '',
       aspect: vertical ? '9:16' : '16:9', duration: '', poster: '', preview: '',
       previewMode: 'youtube', start: 0, featured: false, hidden: false
+    };
+  }
+
+  function blankExternal(ext) {
+    return {
+      type: 'external',
+      externalKind: ext.kind,      // 'instagram' | 'behance'
+      externalUrl: ext.url,
+      id: ext.kind + '-' + (ext.slug || Date.now().toString(36)),
+      title: '', client: '', category: '', year: String(new Date().getFullYear()),
+      description: '',
+      aspect: ext.vertical ? '9:16' : '16:9', duration: '', poster: '',
+      featured: false, hidden: false
     };
   }
 
@@ -672,6 +733,8 @@
     }
 
     var v = items[sel];
+    if (v.type === 'external') { renderInspExternal(v); return; }
+
     var cats = ['Motion Design', 'Brand Film', 'Short Form', 'Explainer', 'Title Sequence', '3D', 'Real Estate'];
 
     host.innerHTML =
@@ -786,35 +849,142 @@
     });
   }
 
+  function renderInspExternal(v) {
+    var host = $('#insp');
+    var cats = ['Motion Design', 'Brand Film', 'Short Form', 'Explainer', 'Title Sequence', '3D', 'Real Estate'];
+    var kindLabel = v.externalKind === 'instagram' ? 'Instagram' : 'Behance';
+
+    host.innerHTML =
+    '<div class="insp__inner">' +
+
+      '<div class="card" data-aspect="' + esc(v.aspect) + '" id="cardPrev" style="background:var(--sunk)">' +
+        (v.poster
+          ? '<img src="' + esc(v.poster) + '" alt="">'
+          : '<div style="height:100%;display:grid;place-items:center;color:var(--faint);font-size:12.5px;padding:20px;text-align:center">No thumbnail yet \u2014 add a poster URL below</div>') +
+        '<span class="card__tag">' + kindLabel + '</span>' +
+      '</div>' +
+
+      '<div class="note" style="margin:14px 0">' +
+        kindLabel + ' doesn\u2019t allow embedding that plays in place, so this card opens ' + kindLabel +
+        ' itself in a new tab when clicked, instead of playing inline like your YouTube pieces.' +
+      '</div>' +
+
+      '<div class="f"><label>Title</label>' +
+        '<input data-k="title" value="' + esc(v.title) + '" placeholder="What is this piece called?"></div>' +
+
+      '<div class="f"><label>Description</label>' +
+        '<textarea data-k="description" rows="3" placeholder="A sentence or two about this project.">' + esc(v.description || '') + '</textarea></div>' +
+
+      '<div class="grid2">' +
+        '<div class="f"><label>Client</label>' +
+          '<input data-k="client" value="' + esc(v.client) + '" placeholder="Square Foot Story"></div>' +
+        '<div class="f"><label>Category</label>' +
+          '<input data-k="category" list="cats" value="' + esc(v.category) + '" placeholder="Motion Design">' +
+          '<datalist id="cats">' + cats.map(function (c) { return '<option value="' + c + '">'; }).join('') + '</datalist>' +
+        '</div>' +
+        '<div class="f"><label>Year</label>' +
+          '<input data-k="year" class="mono" value="' + esc(v.year) + '" placeholder="2026"></div>' +
+        '<div class="f"><label>Duration</label>' +
+          '<input data-k="duration" class="mono" value="' + esc(v.duration) + '" placeholder="1:24"></div>' +
+      '</div>' +
+
+      '<div class="f"><label>Shape</label>' +
+        '<select data-k="aspect">' +
+          ['16:9', '9:16', '1:1', '4:5'].map(function (a) {
+            return '<option value="' + a + '"' + (v.aspect === a ? ' selected' : '') + '>' + a + '</option>';
+          }).join('') +
+        '</select></div>' +
+
+      '<div class="f"><label>Thumbnail (required \u2014 ' + kindLabel + ' won\u2019t give us one automatically)</label>' +
+        '<input data-k="poster" class="mono" value="' + esc(v.poster || '') + '" placeholder="assets/posters/' + esc(v.id) + '.jpg">' +
+        '<div class="hint">Screenshot the post and drop the image in your repo, then paste its path here.</div></div>' +
+
+      '<div class="switches">' +
+        '<label class="sw"><input type="checkbox" data-k="featured"' + (v.featured ? ' checked' : '') + '> Featured</label>' +
+        '<label class="sw"><input type="checkbox" data-k="hidden"' + (v.hidden ? ' checked' : '') + '> Hide from site</label>' +
+      '</div>' +
+
+      '<div style="display:flex;gap:10px;padding-top:18px;border-top:1px solid var(--line)">' +
+        '<a class="btn ghost sm" href="' + esc(v.externalUrl) + '" target="_blank" rel="noopener">Open on ' + kindLabel + ' \u2197</a>' +
+        '<div class="spacer" style="flex:1"></div>' +
+        '<button class="btn danger sm" id="delBtn">Remove</button>' +
+      '</div>' +
+
+    '</div>';
+
+    host.querySelectorAll('[data-k]').forEach(function (input) {
+      var k = input.dataset.k;
+      var ev = input.type === 'checkbox' || input.tagName === 'SELECT' ? 'change' : 'input';
+      input.addEventListener(ev, function () {
+        var val = input.type === 'checkbox' ? input.checked : input.value;
+        items[sel][k] = val;
+        if (k === 'aspect' || k === 'poster') renderInsp();
+        renderList();
+      });
+    });
+
+    var del = $('#delBtn');
+    if (del) del.addEventListener('click', function () {
+      items.splice(sel, 1);
+      sel = Math.min(sel, items.length - 1);
+      renderList(); renderInsp();
+      toast('Removed. Publish to make it stick.');
+    });
+  }
+
   /* ---------- add -------------------------------------------------------- */
 
   async function add() {
     var input = $('#urlIn');
-    var p = parseYT(input.value);
+    var raw = input.value;
+    var p = parseYT(raw);
 
-    if (!p) { toast('That is not a YouTube link I recognise.', 'err'); input.focus(); return; }
-    if (items.some(function (v) { return v.id === p.id; })) {
-      toast('Already in the list.', 'err');
-      sel = items.findIndex(function (v) { return v.id === p.id; });
+    if (p) {
+      if (items.some(function (v) { return v.id === p.id; })) {
+        toast('Already in the list.', 'err');
+        sel = items.findIndex(function (v) { return v.id === p.id; });
+        renderList(); renderInsp();
+        return;
+      }
+
+      var v = blank(p.id, p.vertical);
+      items.unshift(v);
+      sel = 0;
+      input.value = '';
       renderList(); renderInsp();
+
+      var meta = await oembed(p.id);
+      if (meta && items[0] && items[0].id === p.id) {
+        if (!v.title)  v.title  = meta.title || '';
+        if (!v.client) v.client = meta.author_name || '';
+        renderList(); renderInsp();
+        toast('Added — title pulled from YouTube.', 'ok');
+      } else {
+        toast('Added. Give it a title.', 'ok');
+      }
       return;
     }
 
-    var v = blank(p.id, p.vertical);
-    items.unshift(v);
-    sel = 0;
-    input.value = '';
-    renderList(); renderInsp();
+    var ext = parseExternal(raw);
+    if (ext) {
+      if (items.some(function (v) { return v.externalUrl === ext.url; })) {
+        toast('Already in the list.', 'err');
+        sel = items.findIndex(function (v) { return v.externalUrl === ext.url; });
+        renderList(); renderInsp();
+        return;
+      }
 
-    var meta = await oembed(p.id);
-    if (meta && items[0] && items[0].id === p.id) {
-      if (!v.title)  v.title  = meta.title || '';
-      if (!v.client) v.client = meta.author_name || '';
+      var ev = blankExternal(ext);
+      items.unshift(ev);
+      sel = 0;
+      input.value = '';
       renderList(); renderInsp();
-      toast('Added — title pulled from YouTube.', 'ok');
-    } else {
-      toast('Added. Give it a title.', 'ok');
+      toast('Added from ' + (ext.kind === 'instagram' ? 'Instagram' : 'Behance') + ' — add a title and thumbnail.', 'ok');
+      return;
     }
+
+    toast('That\u2019s not a link I recognise \u2014 paste a YouTube, Instagram, or Behance URL.', 'err');
+    input.focus();
   }
 
   /* ---------- drag to reorder ------------------------------------------- */
@@ -1173,12 +1343,103 @@
     }
   });
 
+  /* ---------- messages inbox -------------------------------------------- */
+
+  var MSG_PATH = 'data/messages.json';
+  var msgCache = [];
+  var msgSha = null;
+
+  function escHtml(s) { return esc(s); }
+
+  function timeAgo(iso) {
+    var d = new Date(iso);
+    if (isNaN(d)) return '';
+    var diff = (Date.now() - d.getTime()) / 1000;
+    if (diff < 60) return 'just now';
+    if (diff < 3600) return Math.floor(diff / 60) + 'm ago';
+    if (diff < 86400) return Math.floor(diff / 3600) + 'h ago';
+    if (diff < 2592000) return Math.floor(diff / 86400) + 'd ago';
+    return d.toLocaleDateString();
+  }
+
+  function renderMessages() {
+    var host = $('#msgList');
+    $('#msgSetupNote').style.display = msgCache.length ? 'none' : 'block';
+
+    if (!msgCache.length) {
+      host.innerHTML = '<p class="msg-empty">No messages yet.</p>';
+      return;
+    }
+
+    host.innerHTML = msgCache.map(function (m) {
+      return '' +
+      '<div class="msg-item' + (m.read ? '' : ' unread') + '" data-id="' + escHtml(m.id) + '">' +
+        '<button class="msg-item__del" data-del="' + escHtml(m.id) + '" title="Delete">\u2715</button>' +
+        '<div class="msg-item__head">' +
+          '<span class="msg-item__name">' + escHtml(m.name || 'Someone') + '</span>' +
+          '<span class="msg-item__email">' + escHtml(m.email || '') + '</span>' +
+          (m.project ? '<span class="msg-item__project">' + escHtml(m.project) + '</span>' : '') +
+          '<span class="msg-item__date">' + timeAgo(m.date) + '</span>' +
+        '</div>' +
+        '<div class="msg-item__body">' + escHtml(m.message || '') + '</div>' +
+      '</div>';
+    }).join('');
+  }
+
+  async function pullMessages() {
+    var status = $('#msgStatus');
+    if (!cfg.token || !cfg.owner || !cfg.repo) {
+      status.className = 'status err';
+      status.textContent = 'Connect to your repo first \u2014 use the connection pill, top right.';
+      return;
+    }
+    status.className = 'status busy';
+    status.textContent = 'Checking for messages\u2026';
+    try {
+      var remote = await getRemote(MSG_PATH);
+      msgSha = remote.sha;
+      var data = remote.text ? JSON.parse(remote.text) : { messages: [] };
+      msgCache = data.messages || [];
+      renderMessages();
+      status.className = 'status';
+      status.textContent = msgCache.length
+        ? msgCache.length + ' message' + (msgCache.length === 1 ? '' : 's') + '.'
+        : '';
+    } catch (err) {
+      status.className = 'status err';
+      status.textContent = err.message || 'Could not read data/messages.json.';
+    }
+  }
+
+  async function saveMessages() {
+    var body = {
+      message: 'Update messages inbox',
+      content: b64enc(JSON.stringify({ messages: msgCache }, null, 2)),
+      branch: cfg.branch
+    };
+    if (msgSha) body.sha = msgSha;
+    var res = await gh(filePath(MSG_PATH), { method: 'PUT', body: JSON.stringify(body) });
+    if (!res.ok) throw new Error(ghError(res));
+    var j = await res.json();
+    msgSha = j.content && j.content.sha ? j.content.sha : msgSha;
+  }
+
   $('#msgBtn').addEventListener('click', function () {
     $('#msgModal').classList.add('on');
+    $('#msgStatus').textContent = '';
+    renderMessages();
+    if (cfg.token && cfg.owner && cfg.repo) pullMessages();
   });
   $('#msgModal').addEventListener('click', function (e) {
     if (e.target.hasAttribute('data-x')) $('#msgModal').classList.remove('on');
+    var delId = e.target.getAttribute && e.target.getAttribute('data-del');
+    if (delId) {
+      msgCache = msgCache.filter(function (m) { return m.id !== delId; });
+      renderMessages();
+      saveMessages().catch(function (err) { toast(err.message || 'Could not delete.', 'err'); });
+    }
   });
+  $('#msgRefresh').addEventListener('click', pullMessages);
   $('#msgClose').addEventListener('click', function () {
     $('#msgModal').classList.remove('on');
   });
