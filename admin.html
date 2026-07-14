@@ -123,6 +123,7 @@
   }
   .flag.f{background:rgba(251,86,7,.22);color:#ffb27a}
   .flag.h{background:#26262e;color:var(--faint)}
+  .flag.ig{background:rgba(225,48,108,.22);color:#ff8fb3;font-size:10px}
   .row__grip{color:#3a3a47;cursor:grab;flex:none;padding:2px}
   .row__grip:active{cursor:grabbing}
   .row__del{
@@ -712,6 +713,7 @@
         '<span class="row__flags">' +
           (v.featured ? '<span class="flag f">Feat</span>' : '') +
           (v.hidden ? '<span class="flag h">Hidden</span>' : '') +
+          (v.instagramUrl ? '<span class="flag ig" title="Also on Instagram">IG</span>' : '') +
         '</span>' +
         '<span class="row__grip" title="Drag to reorder">⣿</span>' +
       '</div>';

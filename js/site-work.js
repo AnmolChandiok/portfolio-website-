@@ -79,11 +79,19 @@
 
     var icon = isExternal ? 'fa-arrow-up-right-from-square' : 'fa-play';
 
+    // A regular (non-external) video can also carry a cross-link to an
+    // Instagram post of the same piece — show a small badge on the
+    // thumbnail itself so that's visible without opening the sheet.
+    var igCrossLink = !isExternal && v.instagramUrl
+      ? '<span class="work-ig-badge" title="Also on Instagram" aria-hidden="true"><i class="fa-brands fa-instagram"></i></span>'
+      : '';
+
     article.innerHTML =
       '<div class="work-thumb ' + ratio + '">' +
         '<img class="work-poster" src="' + posterFor(v) + '" alt="" loading="lazy" ' +
              'onerror="this.style.display=\'none\'">' +
         '<span class="work-badge">' + badge + '</span>' +
+        igCrossLink +
         '<button type="button" class="work-play" aria-label="' + (isExternal ? 'Open ' : 'Preview ') +
           (v.title ? v.title.replace(/"/g, '&quot;') : 'video') + '">' +
           '<i class="fa-solid ' + icon + '"></i>' +
@@ -101,8 +109,9 @@
     article.querySelector('.work-play').addEventListener('click', openThis);
     article.querySelector('.work-thumb').addEventListener('click', openThis);
 
-    // Hover preview only applies to real, playable video cards.
-    if (!isExternal && (v.previewMode === 'youtube' || v.previewMode === 'clip')) {
+    // Auto-playing preview is reserved for Featured videos — everything
+    // else stays a static poster until clicked open.
+    if (!isExternal && v.featured && (v.previewMode === 'youtube' || v.previewMode === 'clip')) {
       wirePreview(article, v);
     }
 
