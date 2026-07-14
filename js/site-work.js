@@ -86,10 +86,23 @@
       ? '<span class="work-ig-badge" title="Also on Instagram" aria-hidden="true"><i class="fa-brands fa-instagram"></i></span>'
       : '';
 
+    // Instagram/Behance give us no thumbnail API — when there's no poster
+    // (or it fails to load), fall back to a plain platform-icon panel
+    // instead of leaving the card looking broken/blank.
+    var poster = posterFor(v);
+    var posterImg = poster
+      ? '<img class="work-poster" src="' + poster + '" alt="" loading="lazy" ' +
+          'onerror="this.style.display=\'none\'">'
+      : '';
+    var posterFallback =
+      '<div class="work-poster-fallback"><i class="fa-brands ' +
+      (isExternal && v.externalKind === 'behance' ? 'fa-behance' : 'fa-instagram') +
+      '" aria-hidden="true"></i></div>';
+
     article.innerHTML =
       '<div class="work-thumb ' + ratio + '">' +
-        '<img class="work-poster" src="' + posterFor(v) + '" alt="" loading="lazy" ' +
-             'onerror="this.style.display=\'none\'">' +
+        (isExternal ? posterFallback : '') +
+        posterImg +
         '<span class="work-badge">' + badge + '</span>' +
         igCrossLink +
         '<button type="button" class="work-play" aria-label="' + (isExternal ? 'Open ' : 'Preview ') +
@@ -102,6 +115,11 @@
         '<p>' + [v.client, v.category].filter(Boolean).join(' · ') + '</p>' +
       '</div>';
 
+    // Instagram/Behance have no embed that plays inline the way YouTube
+    // does — no muted-autoplay-loop option, and their widget only shows a
+    // small static card requiring a manual click. Rather than fake parity
+    // with a half-working inline embed, these still just open the real
+    // post in a new tab.
     var openThis = isExternal
       ? function () { window.open(v.externalUrl, '_blank', 'noopener'); }
       : function () { openSheet(v); };
@@ -371,4 +389,24 @@
       });
     })
     .catch(function () { /* social.json not reachable yet — icons stay as-is */ });
+})();
+
+/* ---------- profile photo: read from data/profile.json, set by admin.html - */
+(function () {
+  'use strict';
+  var img = document.getElementById('about-img');
+  var initials = document.getElementById('about-initials');
+  if (!img || !initials) return;
+
+  fetch('data/profile.json', { cache: 'no-cache' })
+    .then(function (res) { return res.ok ? res.json() : null; })
+    .then(function (data) {
+      var src = data && data.image;
+      if (!src) return; // nothing published — keep the "AC" mark
+      img.src = src;
+      img.hidden = false;
+      img.addEventListener('load', function () { initials.style.display = 'none'; });
+      img.addEventListener('error', function () { img.hidden = true; }, { once: true });
+    })
+    .catch(function () { /* profile.json not reachable yet — mark stays as-is */ });
 })();

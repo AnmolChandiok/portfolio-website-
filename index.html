@@ -28,15 +28,15 @@
     <div class="container header-inner">
       <a href="#top" class="logo" aria-label="Anmol Chandiok home">
         <span class="logo-mark" aria-hidden="true"><i class="fa-solid fa-play"></i></span>
-        <span class="logo-text">Anmol<span class="accent">.</span></span>
+        <span class="logo-text"><span id="c-nav-brand">Anmol</span><span class="accent">.</span></span>
       </a>
 
       <nav class="nav-desktop" aria-label="Primary">
-        <a href="#work">Work</a>
-        <a href="#services">Services</a>
-        <a href="#about">About</a>
-        <a href="#process">Process</a>
-        <a href="#contact">Contact</a>
+        <a href="#work" id="c-nav-link-work">Work</a>
+        <a href="#services" id="c-nav-link-services">Services</a>
+        <a href="#about" id="c-nav-link-about">About</a>
+        <a href="#process" id="c-nav-link-process">Process</a>
+        <a href="#contact" id="c-nav-link-contact">Contact</a>
       </nav>
 
       <div class="header-actions">
@@ -44,7 +44,7 @@
           <i class="fa-solid fa-sun theme-icon-light" aria-hidden="true"></i>
           <i class="fa-solid fa-moon theme-icon-dark" aria-hidden="true"></i>
         </button>
-        <a href="#contact" class="btn btn-primary btn-sm header-cta">Hire me</a>
+        <a href="#contact" class="btn btn-primary btn-sm header-cta" id="c-nav-header-cta">Hire me</a>
         <button type="button" class="nav-toggle" id="nav-toggle" aria-label="Open menu" aria-expanded="false" aria-controls="mobile-nav">
           <span></span><span></span><span></span>
         </button>
@@ -52,18 +52,18 @@
     </div>
 
     <div class="mobile-nav" id="mobile-nav" hidden>
-      <a href="#work">Work</a>
-      <a href="#services">Services</a>
-      <a href="#about">About</a>
-      <a href="#process">Process</a>
-      <a href="#contact">Contact</a>
-      <a href="#contact" class="btn btn-primary btn-block">Let’s work together</a>
+      <a href="#work" id="c-nav-mlink-work">Work</a>
+      <a href="#services" id="c-nav-mlink-services">Services</a>
+      <a href="#about" id="c-nav-mlink-about">About</a>
+      <a href="#process" id="c-nav-mlink-process">Process</a>
+      <a href="#contact" id="c-nav-mlink-contact">Contact</a>
+      <a href="#contact" class="btn btn-primary btn-block" id="c-nav-mobile-cta">Let’s work together</a>
     </div>
   </header>
 
   <main id="main">
     <!-- ========== HERO ========== -->
-    <section class="hero" aria-label="Introduction">
+    <section class="hero" aria-label="Introduction" id="hero">
       <canvas id="hero-canvas" class="hero-canvas" aria-hidden="true"></canvas>
       <div class="hero-vignette" aria-hidden="true"></div>
 
@@ -71,10 +71,10 @@
         <div class="hero-copy">
           <p class="eyebrow">
             <span class="pulse-dot" aria-hidden="true"></span>
-            Available for projects · Video Editor
+            <span id="c-hero-eyebrow">Available for projects · Video Editor</span>
           </p>
 
-          <h1 class="hero-title">
+          <h1 class="hero-title" id="c-hero-title">
             <span class="line">
               <span class="word">Cuts</span>
               <span class="word">that</span>
@@ -87,19 +87,19 @@
             </span>
           </h1>
 
-          <p class="hero-sub">
+          <p class="hero-sub" id="c-hero-sub">
             I’m <strong>Anmol Chandiok</strong> — a video editor &amp; motion designer crafting reels,
             brand films, and scroll-stopping short-form that feel premium on every screen.
           </p>
 
           <div class="hero-cta">
             <a href="#work" class="btn btn-primary btn-lg">
-              View selected work
+              <span id="c-hero-cta-primary">View selected work</span>
               <i class="fa-solid fa-arrow-down" aria-hidden="true"></i>
             </a>
             <a href="#contact" class="btn btn-ghost btn-lg">
               <i class="fa-regular fa-envelope" aria-hidden="true"></i>
-              Start a project
+              <span id="c-hero-cta-secondary">Start a project</span>
             </a>
           </div>
 
@@ -126,7 +126,7 @@
       </div>
 
       <div class="hero-marquee" aria-hidden="true">
-        <div class="marquee-track">
+        <div class="marquee-track" id="c-hero-marquee">
           <span>Premiere Pro</span><span>•</span>
           <span>After Effects</span><span>•</span>
           <span>Color</span><span>•</span>
@@ -149,9 +149,9 @@
     <section class="section" id="work">
       <div class="container">
         <div class="section-head">
-          <p class="section-eyebrow">Selected work</p>
-          <h2 class="section-title">Frames that earn the scroll.</h2>
-          <p class="section-sub">A mix of short-form heat, brand polish, and motion that sells the story.</p>
+          <p class="section-eyebrow" id="c-work-eyebrow">Selected work</p>
+          <h2 class="section-title" id="c-work-title">Frames that earn the scroll.</h2>
+          <p class="section-sub" id="c-work-sub">A mix of short-form heat, brand polish, and motion that sells the story.</p>
         </div>
 
         <div class="work-filters" role="tablist" aria-label="Filter work">
@@ -173,29 +173,29 @@
     <section class="section section-alt" id="services">
       <div class="container">
         <div class="section-head">
-          <p class="section-eyebrow">Services</p>
-          <h2 class="section-title">What I deliver.</h2>
+          <p class="section-eyebrow" id="c-services-eyebrow">Services</p>
+          <h2 class="section-title" id="c-services-title">What I deliver.</h2>
         </div>
         <div class="services-grid">
           <article class="service-card">
             <div class="service-icon"><i class="fa-solid fa-scissors" aria-hidden="true"></i></div>
-            <h3>Short-form &amp; Reels</h3>
-            <p>Hook in 1 second. Retention edits, captions, platform-native cuts for IG, YT Shorts &amp; TikTok.</p>
+            <h3 id="c-services-1-title">Short-form &amp; Reels</h3>
+            <p id="c-services-1-body">Hook in 1 second. Retention edits, captions, platform-native cuts for IG, YT Shorts &amp; TikTok.</p>
           </article>
           <article class="service-card">
             <div class="service-icon"><i class="fa-solid fa-film" aria-hidden="true"></i></div>
-            <h3>Brand films</h3>
-            <p>Story-led edits with cinematic pacing, sound design, and color that matches your brand world.</p>
+            <h3 id="c-services-2-title">Brand films</h3>
+            <p id="c-services-2-body">Story-led edits with cinematic pacing, sound design, and color that matches your brand world.</p>
           </article>
           <article class="service-card">
             <div class="service-icon"><i class="fa-solid fa-wand-magic-sparkles" aria-hidden="true"></i></div>
-            <h3>Motion graphics</h3>
-            <p>Logo reveals, title sequences, lower thirds, and animated identities in After Effects.</p>
+            <h3 id="c-services-3-title">Motion graphics</h3>
+            <p id="c-services-3-body">Logo reveals, title sequences, lower thirds, and animated identities in After Effects.</p>
           </article>
           <article class="service-card">
             <div class="service-icon"><i class="fa-solid fa-sliders" aria-hidden="true"></i></div>
-            <h3>Color &amp; finish</h3>
-            <p>Look development, consistency across multi-clip packages, export for web, ads, and 4K.</p>
+            <h3 id="c-services-4-title">Color &amp; finish</h3>
+            <p id="c-services-4-body">Look development, consistency across multi-clip packages, export for web, ads, and 4K.</p>
           </article>
         </div>
       </div>
@@ -207,7 +207,8 @@
         <div class="about-visual">
           <div class="about-frame">
             <div class="about-photo">
-              <span class="about-initials">AC</span>
+              <span class="about-initials" id="about-initials">AC</span>
+              <img class="about-img" id="about-img" alt="" hidden>
             </div>
             <div class="about-float f1">Premiere</div>
             <div class="about-float f2">AE</div>
@@ -215,21 +216,21 @@
           </div>
         </div>
         <div class="about-copy">
-          <p class="section-eyebrow">About</p>
-          <h2 class="section-title">Editor by craft.<br />Director of feeling.</h2>
-          <p>
+          <p class="section-eyebrow" id="c-about-eyebrow">About</p>
+          <h2 class="section-title" id="c-about-title">Editor by craft.<br />Director of feeling.</h2>
+          <p id="c-about-p1">
             I treat every cut like a decision the viewer will feel — even if they never notice it.
             From real-estate luxury reels to knowledge-center socials and product stories,
             I build edits that look expensive and move fast.
           </p>
-          <p>
+          <p id="c-about-p2">
             Tools I live in: <strong>Premiere Pro</strong>, <strong>After Effects</strong>,
             color, sound, and a ruthless timeline.
           </p>
           <ul class="about-list">
-            <li>Vertical + landscape delivery from one story</li>
-            <li>Music-led pacing &amp; caption-ready exports</li>
-            <li>Fast feedback loops, clear revisions</li>
+            <li id="c-about-li1">Vertical + landscape delivery from one story</li>
+            <li id="c-about-li2">Music-led pacing &amp; caption-ready exports</li>
+            <li id="c-about-li3">Fast feedback loops, clear revisions</li>
           </ul>
         </div>
       </div>
@@ -239,29 +240,29 @@
     <section class="section section-alt" id="process">
       <div class="container">
         <div class="section-head">
-          <p class="section-eyebrow">Process</p>
-          <h2 class="section-title">From raw to ready.</h2>
+          <p class="section-eyebrow" id="c-process-eyebrow">Process</p>
+          <h2 class="section-title" id="c-process-title">From raw to ready.</h2>
         </div>
         <ol class="process-steps">
           <li>
-            <span class="step-num">01</span>
-            <h3>Brief</h3>
-            <p>Goals, references, platforms, aspect ratios, and the feeling you want people to leave with.</p>
+            <span class="step-num" id="c-process-1-num">01</span>
+            <h3 id="c-process-1-title">Brief</h3>
+            <p id="c-process-1-body">Goals, references, platforms, aspect ratios, and the feeling you want people to leave with.</p>
           </li>
           <li>
-            <span class="step-num">02</span>
-            <h3>Rough cut</h3>
-            <p>Structure, hooks, and story first. You’ll see the bones before the polish.</p>
+            <span class="step-num" id="c-process-2-num">02</span>
+            <h3 id="c-process-2-title">Rough cut</h3>
+            <p id="c-process-2-body">Structure, hooks, and story first. You’ll see the bones before the polish.</p>
           </li>
           <li>
-            <span class="step-num">03</span>
-            <h3>Finish</h3>
-            <p>Motion, grade, sound, captions — then exports for every format you need.</p>
+            <span class="step-num" id="c-process-3-num">03</span>
+            <h3 id="c-process-3-title">Finish</h3>
+            <p id="c-process-3-body">Motion, grade, sound, captions — then exports for every format you need.</p>
           </li>
           <li>
-            <span class="step-num">04</span>
-            <h3>Deliver</h3>
-            <p>Master files + platform-ready cuts. Optional thumbnails and cutdowns.</p>
+            <span class="step-num" id="c-process-4-num">04</span>
+            <h3 id="c-process-4-title">Deliver</h3>
+            <p id="c-process-4-body">Master files + platform-ready cuts. Optional thumbnails and cutdowns.</p>
           </li>
         </ol>
       </div>
@@ -271,9 +272,9 @@
     <section class="section" id="contact">
       <div class="container contact-wrap">
         <div class="contact-card">
-          <p class="section-eyebrow">Contact</p>
-          <h2 class="section-title">Let’s make something people finish watching.</h2>
-          <p class="section-sub">
+          <p class="section-eyebrow" id="c-contact-eyebrow">Contact</p>
+          <h2 class="section-title" id="c-contact-title">Let’s make something people finish watching.</h2>
+          <p class="section-sub" id="c-contact-sub">
             Tell me about your project — reels, brand film, motion package, or ongoing content.
           </p>
 
@@ -312,28 +313,28 @@
 
         <aside class="contact-aside">
           <div class="aside-block">
-            <h3>Prefer direct?</h3>
-            <a class="aside-link" href="mailto:anmol.chandiok9@gmail.com">
+            <h3 id="c-contact-direct-title">Prefer direct?</h3>
+            <a class="aside-link" href="mailto:anmol.chandiok9@gmail.com" id="c-contact-email-link">
               <i class="fa-regular fa-envelope" aria-hidden="true"></i>
-              anmol.chandiok9@gmail.com
+              <span id="c-contact-email-text">anmol.chandiok9@gmail.com</span>
             </a>
-            <a class="aside-link" href="tel:+918130259174">
+            <a class="aside-link" href="tel:+918130259174" id="c-contact-phone-link">
               <i class="fa-solid fa-phone" aria-hidden="true"></i>
-              +91 81302 59174
+              <span id="c-contact-phone-text">+91 81302 59174</span>
             </a>
           </div>
           <div class="aside-block">
-            <h3>Social</h3>
+            <h3 id="c-contact-social-title">Social</h3>
             <div class="socials">
-              <a href="#" aria-label="Instagram" class="social"><i class="fa-brands fa-instagram"></i></a>
-              <a href="#" aria-label="YouTube" class="social"><i class="fa-brands fa-youtube"></i></a>
-              <a href="#" aria-label="LinkedIn" class="social"><i class="fa-brands fa-linkedin-in"></i></a>
-              <a href="#" aria-label="Behance" class="social"><i class="fa-brands fa-behance"></i></a>
+              <a href="#" aria-label="Instagram" class="social" id="social-instagram"><i class="fa-brands fa-instagram"></i></a>
+              <a href="#" aria-label="YouTube" class="social" id="social-youtube"><i class="fa-brands fa-youtube"></i></a>
+              <a href="#" aria-label="LinkedIn" class="social" id="social-linkedin"><i class="fa-brands fa-linkedin-in"></i></a>
+              <a href="#" aria-label="Behance" class="social" id="social-behance"><i class="fa-brands fa-behance"></i></a>
             </div>
           </div>
           <div class="aside-block accent-panel">
-            <p class="accent-panel-label">Status</p>
-            <p class="accent-panel-text">Open for freelance &amp; collabs</p>
+            <p class="accent-panel-label" id="c-contact-status-label">Status</p>
+            <p class="accent-panel-text" id="c-contact-status-text">Open for freelance &amp; collabs</p>
           </div>
         </aside>
       </div>
@@ -344,9 +345,9 @@
     <div class="container footer-inner">
       <div class="footer-brand">
         <span class="logo-mark sm" aria-hidden="true"><i class="fa-solid fa-play"></i></span>
-        <span>Anmol Chandiok © <span id="year"></span></span>
+        <span><span id="c-footer-brand">Anmol Chandiok</span> © <span id="year"></span></span>
       </div>
-      <p class="muted small">Video editor · Motion designer · Built for every screen</p>
+      <p class="muted small" id="c-footer-tagline">Video editor · Motion designer · Built for every screen</p>
       <a href="#top" class="back-top">Back to top <i class="fa-solid fa-arrow-up" aria-hidden="true"></i></a>
     </div>
   </footer>
@@ -377,6 +378,7 @@
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
   <script src="js/config.js"></script>
+  <script src="js/site-content.js"></script>
   <script src="js/site-work.js"></script>
   <script src="js/main.js"></script>
 </body>

@@ -1,0 +1,80 @@
+{
+  "nav": {
+    "brand": "Anmol",
+    "linkWork": "Work",
+    "linkServices": "Services",
+    "linkAbout": "About",
+    "linkProcess": "Process",
+    "linkContact": "Contact",
+    "headerCta": "Hire me",
+    "mobileCta": "Let’s work together"
+  },
+  "hero": {
+    "eyebrow": "Available for projects · Video Editor",
+    "titleLine1": "Cuts that",
+    "titleLine1Accent": "hit.",
+    "titleLine2": "Motion that",
+    "titleLine2Accent": "moves.",
+    "sub": "I’m <strong>Anmol Chandiok</strong> — a video editor &amp; motion designer crafting reels, brand films, and scroll-stopping short-form that feel premium on every screen.",
+    "ctaPrimary": "View selected work",
+    "ctaSecondary": "Start a project",
+    "marquee": "Premiere Pro, After Effects, Color, Sound Design, Reels, Brand Films, Motion Graphics"
+  },
+  "work": {
+    "eyebrow": "Selected work",
+    "title": "Frames that earn the scroll.",
+    "sub": "A mix of short-form heat, brand polish, and motion that sells the story."
+  },
+  "services": {
+    "eyebrow": "Services",
+    "title": "What I deliver.",
+    "item1Title": "Short-form &amp; Reels",
+    "item1Body": "Hook in 1 second. Retention edits, captions, platform-native cuts for IG, YT Shorts &amp; TikTok.",
+    "item2Title": "Brand films",
+    "item2Body": "Story-led edits with cinematic pacing, sound design, and color that matches your brand world.",
+    "item3Title": "Motion graphics",
+    "item3Body": "Logo reveals, title sequences, lower thirds, and animated identities in After Effects.",
+    "item4Title": "Color &amp; finish",
+    "item4Body": "Look development, consistency across multi-clip packages, export for web, ads, and 4K."
+  },
+  "about": {
+    "eyebrow": "About",
+    "title": "Editor by craft.<br />Director of feeling.",
+    "p1": "I treat every cut like a decision the viewer will feel — even if they never notice it. From real-estate luxury reels to knowledge-center socials and product stories, I build edits that look expensive and move fast.",
+    "p2": "Tools I live in: <strong>Premiere Pro</strong>, <strong>After Effects</strong>, color, sound, and a ruthless timeline.",
+    "li1": "Vertical + landscape delivery from one story",
+    "li2": "Music-led pacing &amp; caption-ready exports",
+    "li3": "Fast feedback loops, clear revisions"
+  },
+  "process": {
+    "eyebrow": "Process",
+    "title": "From raw to ready.",
+    "step1Num": "01",
+    "step1Title": "Brief",
+    "step1Body": "Goals, references, platforms, aspect ratios, and the feeling you want people to leave with.",
+    "step2Num": "02",
+    "step2Title": "Rough cut",
+    "step2Body": "Structure, hooks, and story first. You’ll see the bones before the polish.",
+    "step3Num": "03",
+    "step3Title": "Finish",
+    "step3Body": "Motion, grade, sound, captions — then exports for every format you need.",
+    "step4Num": "04",
+    "step4Title": "Deliver",
+    "step4Body": "Master files + platform-ready cuts. Optional thumbnails and cutdowns."
+  },
+  "contact": {
+    "eyebrow": "Contact",
+    "title": "Let’s make something people finish watching.",
+    "sub": "Tell me about your project — reels, brand film, motion package, or ongoing content.",
+    "directTitle": "Prefer direct?",
+    "email": "anmol.chandiok9@gmail.com",
+    "phone": "+91 81302 59174",
+    "socialTitle": "Social",
+    "statusLabel": "Status",
+    "statusText": "Open for freelance &amp; collabs"
+  },
+  "footer": {
+    "brand": "Anmol Chandiok",
+    "tagline": "Video editor · Motion designer · Built for every screen"
+  }
+}

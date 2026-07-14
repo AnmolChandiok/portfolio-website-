@@ -216,9 +216,33 @@ sheetOverlay?.addEventListener("click", (e) => {
     }
 
     const endpoint = window.CONTACT_FORM_ENDPOINT || "";
+    const project = form.project ? form.project.value : "";
+
     if (!endpoint) {
-      if (note) note.textContent = "Form isn\u2019t connected yet \u2014 add a Formspree endpoint in js/config.js.";
-      toast("Not connected", "See CONTACT_FORM_ENDPOINT in config.js.");
+      // No Worker deployed \u2014 fall back to a plain mailto link so the form
+      // still works with zero third-party services and zero setup. This
+      // opens the visitor's own email app with everything pre-filled;
+      // they just hit send there (a page can't silently send email for
+      // them \u2014 that's a browser security boundary, not a bug).
+      const to = window.CONTACT_EMAIL || "";
+      if (!to) {
+        if (note) note.textContent = "Form isn\u2019t connected yet \u2014 set CONTACT_EMAIL in js/config.js.";
+        toast("Not connected", "See CONTACT_EMAIL in config.js.");
+        return;
+      }
+      const subject = "New project inquiry from " + name;
+      const body =
+        "Name: " + name + "\n" +
+        "Email: " + email + "\n" +
+        (project ? "Project: " + project + "\n" : "") +
+        "\n" + message;
+      window.location.href =
+        "mailto:" + encodeURIComponent(to) +
+        "?subject=" + encodeURIComponent(subject) +
+        "&body=" + encodeURIComponent(body);
+      if (note) note.textContent = "Opening your email app \u2014 hit send there to reach me.";
+      toast("Opening email\u2026", "Complete sending in your email app.");
+      form.reset();
       return;
     }
 
@@ -233,7 +257,7 @@ sheetOverlay?.addEventListener("click", (e) => {
           name,
           email,
           message,
-          project: form.project ? form.project.value : "",
+          project,
         }),
       });
 
@@ -371,34 +395,47 @@ sheetOverlay?.addEventListener("click", (e) => {
   let HERO_CLIPS = [];
 
   async function resolveHeroClips() {
+    const configClips = (Array.isArray(CFG.hero) ? CFG.hero : []).map(normClip).filter(Boolean);
+
     try {
       const res = await fetch("data/videos.json", { cache: "no-cache" });
       if (res.ok) {
         const json = await res.json();
         const list = Array.isArray(json) ? json : json.videos || [];
-        const fromDashboard = list
-          .filter((v) => v && v.featured && !v.hidden && v.type !== "external")
-          .map((v) => {
-            const hasClip = v.previewMode === "clip" && !!v.preview;
-            return {
-              // Live video texture when a self-hosted clip exists; otherwise
-              // the card shows the YouTube thumbnail as a still image — a
-              // YouTube iframe can't texture onto a 3D card, but a plain
-              // image can, so every Featured video still shows up here.
-              src: hasClip ? v.preview : "",
-              poster: hasClip ? "" : v.poster || "https://i.ytimg.com/vi/" + v.id + "/maxresdefault.jpg",
-              playSrc: "https://www.youtube.com/watch?v=" + v.id,     // what opens when clicked — the full video
-              ratio: v.aspect || "16:9",
-              title: v.title || "",
-              description: v.description || "",
-            };
-          });
-        if (fromDashboard.length) return fromDashboard.slice(0, 8);
+        const eligible = list.filter((v) => v && !v.hidden && v.type !== "external");
+
+        // Featured videos fill the ring first, then non-featured ones —
+        // same relative order within each group as the dashboard's own
+        // list. The ring should always look full, not shrink down to
+        // however many happen to be marked Featured.
+        const ordered = eligible.filter((v) => v.featured).concat(eligible.filter((v) => !v.featured));
+
+        const fromDashboard = ordered.map((v) => {
+          const hasClip = v.previewMode === "clip" && !!v.preview;
+          return {
+            // Live video texture when a self-hosted clip exists; otherwise
+            // the card shows the YouTube thumbnail as a still image — a
+            // YouTube iframe can't texture onto a 3D card, but a plain
+            // image can, so every dashboard video can still show up here.
+            src: hasClip ? v.preview : "",
+            poster: hasClip ? "" : v.poster || "https://i.ytimg.com/vi/" + v.id + "/maxresdefault.jpg",
+            playSrc: "https://www.youtube.com/watch?v=" + v.id,     // what opens when clicked — the full video
+            ratio: v.aspect || "16:9",
+            title: v.title || "",
+            description: v.description || "",
+          };
+        });
+
+        // Dashboard videos (featured first) take priority; config.js clips
+        // only fill whatever slots are left over, so the ring is always
+        // as full as there's material for.
+        const combined = fromDashboard.concat(configClips);
+        if (combined.length) return combined.slice(0, 8);
       }
     } catch (e) {
       /* offline, or file not reachable yet — fall through to config.js */
     }
-    return (Array.isArray(CFG.hero) ? CFG.hero : []).map(normClip).filter(Boolean).slice(0, 8);
+    return configClips.slice(0, 8);
   }
 
   /* ---------- Work grid previews now live in js/site-work.js ---------- */

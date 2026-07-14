@@ -56,6 +56,20 @@
   font-size: 0.9rem;
 }
 
+/* Instagram/Behance give us no thumbnail API — this sits behind the
+   .work-poster <img> (or alone, if no poster URL was ever set) so a
+   missing/broken thumbnail reads as an intentional platform card instead
+   of a blank, broken-looking tile. */
+.work-poster-fallback {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  background: linear-gradient(135deg, #1f1d1b, #111010 60%, rgba(251, 86, 7, 0.35));
+  color: rgba(255, 255, 255, 0.35);
+  font-size: 2.4rem;
+}
+
 .work-empty {
   grid-column: 1 / -1;
   padding: 40px 0;

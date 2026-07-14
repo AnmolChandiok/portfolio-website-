@@ -34,7 +34,7 @@ window.SITE_VIDEOS = {
      Tip: YouTube/Vimeo links can't texture onto 3D cards,
      so hero clips must be real files or direct .mp4 URLs. */
   hero: [
-    { src: "https://www.instagram.com/reel/DaSmFTcPdIA/?utm_source=ig_web_copy_link&igsh=MzRlODBiNWFlZA==",      ratio: "9:16", title: "Luxury Outdoor Living" },
+    { src: "", ratio: "9:16", title: "Luxury Outdoor Living" }, // Instagram-only piece — no file to texture the card with yet, see tip above
     { src: "media/stain-glass.mp4", ratio: "16:9", title: "Stain Glass House" },
     { src: "media/hero-anim.mp4",   ratio: "16:9", title: "Hero Animation" },
     { src: "media/animation.mp4",   ratio: "9:16", title: "Motion Study" },
@@ -51,15 +51,19 @@ window.SITE_VIDEOS = {
 /* ============================================================
    CONTACT FORM
    ------------------------------------------------------------
-   Messages are stored in YOUR repo, at data/messages.json — not on any
-   third-party service. A small free Cloudflare Worker does the actual
-   writing (a public form can't safely hold a repo-write credential
-   itself, since anyone could steal it from the browser — the Worker
-   keeps that credential private on Cloudflare's side instead).
+   Two ways this can work, no other third-party form service involved
+   either way:
 
-   Setup: see cloudflare-worker.js in the root of this repo for the
-   5-minute deploy steps. Once deployed, paste its URL below.
+   1. DEFAULT (zero setup) — CONTACT_FORM_ENDPOINT below is left empty,
+      so submitting opens the visitor's own email app with everything
+      pre-filled, addressed to CONTACT_EMAIL. They just hit send in
+      their app. Nothing to deploy, nothing to configure — this is
+      what's live right now.
 
-   Until this is set, the form still validates and tells the visitor
-   it isn't connected yet — it won't pretend to send. */
+   2. OPTIONAL UPGRADE — deploy the small Cloudflare Worker in
+      cloudflare-worker.js (free, ~5 minutes, see that file) and paste
+      its URL into CONTACT_FORM_ENDPOINT. Messages then get written
+      straight into data/messages.json in YOUR repo and show up in the
+      admin.html "Messages" tab, instead of just going out as email. */
+window.CONTACT_EMAIL = "anmol.chandiok9@gmail.com";
 window.CONTACT_FORM_ENDPOINT = ""; // e.g. "https://contact-to-github-worker.you.workers.dev"

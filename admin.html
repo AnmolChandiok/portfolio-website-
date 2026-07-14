@@ -210,6 +210,12 @@
     position:relative;width:min(520px,100%);max-height:90vh;overflow:auto;
     background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:24px;
   }
+  .modal__box.wide{width:min(760px,100%)}
+  .content-group{
+    font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--accent);
+    margin:22px 0 10px;padding-top:14px;border-top:1px solid var(--line);
+  }
+  .content-group:first-child{margin-top:0;padding-top:0;border-top:none}
   .modal__box h2{margin:0 0 6px;font-size:16px;font-weight:600}
   .modal__box>p{margin:0 0 20px;font-size:13px;color:var(--dim);line-height:1.6}
 
@@ -304,8 +310,9 @@
       </svg>
     </div>
     <h1>Work dashboard</h1>
-    <p>Private. Enter the password to continue.</p>
-    <input id="lockPw" type="password" placeholder="Password" autocomplete="current-password" autofocus>
+    <p>Private. Enter your email and password to continue.</p>
+    <input id="lockEmail" type="email" placeholder="Email" autocomplete="username" autofocus>
+    <input id="lockPw" type="password" placeholder="Password" autocomplete="current-password">
     <div class="lock__err" id="lockErr"></div>
     <button class="btn primary" id="lockGo" style="width:100%">Unlock</button>
   </div>
@@ -318,7 +325,9 @@
     <div class="brand"><span class="dot"></span> Work <small>/ pluseshot</small></div>
     <div class="spacer"></div>
     <button class="pill" id="connPill"><span class="led"></span><span id="connText">Not connected</span></button>
+    <button class="btn ghost sm" id="contentBtn" title="Every heading, paragraph and label on the site">Content</button>
     <button class="btn ghost sm" id="linksBtn" title="Instagram, YouTube, LinkedIn, Behance">Links</button>
+    <button class="btn ghost sm" id="profileBtn" title="Your profile photo in the About section">Profile</button>
     <button class="btn ghost sm" id="msgBtn" title="Where contact form messages go">Messages</button>
     <button class="btn ghost sm" id="pwBtn" title="Change the dashboard password">Password</button>
     <button class="btn primary" id="publishBtn" disabled>Publish to site</button>
@@ -483,6 +492,57 @@
   </div>
 </div>
 
+<!-- profile photo -->
+<div class="modal" id="profileModal">
+  <div class="modal__scrim" data-x></div>
+  <div class="modal__box">
+    <h2>Profile photo</h2>
+    <p>Shows in the About section, in place of the "AC" mark. Publishing uploads the file straight into
+      <code style="font-family:var(--mono)">media/</code> in your repo — no third-party image host.</p>
+
+    <div style="border:1px solid var(--line);border-radius:12px;overflow:hidden;background:var(--sunk);margin-bottom:14px">
+      <img id="profilePreview" style="display:none;width:100%;max-height:260px;object-fit:cover" alt="">
+      <div id="profileEmpty" style="padding:28px 14px;text-align:center;color:var(--faint);font-size:12.5px">
+        No photo published yet.
+      </div>
+    </div>
+
+    <div class="f"><label>Choose an image</label>
+      <input type="file" id="profileFile" accept="image/*"></div>
+    <div class="hint">Any size works — it gets center-cropped into the About section's frame, so a fairly
+      centered subject looks best. A few hundred KB is plenty; huge files just slow down the page.</div>
+
+    <div style="display:flex;gap:10px;margin-top:14px">
+      <button class="btn danger sm" id="profileRemove">Remove photo</button>
+      <div class="spacer"></div>
+      <button class="btn primary" id="profileSave">Publish photo</button>
+    </div>
+
+    <div class="status" id="profileStatus"></div>
+  </div>
+</div>
+
+<!-- site content -->
+<div class="modal" id="contentModal">
+  <div class="modal__scrim" data-x></div>
+  <div class="modal__box wide">
+    <h2>Site content</h2>
+    <p>Every heading, paragraph, button label and list item on the live site, in one place. Publishes to
+      <code style="font-family:var(--mono)">data/content.json</code>. Leave a field empty to keep whatever's
+      already hand-written in the page for it.</p>
+
+    <div id="contentFields"></div>
+
+    <div style="display:flex;gap:10px;margin-top:18px;position:sticky;bottom:-24px;background:var(--panel);padding:14px 0 2px">
+      <button class="btn" id="contentPull">Pull current</button>
+      <div class="spacer"></div>
+      <button class="btn primary" id="contentSave">Publish content</button>
+    </div>
+
+    <div class="status" id="contentStatus"></div>
+  </div>
+</div>
+
 <div class="toast" id="toast"></div>
 
 </div><!-- /#app -->
@@ -506,6 +566,7 @@
   ------------------------------------------------------------------------- */
 
   var PW_HASH = 'e8b3abdb658b91480eecfff5e7764727cbd920b9a232acba511a846bd3ae9730';
+  var LOGIN_EMAIL = 'anmol.chandiok9@gmail.com';
 
   async function sha256Hex(str) {
     var buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(str));
@@ -520,25 +581,31 @@
   }
 
   async function tryUnlock() {
-    var input = document.getElementById('lockPw');
+    var emailInput = document.getElementById('lockEmail');
+    var pwInput = document.getElementById('lockPw');
     var err = document.getElementById('lockErr');
     var box = document.getElementById('lockBox');
-    var pw = input.value;
+    var email = emailInput.value.trim().toLowerCase();
+    var pw = pwInput.value;
 
-    if (!pw) { input.focus(); return; }
+    if (!email) { emailInput.focus(); return; }
+    if (!pw) { pwInput.focus(); return; }
 
     var hash = await sha256Hex(pw);
-    if (hash === PW_HASH) {
+    if (email === LOGIN_EMAIL.toLowerCase() && hash === PW_HASH) {
       showApp();
     } else {
-      err.textContent = 'Wrong password.';
+      err.textContent = 'Wrong email or password.';
       box.classList.remove('shake'); void box.offsetWidth; box.classList.add('shake');
-      input.value = '';
-      input.focus();
+      pwInput.value = '';
+      pwInput.focus();
     }
   }
 
   document.getElementById('lockGo').addEventListener('click', tryUnlock);
+  document.getElementById('lockEmail').addEventListener('keydown', function (e) {
+    if (e.key === 'Enter') tryUnlock();
+  });
   document.getElementById('lockPw').addEventListener('keydown', function (e) {
     if (e.key === 'Enter') tryUnlock();
   });
@@ -1516,12 +1583,331 @@
     }
   });
 
+  /* ---------- site content ---------------------------------------------- */
+
+  var CONTENT_PATH = 'data/content.json';
+  var contentData = {};
+
+  // Every editable field on the live site: which key in content.json it
+  // maps to, its label here, and whether it needs a multi-line box.
+  var CONTENT_FIELDS = [
+    { group: 'Navigation', key: 'nav.brand', label: 'Logo text' },
+    { group: 'Navigation', key: 'nav.linkWork', label: 'Nav link — Work' },
+    { group: 'Navigation', key: 'nav.linkServices', label: 'Nav link — Services' },
+    { group: 'Navigation', key: 'nav.linkAbout', label: 'Nav link — About' },
+    { group: 'Navigation', key: 'nav.linkProcess', label: 'Nav link — Process' },
+    { group: 'Navigation', key: 'nav.linkContact', label: 'Nav link — Contact' },
+    { group: 'Navigation', key: 'nav.headerCta', label: 'Header button' },
+    { group: 'Navigation', key: 'nav.mobileCta', label: 'Mobile menu button' },
+
+    { group: 'Hero', key: 'hero.eyebrow', label: 'Eyebrow badge' },
+    { group: 'Hero', key: 'hero.titleLine1', label: 'Headline — line 1' },
+    { group: 'Hero', key: 'hero.titleLine1Accent', label: 'Headline — line 1 accent word' },
+    { group: 'Hero', key: 'hero.titleLine2', label: 'Headline — line 2' },
+    { group: 'Hero', key: 'hero.titleLine2Accent', label: 'Headline — line 2 accent word' },
+    { group: 'Hero', key: 'hero.sub', label: 'Subheading (HTML allowed)', big: true },
+    { group: 'Hero', key: 'hero.ctaPrimary', label: 'Primary button' },
+    { group: 'Hero', key: 'hero.ctaSecondary', label: 'Secondary button' },
+    { group: 'Hero', key: 'hero.marquee', label: 'Scrolling strip words (comma-separated)', big: true },
+
+    { group: 'Work section', key: 'work.eyebrow', label: 'Eyebrow' },
+    { group: 'Work section', key: 'work.title', label: 'Title' },
+    { group: 'Work section', key: 'work.sub', label: 'Subtitle' },
+
+    { group: 'Services', key: 'services.eyebrow', label: 'Eyebrow' },
+    { group: 'Services', key: 'services.title', label: 'Title' },
+    { group: 'Services', key: 'services.item1Title', label: 'Card 1 — title' },
+    { group: 'Services', key: 'services.item1Body', label: 'Card 1 — body', big: true },
+    { group: 'Services', key: 'services.item2Title', label: 'Card 2 — title' },
+    { group: 'Services', key: 'services.item2Body', label: 'Card 2 — body', big: true },
+    { group: 'Services', key: 'services.item3Title', label: 'Card 3 — title' },
+    { group: 'Services', key: 'services.item3Body', label: 'Card 3 — body', big: true },
+    { group: 'Services', key: 'services.item4Title', label: 'Card 4 — title' },
+    { group: 'Services', key: 'services.item4Body', label: 'Card 4 — body', big: true },
+
+    { group: 'About', key: 'about.eyebrow', label: 'Eyebrow' },
+    { group: 'About', key: 'about.title', label: 'Title (HTML — <br/> allowed)' },
+    { group: 'About', key: 'about.p1', label: 'Paragraph 1', big: true },
+    { group: 'About', key: 'about.p2', label: 'Paragraph 2 (HTML allowed)', big: true },
+    { group: 'About', key: 'about.li1', label: 'Bullet 1' },
+    { group: 'About', key: 'about.li2', label: 'Bullet 2' },
+    { group: 'About', key: 'about.li3', label: 'Bullet 3' },
+
+    { group: 'Process', key: 'process.eyebrow', label: 'Eyebrow' },
+    { group: 'Process', key: 'process.title', label: 'Title' },
+    { group: 'Process', key: 'process.step1Num', label: 'Step 1 — number' },
+    { group: 'Process', key: 'process.step1Title', label: 'Step 1 — title' },
+    { group: 'Process', key: 'process.step1Body', label: 'Step 1 — body', big: true },
+    { group: 'Process', key: 'process.step2Num', label: 'Step 2 — number' },
+    { group: 'Process', key: 'process.step2Title', label: 'Step 2 — title' },
+    { group: 'Process', key: 'process.step2Body', label: 'Step 2 — body', big: true },
+    { group: 'Process', key: 'process.step3Num', label: 'Step 3 — number' },
+    { group: 'Process', key: 'process.step3Title', label: 'Step 3 — title' },
+    { group: 'Process', key: 'process.step3Body', label: 'Step 3 — body', big: true },
+    { group: 'Process', key: 'process.step4Num', label: 'Step 4 — number' },
+    { group: 'Process', key: 'process.step4Title', label: 'Step 4 — title' },
+    { group: 'Process', key: 'process.step4Body', label: 'Step 4 — body', big: true },
+
+    { group: 'Contact', key: 'contact.eyebrow', label: 'Eyebrow' },
+    { group: 'Contact', key: 'contact.title', label: 'Title' },
+    { group: 'Contact', key: 'contact.sub', label: 'Subtitle', big: true },
+    { group: 'Contact', key: 'contact.directTitle', label: '"Prefer direct?" heading' },
+    { group: 'Contact', key: 'contact.email', label: 'Email address' },
+    { group: 'Contact', key: 'contact.phone', label: 'Phone (as displayed)' },
+    { group: 'Contact', key: 'contact.socialTitle', label: '"Social" heading' },
+    { group: 'Contact', key: 'contact.statusLabel', label: 'Status label' },
+    { group: 'Contact', key: 'contact.statusText', label: 'Status text (HTML allowed)' },
+
+    { group: 'Footer', key: 'footer.brand', label: 'Footer name' },
+    { group: 'Footer', key: 'footer.tagline', label: 'Footer tagline' }
+  ];
+
+  function getPath(obj, path) {
+    return path.split('.').reduce(function (o, k) { return o && o[k] !== undefined ? o[k] : undefined; }, obj);
+  }
+  function setPath(obj, path, val) {
+    var parts = path.split('.');
+    var cur = obj;
+    for (var i = 0; i < parts.length - 1; i++) {
+      if (!cur[parts[i]] || typeof cur[parts[i]] !== 'object') cur[parts[i]] = {};
+      cur = cur[parts[i]];
+    }
+    cur[parts[parts.length - 1]] = val;
+  }
+
+  function renderContentFields(data) {
+    var host = $('#contentFields');
+    var lastGroup = null;
+    host.innerHTML = CONTENT_FIELDS.map(function (f) {
+      var val = getPath(data, f.key) || '';
+      var heading = '';
+      if (f.group !== lastGroup) { heading = '<div class="content-group">' + f.group + '</div>'; lastGroup = f.group; }
+      var input = f.big
+        ? '<textarea data-key="' + f.key + '" rows="2">' + esc(val) + '</textarea>'
+        : '<input data-key="' + f.key + '" class="mono" value="' + esc(val) + '">';
+      return heading + '<div class="f"><label>' + f.label + '</label>' + input + '</div>';
+    }).join('');
+  }
+
+  async function pullContent() {
+    var status = $('#contentStatus');
+    status.className = 'status busy';
+    status.textContent = 'Reading current content…';
+    try {
+      var remote = await getRemote(CONTENT_PATH);
+      contentData = remote.text ? JSON.parse(remote.text) : {};
+      renderContentFields(contentData);
+      status.className = 'status';
+      status.textContent = remote.text ? 'Loaded.' : 'No content published yet — fields below are blank until you fill and publish them.';
+    } catch (err) {
+      status.className = 'status err';
+      status.textContent = err.message || 'Could not read data/content.json.';
+    }
+  }
+
+  $('#contentBtn').addEventListener('click', function () {
+    $('#contentModal').classList.add('on');
+    $('#contentStatus').textContent = '';
+    renderContentFields(contentData);
+    if (cfg.token && cfg.owner && cfg.repo) pullContent();
+  });
+  $('#contentModal').addEventListener('click', function (e) {
+    if (e.target.hasAttribute('data-x')) $('#contentModal').classList.remove('on');
+  });
+  $('#contentPull').addEventListener('click', pullContent);
+
+  $('#contentSave').addEventListener('click', async function () {
+    var status = $('#contentStatus');
+    if (!cfg.token || !cfg.owner || !cfg.repo) {
+      status.className = 'status err';
+      status.textContent = 'Connect to your repo first — use the connection pill, top right.';
+      return;
+    }
+
+    $('#contentFields').querySelectorAll('[data-key]').forEach(function (input) {
+      if (input.value.trim()) setPath(contentData, input.dataset.key, input.value);
+    });
+
+    var btn = $('#contentSave');
+    btn.disabled = true;
+    status.className = 'status busy';
+    status.textContent = 'Publishing…';
+
+    try {
+      var remote = await getRemote(CONTENT_PATH);
+      var body = {
+        message: 'Update site content',
+        content: b64enc(JSON.stringify(contentData, null, 2)),
+        branch: cfg.branch
+      };
+      if (remote.sha) body.sha = remote.sha;
+      var res = await gh(filePath(CONTENT_PATH), { method: 'PUT', body: JSON.stringify(body) });
+      if (!res.ok) throw new Error(ghError(res));
+
+      status.className = 'status ok';
+      status.textContent = 'Published. Live on the site shortly.';
+      toast('Content published.', 'ok');
+    } catch (err) {
+      status.className = 'status err';
+      status.textContent = err.message || 'Could not publish content.';
+    } finally {
+      btn.disabled = false;
+    }
+  });
+
+  /* ---------- profile photo ------------------------------------------- */
+
+  var PROFILE_PATH = 'data/profile.json';
+
+  function fileToBase64(file) {
+    return new Promise(function (resolve, reject) {
+      var reader = new FileReader();
+      reader.onload = function () {
+        var result = String(reader.result);
+        resolve(result.slice(result.indexOf(',') + 1));
+      };
+      reader.onerror = function () { reject(new Error('Could not read that file.')); };
+      reader.readAsDataURL(file);
+    });
+  }
+
+  function showProfilePreview(src) {
+    var img = $('#profilePreview'), empty = $('#profileEmpty');
+    if (src) {
+      img.src = src; img.style.display = ''; empty.style.display = 'none';
+    } else {
+      img.removeAttribute('src'); img.style.display = 'none'; empty.style.display = '';
+    }
+  }
+
+  async function pullProfile() {
+    var status = $('#profileStatus');
+    status.className = 'status busy';
+    status.textContent = 'Reading current photo…';
+    try {
+      var remote = await getRemote(PROFILE_PATH);
+      var data = remote.text ? JSON.parse(remote.text) : {};
+      showProfilePreview(data.image || '');
+      status.className = 'status';
+      status.textContent = remote.text ? 'Loaded.' : 'No photo published yet.';
+    } catch (err) {
+      status.className = 'status err';
+      status.textContent = err.message || 'Could not read data/profile.json.';
+    }
+  }
+
+  $('#profileBtn').addEventListener('click', function () {
+    $('#profileModal').classList.add('on');
+    $('#profileStatus').textContent = '';
+    $('#profileFile').value = '';
+    if (cfg.token && cfg.owner && cfg.repo) pullProfile();
+  });
+  $('#profileModal').addEventListener('click', function (e) {
+    if (e.target.hasAttribute('data-x')) $('#profileModal').classList.remove('on');
+  });
+
+  $('#profileFile').addEventListener('change', function () {
+    var file = this.files[0];
+    if (file) showProfilePreview(URL.createObjectURL(file));
+  });
+
+  $('#profileSave').addEventListener('click', async function () {
+    var status = $('#profileStatus');
+    if (!cfg.token || !cfg.owner || !cfg.repo) {
+      status.className = 'status err';
+      status.textContent = 'Connect to your repo first — use the connection pill, top right.';
+      return;
+    }
+    var file = $('#profileFile').files[0];
+    if (!file) {
+      status.className = 'status err';
+      status.textContent = 'Choose an image first.';
+      return;
+    }
+
+    var btn = $('#profileSave');
+    btn.disabled = true;
+    status.className = 'status busy';
+    status.textContent = 'Uploading…';
+
+    try {
+      var ext = (file.name.split('.').pop() || 'jpg').toLowerCase().replace(/[^a-z0-9]/g, '') || 'jpg';
+      var imgPath = 'media/profile-' + Date.now() + '.' + ext;
+      var content = await fileToBase64(file);
+
+      var upload = await gh(filePath(imgPath), {
+        method: 'PUT',
+        body: JSON.stringify({ message: 'Update profile photo', content: content, branch: cfg.branch })
+      });
+      if (!upload.ok) throw new Error(ghError(upload));
+
+      var remote = await getRemote(PROFILE_PATH);
+      var body = {
+        message: 'Point profile photo at ' + imgPath,
+        content: b64enc(JSON.stringify({ image: imgPath }, null, 2)),
+        branch: cfg.branch
+      };
+      if (remote.sha) body.sha = remote.sha;
+      var res = await gh(filePath(PROFILE_PATH), { method: 'PUT', body: JSON.stringify(body) });
+      if (!res.ok) throw new Error(ghError(res));
+
+      status.className = 'status ok';
+      status.textContent = 'Published. Live on the site shortly.';
+      toast('Profile photo updated.', 'ok');
+      showProfilePreview(imgPath);
+    } catch (err) {
+      status.className = 'status err';
+      status.textContent = err.message || 'Could not publish the photo.';
+    } finally {
+      btn.disabled = false;
+    }
+  });
+
+  $('#profileRemove').addEventListener('click', async function () {
+    var status = $('#profileStatus');
+    if (!cfg.token || !cfg.owner || !cfg.repo) {
+      status.className = 'status err';
+      status.textContent = 'Connect to your repo first — use the connection pill, top right.';
+      return;
+    }
+
+    var btn = $('#profileRemove');
+    btn.disabled = true;
+    status.className = 'status busy';
+    status.textContent = 'Removing…';
+
+    try {
+      var remote = await getRemote(PROFILE_PATH);
+      var body = {
+        message: 'Remove profile photo',
+        content: b64enc(JSON.stringify({ image: '' }, null, 2)),
+        branch: cfg.branch
+      };
+      if (remote.sha) body.sha = remote.sha;
+      var res = await gh(filePath(PROFILE_PATH), { method: 'PUT', body: JSON.stringify(body) });
+      if (!res.ok) throw new Error(ghError(res));
+
+      status.className = 'status ok';
+      status.textContent = 'Removed — the About section falls back to the default mark.';
+      toast('Profile photo removed.', 'ok');
+      $('#profileFile').value = '';
+      showProfilePreview('');
+    } catch (err) {
+      status.className = 'status err';
+      status.textContent = err.message || 'Could not remove the photo.';
+    } finally {
+      btn.disabled = false;
+    }
+  });
+
   document.addEventListener('keydown', function (e) {
     if (e.key === 'Escape') {
       $('#connModal').classList.remove('on');
       $('#pwModal').classList.remove('on');
       $('#msgModal').classList.remove('on');
       $('#linksModal').classList.remove('on');
+      $('#profileModal').classList.remove('on');
+      $('#contentModal').classList.remove('on');
     }
   });
 
