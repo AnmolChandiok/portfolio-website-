@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>All Work — Anmol Chandiok</title>
+  <meta name="description" content="Every project by Anmol Chandiok — video editor and motion designer. Reels, brand films, and short-form storytelling." />
+  <meta name="theme-color" content="#0a0a0a" />
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%23fb5607'/%3E%3Cpath d='M12 9v14l12-7-12-7z' fill='white'/%3E%3C/svg%3E" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Syne:wght@600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+  <link rel="stylesheet" href="css/styles.css" />
+  <link rel="stylesheet" href="css/work-integration.css" />
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+
+  <!-- Ambient glow layers -->
+  <div class="bg-glow" aria-hidden="true"></div>
+  <div class="bg-grid" aria-hidden="true"></div>
+
+  <header class="site-header" id="top">
+    <div class="container header-inner">
+      <a href="index.html" class="logo" aria-label="Anmol Chandiok home">
+        <span class="logo-mark" aria-hidden="true"><i class="fa-solid fa-play"></i></span>
+        <span class="logo-text"><span id="c-nav-brand">Anmol</span><span class="accent">.</span></span>
+      </a>
+
+      <nav class="nav-desktop" aria-label="Primary">
+        <a href="index.html#work" id="c-nav-link-work">Work</a>
+        <a href="index.html#services" id="c-nav-link-services">Services</a>
+        <a href="index.html#about" id="c-nav-link-about">About</a>
+        <a href="index.html#process" id="c-nav-link-process">Process</a>
+        <a href="index.html#contact" id="c-nav-link-contact">Contact</a>
+      </nav>
+
+      <div class="header-actions">
+        <button type="button" class="theme-toggle" id="theme-toggle" aria-label="Switch to light mode" title="Toggle theme">
+          <i class="fa-solid fa-sun theme-icon-light" aria-hidden="true"></i>
+          <i class="fa-solid fa-moon theme-icon-dark" aria-hidden="true"></i>
+        </button>
+        <a href="index.html#contact" class="btn btn-primary btn-sm header-cta" id="c-nav-header-cta">Hire me</a>
+        <button type="button" class="nav-toggle" id="nav-toggle" aria-label="Open menu" aria-expanded="false" aria-controls="mobile-nav">
+          <span></span><span></span><span></span>
+        </button>
+      </div>
+    </div>
+
+    <div class="mobile-nav" id="mobile-nav" hidden>
+      <a href="index.html#work" id="c-nav-mlink-work">Work</a>
+      <a href="index.html#services" id="c-nav-mlink-services">Services</a>
+      <a href="index.html#about" id="c-nav-mlink-about">About</a>
+      <a href="index.html#process" id="c-nav-mlink-process">Process</a>
+      <a href="index.html#contact" id="c-nav-mlink-contact">Contact</a>
+      <a href="index.html#contact" class="btn btn-primary btn-block" id="c-nav-mobile-cta">Let’s work together</a>
+    </div>
+  </header>
+
+  <main id="main">
+    <!-- ========== ALL WORK ========== -->
+    <section class="section" id="work-all">
+      <div class="container">
+        <a href="index.html" class="back-top" style="display:inline-flex;margin-bottom:1.5rem">
+          <i class="fa-solid fa-arrow-left" aria-hidden="true"></i> Back to home
+        </a>
+
+        <div class="section-head">
+          <p class="section-eyebrow">All work</p>
+          <h2 class="section-title">Every project, one place.</h2>
+          <p class="section-sub">Browse everything — filter by type below.</p>
+        </div>
+
+        <div class="work-filters" role="tablist" aria-label="Filter work">
+          <button type="button" class="filter-btn active" data-filter="all" role="tab" aria-selected="true">All</button>
+          <button type="button" class="filter-btn" data-filter="reel" role="tab" aria-selected="false">Reels</button>
+          <button type="button" class="filter-btn" data-filter="brand" role="tab" aria-selected="false">Brand</button>
+          <button type="button" class="filter-btn" data-filter="motion" role="tab" aria-selected="false">Motion</button>
+        </div>
+
+        <!--
+          Built by js/site-work.js from data/videos.json, same as the home
+          page's showcase — just with no data-limit, so every project shows.
+        -->
+        <div class="work-grid" id="work-grid" data-src="data/videos.json"></div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container footer-inner">
+      <div class="footer-brand">
+        <span class="logo-mark sm" aria-hidden="true"><i class="fa-solid fa-play"></i></span>
+        <span><span id="c-footer-brand">Anmol Chandiok</span> © <span id="year"></span></span>
+      </div>
+      <p class="muted small" id="c-footer-tagline">Video editor · Motion designer · Built for every screen</p>
+      <a href="#top" class="back-top">Back to top <i class="fa-solid fa-arrow-up" aria-hidden="true"></i></a>
+    </div>
+  </footer>
+
+  <!-- Toast -->
+  <div class="toast-stack" id="toast-stack" aria-live="polite"></div>
+
+  <!-- Custom round cursor -->
+  <div class="cursor-ring" id="cursor-ring" aria-hidden="true"></div>
+  <div class="cursor-dot" id="cursor-dot" aria-hidden="true"></div>
+
+  <!-- Bottom-sheet video player -->
+  <div class="sheet-overlay" id="video-sheet" hidden>
+    <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="sheet-title">
+      <div class="sheet-handle" aria-hidden="true"></div>
+      <button type="button" class="sheet-close" id="sheet-close" aria-label="Close player">
+        <i class="fa-solid fa-xmark" aria-hidden="true"></i>
+      </button>
+      <div class="sheet-bezel">
+        <div class="sheet-player" id="sheet-player"></div>
+      </div>
+      <div class="sheet-meta">
+        <h3 id="sheet-title">Project</h3>
+        <p id="sheet-desc"></p>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/config.js"></script>
+  <script src="js/site-content.js"></script>
+  <script src="js/site-work.js"></script>
+  <script src="js/main.js"></script>
+</body>
+</html>

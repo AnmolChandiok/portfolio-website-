@@ -664,6 +664,15 @@ sheetOverlay?.addEventListener("click", (e) => {
             mat.needsUpdate = true;
             refl.material.map = tex;
             refl.material.needsUpdate = true;
+
+            // No video file for this card, so nothing will ever autoplay on
+            // it — a slow, subtle zoom keeps it from reading as frozen/dead
+            // next to the cards that do have real video textures.
+            mesh.userData.kenBurns = {
+              tex,
+              baseRepeat: tex.repeat.clone(),
+              baseOffset: tex.offset.clone(),
+            };
           },
           undefined,
           () => {} // thumbnail unreachable — card keeps the branded fallback texture
@@ -962,6 +971,19 @@ sheetOverlay?.addEventListener("click", (e) => {
         m.userData.card.position.y +=
           (((i % 2 ? 0.14 : -0.14) + 0.35 + Math.sin(t * 0.9 + i) * 0.06) - m.userData.card.position.y) * 0.1;
         if (m.material.map && m.material.map.isVideoTexture) m.material.map.needsUpdate = true;
+
+        // Ken-Burns drift for cards stuck on a still thumbnail (no video
+        // file), so they read as gently alive instead of frozen.
+        const kb = m.userData.kenBurns;
+        if (kb) {
+          const zoom = 1 + Math.sin(t * 0.15 + i) * 0.035;
+          kb.tex.repeat.set(kb.baseRepeat.x / zoom, kb.baseRepeat.y / zoom);
+          kb.tex.offset.set(
+            kb.baseOffset.x + (kb.baseRepeat.x - kb.tex.repeat.x) / 2,
+            kb.baseOffset.y + (kb.baseRepeat.y - kb.tex.repeat.y) / 2
+          );
+          kb.tex.needsUpdate = true;
+        }
       });
 
       // trail follows the cursor with lag

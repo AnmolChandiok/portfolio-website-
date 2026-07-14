@@ -350,6 +350,18 @@
       return;
     }
 
+    // A capped grid (the home page's showcase) shows Featured videos first,
+    // then fills any remaining slots with the rest \u2014 same relative order
+    // within each group as the dashboard's own list \u2014 instead of just
+    // whatever happened to come first in the file.
+    var limit = parseInt(grid.dataset.limit, 10);
+    if (limit > 0) {
+      data = data.filter(function (v) { return v.featured; })
+        .concat(data.filter(function (v) { return !v.featured; }))
+        .slice(0, limit);
+      grid.classList.add('work-grid--bento');
+    }
+
     grid.innerHTML = '';
     if (!data.length) {
       grid.innerHTML = '<p class="work-empty">No projects published yet \u2014 add one from admin.html.</p>';

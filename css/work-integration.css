@@ -78,6 +78,68 @@
   text-align: center;
 }
 
+.work-viewall {
+  display: flex;
+  justify-content: center;
+  margin-top: clamp(2rem, 4vw, 3rem);
+}
+
+/* ---------- Home page showcase: a curated bento grid for exactly 5 cards,
+   deliberately mixing sizes instead of a uniform grid — the featured piece
+   gets the biggest cell, everything else fills in around it. Explicit
+   named areas (not auto-flow) so all 10/8 cells are always accounted for —
+   auto-flow:dense left an orphaned card and dead space. The masonry rules
+   elsewhere are for work.html's full, unlimited grid; this is a separate,
+   fixed layout for a fixed count. ---------- */
+.work-grid--bento {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  grid-template-rows: repeat(4, 170px);
+  grid-template-areas:
+    "a a"
+    "a a"
+    "b c"
+    "d e";
+  gap: 1rem;
+}
+.work-grid--bento .work-card {
+  display: flex;
+  flex-direction: column;
+  width: auto;
+  margin: 0;
+  break-inside: auto;
+}
+.work-grid--bento .work-thumb {
+  flex: 1;
+  min-height: 0;
+}
+.work-grid--bento .work-thumb.ratio-9-16,
+.work-grid--bento .work-thumb.ratio-16-9 {
+  aspect-ratio: unset;
+  max-height: none;
+}
+.work-grid--bento .work-meta {
+  flex: none;
+}
+
+.work-grid--bento .work-card:nth-child(1) { grid-area: a; }
+.work-grid--bento .work-card:nth-child(2) { grid-area: b; }
+.work-grid--bento .work-card:nth-child(3) { grid-area: c; }
+.work-grid--bento .work-card:nth-child(4) { grid-area: d; }
+.work-grid--bento .work-card:nth-child(5) { grid-area: e; }
+
+/* Wide enough for a proper bento: one big square, one tall card, one wide
+   card, two small squares — five cards, five different shapes. */
+@media (min-width: 700px) {
+  .work-grid--bento {
+    grid-template-columns: repeat(5, 1fr);
+    grid-template-rows: repeat(2, 260px);
+    grid-template-areas:
+      "a a b c d"
+      "a a b e e";
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .work-poster, .work-preview { transition-duration: .01ms !important; }
 }

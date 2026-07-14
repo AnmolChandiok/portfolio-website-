@@ -154,18 +154,20 @@
           <p class="section-sub" id="c-work-sub">A mix of short-form heat, brand polish, and motion that sells the story.</p>
         </div>
 
-        <div class="work-filters" role="tablist" aria-label="Filter work">
-          <button type="button" class="filter-btn active" data-filter="all" role="tab" aria-selected="true">All</button>
-          <button type="button" class="filter-btn" data-filter="reel" role="tab" aria-selected="false">Reels</button>
-          <button type="button" class="filter-btn" data-filter="brand" role="tab" aria-selected="false">Brand</button>
-          <button type="button" class="filter-btn" data-filter="motion" role="tab" aria-selected="false">Motion</button>
-        </div>
-
         <!--
           These cards are now built by js/site-work.js from data/videos.json.
           Edit your work through admin.html — never hand-edit this markup again.
+          data-limit caps this to the top 5 (Featured first) for the home
+          showcase — the full, filterable grid lives on work.html.
         -->
-        <div class="work-grid" id="work-grid" data-src="data/videos.json"></div>
+        <div class="work-grid" id="work-grid" data-src="data/videos.json" data-limit="5"></div>
+
+        <div class="work-viewall">
+          <a href="work.html" class="btn btn-ghost btn-lg">
+            View all videos
+            <i class="fa-solid fa-arrow-right" aria-hidden="true"></i>
+          </a>
+        </div>
       </div>
     </section>
 
