@@ -1,6 +1,24 @@
 {
-  "updated": "2026-07-14T11:29:43.843Z",
+  "updated": "2026-07-14T11:30:26.547Z",
   "videos": [
+    {
+      "type": "youtube",
+      "id": "eMwPuclXyHA",
+      "title": "The CUTEST Kitten You'll Ever See! #cute #cat #funny #pets #funnycats #kittens #shorts #funnyanimals",
+      "client": "Skele Animals",
+      "category": "",
+      "year": "2026",
+      "description": "",
+      "instagramUrl": "",
+      "aspect": "9:16",
+      "duration": "",
+      "poster": "",
+      "preview": "",
+      "previewMode": "youtube",
+      "start": 0,
+      "featured": true,
+      "hidden": false
+    },
     {
       "type": "youtube",
       "id": "z8-a3iuYMwQ",
@@ -16,7 +34,7 @@
       "preview": "",
       "previewMode": "youtube",
       "start": 0,
-      "featured": false,
+      "featured": true,
       "hidden": false
     },
     {
