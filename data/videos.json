@@ -1,5 +1,5 @@
 {
-  "updated": "2026-07-14T11:32:38.495Z",
+  "updated": "2026-07-14T14:56:35.786Z",
   "videos": [
     {
       "type": "youtube",
@@ -39,51 +39,63 @@
     },
     {
       "type": "external",
-      "externalKind": "instagram",
-      "externalUrl": "https://www.instagram.com/reel/DZ4LGrApiAU/?utm_source=ig_web_copy_link&igsh=MzRlODBiNWFlZA==",
       "id": "instagram-DZ4LGrApiAU",
       "title": "Shot and Edited by me ",
       "client": "Square Foot Story X Navbharat Nivas",
       "category": "Short Form",
       "year": "2026",
       "description": "Shot and Edited by me and ",
+      "instagramUrl": "",
       "aspect": "9:16",
       "duration": "",
       "poster": "",
+      "preview": "",
+      "previewMode": "youtube",
+      "start": 0,
       "featured": false,
-      "hidden": false
+      "hidden": false,
+      "externalKind": "instagram",
+      "externalUrl": "https://www.instagram.com/reel/DZ4LGrApiAU/?utm_source=ig_web_copy_link&igsh=MzRlODBiNWFlZA=="
     },
     {
       "type": "external",
-      "externalKind": "instagram",
-      "externalUrl": "https://www.instagram.com/reel/DZr-QlICagD/?utm_source=ig_web_copy_link",
       "id": "instagram-DZr-QlICagD",
       "title": "This Video Got 100K+ views on Instagram ",
       "client": "Square Foot Story X Navbharat Nivas",
       "category": "Short Form",
       "year": "2026",
       "description": "This Video Got 100K+ views on Instagram and its one top 5 Performing video for this page and he is Bulider",
+      "instagramUrl": "",
       "aspect": "9:16",
       "duration": "",
       "poster": "",
+      "preview": "",
+      "previewMode": "youtube",
+      "start": 0,
       "featured": false,
-      "hidden": false
+      "hidden": false,
+      "externalKind": "instagram",
+      "externalUrl": "https://www.instagram.com/reel/DZr-QlICagD/?utm_source=ig_web_copy_link"
     },
     {
       "type": "external",
-      "externalKind": "instagram",
-      "externalUrl": "https://www.instagram.com/reel/DaNkD3Kpp62/?utm_source=ig_web_copy_link&igsh=MzRlODBiNWFlZA==",
       "id": "instagram-DaNkD3Kpp62",
       "title": "Stained Glass House (Lead Generation)",
       "client": "Square Foot Story X Stained Glass House",
       "category": "Short Form",
       "year": "2026",
       "description": "This video helped my client in generation of original leads from Instagram ",
+      "instagramUrl": "",
       "aspect": "9:16",
       "duration": "",
       "poster": "",
+      "preview": "",
+      "previewMode": "youtube",
+      "start": 0,
       "featured": true,
-      "hidden": false
+      "hidden": false,
+      "externalKind": "instagram",
+      "externalUrl": "https://www.instagram.com/reel/DaNkD3Kpp62/?utm_source=ig_web_copy_link&igsh=MzRlODBiNWFlZA=="
     }
   ]
 }
