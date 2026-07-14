@@ -1,7 +1,8 @@
 {
-  "updated": "2026-07-12T17:40:25.671Z",
+  "updated": "2026-07-14T03:39:31.081Z",
   "videos": [
     {
+      "type": "youtube",
       "id": "TMUJTFk4CeM",
       "title": "Recent Client Work",
       "client": "Anmol Chandiok",
@@ -15,11 +16,12 @@
       "preview": "",
       "previewMode": "youtube",
       "start": 0,
-      "featured": true,
+      "featured": false,
       "hidden": false,
       "platform": "youtube"
     },
     {
+      "type": "youtube",
       "id": "P5E2C3pyAZY",
       "title": "Drift Car Portfolio Video",
       "client": "Anmol Chandiok",
@@ -38,6 +40,7 @@
       "platform": "youtube"
     },
     {
+      "type": "youtube",
       "id": "p2wTxGeT2A0",
       "title": "Swift 🔥",
       "client": "Anmol Chandiok",
@@ -56,6 +59,7 @@
       "platform": "youtube"
     },
     {
+      "type": "youtube",
       "id": "rbTEAwR6PIw",
       "title": "How to Install Arm Rest in Swift 2018",
       "client": "Anmol Chandiok",
