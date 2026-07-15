@@ -128,16 +128,35 @@
 .work-grid--bento .work-card:nth-child(4) { grid-area: d; }
 .work-grid--bento .work-card:nth-child(5) { grid-area: e; }
 
-/* Wide enough for a proper bento: one big square, one tall card, one wide
-   card, two small squares — five cards, five different shapes. */
+/* Desktop: adaptive, not positional — each card's cell shape comes from
+   that video's own aspect ratio (data-aspect, set in site-work.js), not
+   from which slot it happens to land in. Portrait pieces get a tall
+   narrow cell, landscape pieces get a wide short one, and the first
+   (top-priority, Featured) card gets a bigger version of its own shape.
+   Plain row-by-row flow (not `dense`) — dense re-packs by leftover space
+   and was shuffling the 2nd Featured video out of a prominent spot. */
 @media (min-width: 700px) {
   .work-grid--bento {
-    grid-template-columns: repeat(5, 1fr);
-    grid-template-rows: repeat(2, 260px);
-    grid-template-areas:
-      "a a b c d"
-      "a a b e e";
+    grid-template-columns: repeat(12, 1fr);
+    grid-template-rows: none;
+    grid-auto-rows: 50px;
+    grid-auto-flow: row;
+    grid-template-areas: none;
   }
+
+  .work-grid--bento .work-card {
+    grid-area: auto;
+  }
+
+  /* Row unit (50px) is much smaller than a column's rendered width, so
+     matching a real 9:16 or 16:9 look takes very different row-spans per
+     axis, not equal-looking numbers — worked out from actual column width
+     at a ~1300px container, then rounded. */
+  .work-grid--bento .work-card[data-aspect="9:16"] { grid-column: span 2; grid-row: span 8; }
+  .work-grid--bento .work-card[data-aspect="16:9"] { grid-column: span 4; grid-row: span 5; }
+
+  .work-grid--bento .work-card:first-child[data-aspect="9:16"] { grid-column: span 3; grid-row: span 11; }
+  .work-grid--bento .work-card:first-child[data-aspect="16:9"] { grid-column: span 6; grid-row: span 7; }
 }
 
 @media (prefers-reduced-motion: reduce) {

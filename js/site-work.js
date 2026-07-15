@@ -68,6 +68,7 @@
     article.dataset.cat = tagsOf(v);
     article.style.setProperty('--i', i);
     article.dataset.video = v.id;
+    article.dataset.aspect = v.aspect === '9:16' ? '9:16' : '16:9';
 
     var ratio = v.aspect === '9:16' ? 'ratio-9-16' : 'ratio-16-9';
 
