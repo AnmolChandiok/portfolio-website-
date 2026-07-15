@@ -1,5 +1,5 @@
 {
-  "updated": "2026-07-15T04:33:56.054Z",
+  "updated": "2026-07-15T04:35:43.385Z",
   "videos": [
     {
       "type": "youtube",
@@ -16,7 +16,7 @@
       "preview": "",
       "previewMode": "youtube",
       "start": 0,
-      "featured": false,
+      "featured": true,
       "hidden": false
     },
     {
