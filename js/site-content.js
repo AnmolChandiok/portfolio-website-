@@ -44,6 +44,12 @@
     ['c-about-li2', 'about.li2', 'html'],
     ['c-about-li3', 'about.li3', 'html'],
 
+    ['c-resume-eyebrow', 'resume.eyebrow', 'text'],
+    ['c-resume-title', 'resume.title', 'text'],
+    ['c-resume-sub', 'resume.sub', 'text'],
+    ['c-resume-view-label', 'resume.viewLabel', 'text'],
+    ['c-resume-download-label', 'resume.downloadLabel', 'text'],
+
     ['c-process-eyebrow', 'process.eyebrow', 'text'],
     ['c-process-title', 'process.title', 'text'],
     ['c-process-1-num', 'process.step1Num', 'text'],
@@ -88,6 +94,7 @@
       work: data.nav && data.nav.linkWork,
       services: data.nav && data.nav.linkServices,
       about: data.nav && data.nav.linkAbout,
+      resume: data.nav && data.nav.linkResume,
       process: data.nav && data.nav.linkProcess,
       contact: data.nav && data.nav.linkContact
     };

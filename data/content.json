@@ -4,6 +4,7 @@
     "linkWork": "Work",
     "linkServices": "Services",
     "linkAbout": "About",
+    "linkResume": "Resume",
     "linkProcess": "Process",
     "linkContact": "Contact",
     "headerCta": "Hire me",
@@ -45,6 +46,13 @@
     "li1": "Vertical + landscape delivery from one story",
     "li2": "Music-led pacing &amp; caption-ready exports",
     "li3": "Fast feedback loops, clear revisions"
+  },
+  "resume": {
+    "eyebrow": "Resume",
+    "title": "Want the full story on paper?",
+    "sub": "Experience, tools, and project history in one PDF.",
+    "viewLabel": "View CV",
+    "downloadLabel": "Download CV"
   },
   "process": {
     "eyebrow": "Process",

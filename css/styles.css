@@ -988,6 +988,32 @@ html[data-theme="light"] .theme-icon-light {
   font-size: 1.05rem;
 }
 
+/* ---------- resume ---------- */
+.resume-wrap {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.5rem;
+}
+
+.resume-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.85rem;
+  flex: none;
+}
+
+.resume-actions[hidden] {
+  display: none;
+}
+
+.resume-empty {
+  margin: 0;
+  color: var(--text-2);
+  font-size: 0.95rem;
+}
+
 /* ---------- work ---------- */
 .work-filters {
   display: flex;

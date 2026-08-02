@@ -87,22 +87,34 @@
       ? '<span class="work-ig-badge" title="Also on Instagram" aria-hidden="true"><i class="fa-brands fa-instagram"></i></span>'
       : '';
 
-    // Instagram/Behance give us no thumbnail API — when there's no poster
-    // (or it fails to load), fall back to a plain platform-icon panel
-    // instead of leaving the card looking broken/blank.
+    // Instagram/Behance give us no thumbnail API at all. YouTube gives one,
+    // but maxresdefault.jpg doesn't exist for plenty of real videos (Shorts
+    // often never get a high-res thumbnail generated) — and critically,
+    // ytimg.com answers a missing one with an HTTP 200 and a generic 120x90
+    // gray placeholder, not a 404, so a plain onerror handler never fires.
+    // hqdefault.jpg is far more reliably a real thumbnail, so that's the
+    // fallback once the placeholder's exact known size gives it away.
     var poster = posterFor(v);
+    var hqFallback = !isExternal ? 'https://i.ytimg.com/vi/' + v.id + '/hqdefault.jpg' : '';
+    var swapToFallback =
+      'if(this.dataset.fallback){this.src=this.dataset.fallback;delete this.dataset.fallback}' +
+      'else{this.style.display=\'none\'}';
     var posterImg = poster
       ? '<img class="work-poster" src="' + poster + '" alt="" loading="lazy" ' +
-          'onerror="this.style.display=\'none\'">'
+          (hqFallback ? 'data-fallback="' + hqFallback + '" ' : '') +
+          'onerror="' + swapToFallback + '" ' +
+          'onload="if(this.naturalWidth===120&&this.naturalHeight===90){' + swapToFallback + '}">'
       : '';
     var posterFallback =
       '<div class="work-poster-fallback"><i class="fa-brands ' +
-      (isExternal && v.externalKind === 'behance' ? 'fa-behance' : 'fa-instagram') +
+      (isExternal
+        ? (v.externalKind === 'behance' ? 'fa-behance' : 'fa-instagram')
+        : 'fa-youtube') +
       '" aria-hidden="true"></i></div>';
 
     article.innerHTML =
       '<div class="work-thumb ' + ratio + '">' +
-        (isExternal ? posterFallback : '') +
+        posterFallback +
         posterImg +
         '<span class="work-badge">' + badge + '</span>' +
         igCrossLink +
@@ -422,4 +434,30 @@
       img.addEventListener('error', function () { img.hidden = true; }, { once: true });
     })
     .catch(function () { /* profile.json not reachable yet — mark stays as-is */ });
+})();
+
+/* ---------- resume/CV: read from data/resume.json, set by admin.html ----- */
+(function () {
+  'use strict';
+  var actions = document.getElementById('resume-actions');
+  var empty = document.getElementById('resume-empty');
+  var viewLink = document.getElementById('resume-view');
+  var downloadLink = document.getElementById('resume-download');
+  if (!actions || !empty || !viewLink || !downloadLink) return;
+
+  fetch('data/resume.json', { cache: 'no-cache' })
+    .then(function (res) { return res.ok ? res.json() : null; })
+    .then(function (data) {
+      var file = data && data.file;
+      if (!file) return; // nothing published yet — "CV coming soon" stays showing
+      viewLink.href = file;
+      downloadLink.href = file;
+      // The stored filename carries a cache-busting timestamp (set at
+      // upload time) — give the saved file a clean name instead.
+      var ext = (file.split('.').pop() || 'pdf').toLowerCase();
+      downloadLink.download = 'Anmol-Chandiok-CV.' + ext;
+      actions.hidden = false;
+      empty.hidden = true;
+    })
+    .catch(function () { /* resume.json not reachable yet — "coming soon" stays showing */ });
 })();

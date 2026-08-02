@@ -328,6 +328,7 @@
     <button class="btn ghost sm" id="contentBtn" title="Every heading, paragraph and label on the site">Content</button>
     <button class="btn ghost sm" id="linksBtn" title="Instagram, YouTube, LinkedIn, Behance">Links</button>
     <button class="btn ghost sm" id="profileBtn" title="Your profile photo in the About section">Profile</button>
+    <button class="btn ghost sm" id="resumeBtn" title="Your downloadable CV in the Resume section">Resume</button>
     <button class="btn ghost sm" id="msgBtn" title="Where contact form messages go">Messages</button>
     <button class="btn ghost sm" id="pwBtn" title="Change the dashboard password">Password</button>
     <button class="btn primary" id="publishBtn" disabled>Publish to site</button>
@@ -519,6 +520,40 @@
     </div>
 
     <div class="status" id="profileStatus"></div>
+  </div>
+</div>
+
+<!-- resume / CV -->
+<div class="modal" id="resumeModal">
+  <div class="modal__scrim" data-x></div>
+  <div class="modal__box">
+    <h2>Resume / CV</h2>
+    <p>Powers the "Resume" section on the site — visitors can view or download it there. Publishing
+      uploads the file straight into <code style="font-family:var(--mono)">media/</code> in your repo —
+      no third-party file host.</p>
+
+    <div style="border:1px solid var(--line);border-radius:12px;padding:14px;background:var(--sunk);margin-bottom:14px">
+      <div id="resumeCurrent" style="display:none;align-items:center;gap:10px">
+        <i class="fa-regular fa-file-pdf" style="font-size:20px;color:var(--accent)"></i>
+        <a id="resumeCurrentLink" href="#" target="_blank" rel="noopener" class="mono" style="font-size:12.5px;word-break:break-all"></a>
+      </div>
+      <div id="resumeEmpty" style="text-align:center;color:var(--faint);font-size:12.5px">
+        No CV published yet.
+      </div>
+    </div>
+
+    <div class="f"><label>Choose a PDF</label>
+      <input type="file" id="resumeFile" accept="application/pdf"></div>
+    <div class="hint">PDF only — it's the one format browsers can show inline for the "View CV" button
+      as well as download. A couple MB is plenty.</div>
+
+    <div style="display:flex;gap:10px;margin-top:14px">
+      <button class="btn danger sm" id="resumeRemove">Remove CV</button>
+      <div class="spacer"></div>
+      <button class="btn primary" id="resumeSave">Publish CV</button>
+    </div>
+
+    <div class="status" id="resumeStatus"></div>
   </div>
 </div>
 
@@ -1595,6 +1630,7 @@
     { group: 'Navigation', key: 'nav.linkWork', label: 'Nav link — Work' },
     { group: 'Navigation', key: 'nav.linkServices', label: 'Nav link — Services' },
     { group: 'Navigation', key: 'nav.linkAbout', label: 'Nav link — About' },
+    { group: 'Navigation', key: 'nav.linkResume', label: 'Nav link — Resume' },
     { group: 'Navigation', key: 'nav.linkProcess', label: 'Nav link — Process' },
     { group: 'Navigation', key: 'nav.linkContact', label: 'Nav link — Contact' },
     { group: 'Navigation', key: 'nav.headerCta', label: 'Header button' },
@@ -1632,6 +1668,12 @@
     { group: 'About', key: 'about.li1', label: 'Bullet 1' },
     { group: 'About', key: 'about.li2', label: 'Bullet 2' },
     { group: 'About', key: 'about.li3', label: 'Bullet 3' },
+
+    { group: 'Resume', key: 'resume.eyebrow', label: 'Eyebrow' },
+    { group: 'Resume', key: 'resume.title', label: 'Title' },
+    { group: 'Resume', key: 'resume.sub', label: 'Subtitle' },
+    { group: 'Resume', key: 'resume.viewLabel', label: '"View CV" button text' },
+    { group: 'Resume', key: 'resume.downloadLabel', label: '"Download CV" button text' },
 
     { group: 'Process', key: 'process.eyebrow', label: 'Eyebrow' },
     { group: 'Process', key: 'process.title', label: 'Title' },
@@ -1900,6 +1942,135 @@
     }
   });
 
+  /* ---------- resume / CV ------------------------------------------------ */
+
+  var RESUME_PATH = 'data/resume.json';
+
+  function showResumeCurrent(path) {
+    var current = $('#resumeCurrent'), link = $('#resumeCurrentLink'), empty = $('#resumeEmpty');
+    if (path) {
+      link.href = path; link.textContent = path;
+      current.style.display = 'flex'; empty.style.display = 'none';
+    } else {
+      link.href = '#'; link.textContent = '';
+      current.style.display = 'none'; empty.style.display = '';
+    }
+  }
+
+  async function pullResume() {
+    var status = $('#resumeStatus');
+    status.className = 'status busy';
+    status.textContent = 'Reading current CV…';
+    try {
+      var remote = await getRemote(RESUME_PATH);
+      var data = remote.text ? JSON.parse(remote.text) : {};
+      showResumeCurrent(data.file || '');
+      status.className = 'status';
+      status.textContent = remote.text ? 'Loaded.' : 'No CV published yet.';
+    } catch (err) {
+      status.className = 'status err';
+      status.textContent = err.message || 'Could not read data/resume.json.';
+    }
+  }
+
+  $('#resumeBtn').addEventListener('click', function () {
+    $('#resumeModal').classList.add('on');
+    $('#resumeStatus').textContent = '';
+    $('#resumeFile').value = '';
+    if (cfg.token && cfg.owner && cfg.repo) pullResume();
+  });
+  $('#resumeModal').addEventListener('click', function (e) {
+    if (e.target.hasAttribute('data-x')) $('#resumeModal').classList.remove('on');
+  });
+
+  $('#resumeSave').addEventListener('click', async function () {
+    var status = $('#resumeStatus');
+    if (!cfg.token || !cfg.owner || !cfg.repo) {
+      status.className = 'status err';
+      status.textContent = 'Connect to your repo first — use the connection pill, top right.';
+      return;
+    }
+    var file = $('#resumeFile').files[0];
+    if (!file) {
+      status.className = 'status err';
+      status.textContent = 'Choose a PDF first.';
+      return;
+    }
+
+    var btn = $('#resumeSave');
+    btn.disabled = true;
+    status.className = 'status busy';
+    status.textContent = 'Uploading…';
+
+    try {
+      var docPath = 'media/resume-' + Date.now() + '.pdf';
+      var content = await fileToBase64(file);
+
+      var upload = await gh(filePath(docPath), {
+        method: 'PUT',
+        body: JSON.stringify({ message: 'Update resume/CV', content: content, branch: cfg.branch })
+      });
+      if (!upload.ok) throw new Error(ghError(upload));
+
+      var remote = await getRemote(RESUME_PATH);
+      var body = {
+        message: 'Point resume/CV at ' + docPath,
+        content: b64enc(JSON.stringify({ file: docPath }, null, 2)),
+        branch: cfg.branch
+      };
+      if (remote.sha) body.sha = remote.sha;
+      var res = await gh(filePath(RESUME_PATH), { method: 'PUT', body: JSON.stringify(body) });
+      if (!res.ok) throw new Error(ghError(res));
+
+      status.className = 'status ok';
+      status.textContent = 'Published. Live on the site shortly.';
+      toast('Resume updated.', 'ok');
+      showResumeCurrent(docPath);
+    } catch (err) {
+      status.className = 'status err';
+      status.textContent = err.message || 'Could not publish the CV.';
+    } finally {
+      btn.disabled = false;
+    }
+  });
+
+  $('#resumeRemove').addEventListener('click', async function () {
+    var status = $('#resumeStatus');
+    if (!cfg.token || !cfg.owner || !cfg.repo) {
+      status.className = 'status err';
+      status.textContent = 'Connect to your repo first — use the connection pill, top right.';
+      return;
+    }
+
+    var btn = $('#resumeRemove');
+    btn.disabled = true;
+    status.className = 'status busy';
+    status.textContent = 'Removing…';
+
+    try {
+      var remote = await getRemote(RESUME_PATH);
+      var body = {
+        message: 'Remove resume/CV',
+        content: b64enc(JSON.stringify({ file: '' }, null, 2)),
+        branch: cfg.branch
+      };
+      if (remote.sha) body.sha = remote.sha;
+      var res = await gh(filePath(RESUME_PATH), { method: 'PUT', body: JSON.stringify(body) });
+      if (!res.ok) throw new Error(ghError(res));
+
+      status.className = 'status ok';
+      status.textContent = 'Removed — the Resume section shows "CV coming soon" again.';
+      toast('Resume removed.', 'ok');
+      $('#resumeFile').value = '';
+      showResumeCurrent('');
+    } catch (err) {
+      status.className = 'status err';
+      status.textContent = err.message || 'Could not remove the CV.';
+    } finally {
+      btn.disabled = false;
+    }
+  });
+
   document.addEventListener('keydown', function (e) {
     if (e.key === 'Escape') {
       $('#connModal').classList.remove('on');
@@ -1907,6 +2078,7 @@
       $('#msgModal').classList.remove('on');
       $('#linksModal').classList.remove('on');
       $('#profileModal').classList.remove('on');
+      $('#resumeModal').classList.remove('on');
       $('#contentModal').classList.remove('on');
     }
   });
