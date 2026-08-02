@@ -439,23 +439,25 @@
 /* ---------- resume/CV: read from data/resume.json, set by admin.html ----- */
 (function () {
   'use strict';
-  var actions = document.getElementById('resume-actions');
+  var viewer = document.getElementById('resume-viewer');
+  var embed = document.getElementById('resume-embed');
   var empty = document.getElementById('resume-empty');
-  var viewLink = document.getElementById('resume-view');
+  var actions = document.getElementById('resume-actions');
   var downloadLink = document.getElementById('resume-download');
-  if (!actions || !empty || !viewLink || !downloadLink) return;
+  if (!viewer || !embed || !empty || !actions || !downloadLink) return;
 
   fetch('data/resume.json', { cache: 'no-cache' })
     .then(function (res) { return res.ok ? res.json() : null; })
     .then(function (data) {
       var file = data && data.file;
       if (!file) return; // nothing published yet — "CV coming soon" stays showing
-      viewLink.href = file;
+      embed.src = file; // browsers with a built-in PDF viewer render it inline
       downloadLink.href = file;
       // The stored filename carries a cache-busting timestamp (set at
       // upload time) — give the saved file a clean name instead.
       var ext = (file.split('.').pop() || 'pdf').toLowerCase();
       downloadLink.download = 'Anmol-Chandiok-CV.' + ext;
+      viewer.hidden = false;
       actions.hidden = false;
       empty.hidden = true;
     })

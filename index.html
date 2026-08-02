@@ -242,23 +242,24 @@
 
     <!-- ========== RESUME ========== -->
     <section class="section section-alt" id="resume">
-      <div class="container resume-wrap" id="resume-wrap">
-        <div>
+      <div class="container">
+        <div class="section-head">
           <p class="section-eyebrow" id="c-resume-eyebrow">Resume</p>
           <h2 class="section-title" id="c-resume-title">Want the full story on paper?</h2>
           <p class="section-sub" id="c-resume-sub">Experience, tools, and project history in one PDF.</p>
         </div>
+
+        <div class="resume-viewer" id="resume-viewer" hidden>
+          <iframe id="resume-embed" title="Resume preview"></iframe>
+        </div>
+        <p class="resume-empty" id="resume-empty">CV coming soon.</p>
+
         <div class="resume-actions" id="resume-actions" hidden>
-          <a href="#" id="resume-view" class="btn btn-ghost btn-lg" target="_blank" rel="noopener">
-            <i class="fa-regular fa-file-lines" aria-hidden="true"></i>
-            <span id="c-resume-view-label">View CV</span>
-          </a>
           <a href="#" id="resume-download" class="btn btn-primary btn-lg" download>
             <i class="fa-solid fa-arrow-down" aria-hidden="true"></i>
             <span id="c-resume-download-label">Download CV</span>
           </a>
         </div>
-        <p class="resume-empty" id="resume-empty">CV coming soon.</p>
       </div>
     </section>
 

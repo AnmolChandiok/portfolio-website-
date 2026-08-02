@@ -47,7 +47,6 @@
     ['c-resume-eyebrow', 'resume.eyebrow', 'text'],
     ['c-resume-title', 'resume.title', 'text'],
     ['c-resume-sub', 'resume.sub', 'text'],
-    ['c-resume-view-label', 'resume.viewLabel', 'text'],
     ['c-resume-download-label', 'resume.downloadLabel', 'text'],
 
     ['c-process-eyebrow', 'process.eyebrow', 'text'],
