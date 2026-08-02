@@ -991,7 +991,10 @@ html[data-theme="light"] .theme-icon-light {
 /* ---------- resume ---------- */
 .resume-viewer {
   width: 100%;
-  max-width: 760px;
+  max-width: 640px;
+  /* Matches a standard US Letter page (8.5:11) — the box hugs the shape
+     of a real one-page resume instead of leaving dead space around it. */
+  aspect-ratio: 8.5 / 11;
   margin: 0 auto 1.75rem;
   border-radius: var(--radius, 1rem);
   overflow: hidden;
@@ -1007,9 +1010,7 @@ html[data-theme="light"] .theme-icon-light {
 #resume-embed {
   display: block;
   width: 100%;
-  height: 75vh;
-  max-height: 900px;
-  min-height: 420px;
+  height: 100%;
   border: 0;
 }
 

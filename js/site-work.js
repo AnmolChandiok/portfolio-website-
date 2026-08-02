@@ -451,7 +451,14 @@
     .then(function (data) {
       var file = data && data.file;
       if (!file) return; // nothing published yet — "CV coming soon" stays showing
-      embed.src = file; // browsers with a built-in PDF viewer render it inline
+      // #toolbar=0&navpanes=0 hides Chrome/Edge's PDF-app chrome (the
+      // zoom/print/download toolbar and thumbnail sidebar) so this reads
+      // as an embedded preview, not a whole browser app; view=FitH fits
+      // the page to the box's width instead of showing it zoomed out with
+      // empty space around it. (Standard PDFium/pdf.js viewer params —
+      // Chrome, Edge, Firefox honor them; Safari just ignores and shows
+      // its own plain viewer.)
+      embed.src = file + '#toolbar=0&navpanes=0&scrollbar=0&view=FitH';
       downloadLink.href = file;
       // The stored filename carries a cache-busting timestamp (set at
       // upload time) — give the saved file a clean name instead.
