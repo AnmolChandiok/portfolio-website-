@@ -7,23 +7,35 @@
 <title>Work — Pluseshot</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
+  /* Same palette, type and accent as the live site, so moving between the
+     two doesn't feel like moving between two different products. Light is
+     the default; dark follows the system, exactly as index.html does. */
   :root{
-    --bg:#0a0a0a; --panel:#141414; --panel-2:#1a1a1a; --sunk:#0c0c0c;
-    --line:rgba(255,255,255,.10); --line-hi:rgba(255,255,255,.20);
-    --text:#f5f5f4; --dim:#a8a29e; --faint:#6b6560;
-    --accent:#fb5607; --accent-soft:rgba(251,86,7,.16);
-    --live:#3ddc97; --warn:#ffb454; --bad:#ff6b6b;
-    --r:10px;
-    --mono:"JetBrains Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
-    --ease:cubic-bezier(.22,1,.36,1);
+    --bg:#EDEDEA; --panel:#F4F4F2; --panel-2:#E1E1DD; --sunk:#E4E4E0;
+    --line:#D0D0CB; --line-hi:#B4B4AE;
+    --text:#000000; --dim:#6E6E6A; --faint:#94948F;
+    --accent:#FB5607; --accent-soft:rgba(251,86,7,.14);
+    --live:#0E8A55; --warn:#9A6200; --bad:#C4342B;
+    --r:5px;
+    --mono:"Geist Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
+    --ease:cubic-bezier(.65,0,.35,1);
+  }
+  @media (prefers-color-scheme: dark){
+    :root{
+      --bg:#101010; --panel:#1B1B1A; --panel-2:#232322; --sunk:#0C0C0C;
+      --line:#2B2B2A; --line-hi:#3C3C3A;
+      --text:#F1F1EE; --dim:#9A9A95; --faint:#6E6E6A;
+      --accent-soft:rgba(251,86,7,.16);
+      --live:#3DDC97; --warn:#FFB454; --bad:#FF6B6B;
+    }
   }
   *{box-sizing:border-box}
   html,body{height:100%}
   body{
     margin:0; background:var(--bg); color:var(--text);
-    font:400 14px/1.5 Inter,system-ui,-apple-system,sans-serif;
+    font:400 14px/1.5 Geist,ui-sans-serif,system-ui,-apple-system,sans-serif;
     -webkit-font-smoothing:antialiased;
   }
   button,input,select,textarea{font:inherit;color:inherit}
@@ -56,16 +68,16 @@
   /* ---- buttons ---- */
   .btn{
     border:1px solid var(--line-hi);background:var(--panel-2);color:var(--text);
-    border-radius:8px;padding:8px 14px;font-size:13.5px;font-weight:500;
+    border-radius:5px;padding:8px 14px;font-size:13.5px;font-weight:500;
     transition:background .16s,border-color .16s,opacity .16s;
   }
-  .btn:hover{background:#1e1e27;border-color:#40404f}
+  .btn:hover{background:color-mix(in srgb,var(--text) 8%,var(--panel-2));border-color:var(--line-hi)}
   .btn:disabled{opacity:.42;cursor:not-allowed}
   .btn.primary{background:var(--accent);border-color:var(--accent);color:#fff}
   .btn.primary:hover{background:#ff7a33;border-color:#ff7a33}
   .btn.ghost{background:transparent;border-color:var(--line)}
-  .btn.danger{color:var(--bad);border-color:#3a2226;background:transparent}
-  .btn.danger:hover{background:#2a1519;border-color:#5a2b32}
+  .btn.danger{color:var(--bad);border-color:color-mix(in srgb,var(--bad) 35%,transparent);background:transparent}
+  .btn.danger:hover{background:color-mix(in srgb,var(--bad) 14%,transparent);border-color:color-mix(in srgb,var(--bad) 55%,transparent)}
   .btn.sm{padding:6px 11px;font-size:12.5px}
   :focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:6px}
 
@@ -76,7 +88,7 @@
   }
   .add input{
     flex:1;min-width:0;background:var(--panel);border:1px solid var(--line);
-    border-radius:8px;padding:11px 14px;font-family:var(--mono);font-size:13px;
+    border-radius:5px;padding:11px 14px;font-family:var(--mono);font-size:13px;
   }
   .add input:focus{border-color:var(--accent);outline:none}
   .add input::placeholder{color:var(--faint);font-family:Inter,sans-serif}
@@ -93,7 +105,7 @@
   .bin__list{overflow:auto;padding:8px;flex:1}
 
   .row{
-    display:flex;align-items:center;gap:11px;padding:8px;border-radius:9px;
+    display:flex;align-items:center;gap:11px;padding:8px;border-radius:5px;
     border:1px solid transparent;cursor:pointer;transition:background .13s,border-color .13s;
   }
   .row:hover{background:var(--panel-2)}
@@ -132,7 +144,7 @@
     display:grid;place-items:center;
   }
   .row:hover .row__del{opacity:1}
-  .row__del:hover{background:#2a1519;color:var(--bad)}
+  .row__del:hover{background:color-mix(in srgb,var(--bad) 14%,transparent);color:var(--bad)}
   .row__del:focus-visible{opacity:1}
 
   /* ---- inspector ---- */
@@ -147,7 +159,7 @@
   .empty p{margin:0;font-size:13.5px;max-width:340px;line-height:1.6}
 
   .card{
-    border-radius:12px;overflow:hidden;border:1px solid var(--line);background:#000;
+    border-radius:8px;overflow:hidden;border:1px solid var(--line);background:#000;
     aspect-ratio:16/9;position:relative;margin-bottom:22px;
   }
   .card[data-aspect="9:16"]{aspect-ratio:9/16;max-width:280px}
@@ -168,7 +180,7 @@
     color:var(--faint);font-weight:600;margin-bottom:6px;
   }
   .f input,.f select,.f textarea{
-    width:100%;background:var(--sunk);border:1px solid var(--line);border-radius:8px;
+    width:100%;background:var(--sunk);border:1px solid var(--line);border-radius:5px;
     padding:10px 12px;font-size:13.5px;
   }
   .f input:focus,.f select:focus,.f textarea:focus{border-color:var(--accent);outline:none}
@@ -178,7 +190,7 @@
 
   .switches{display:flex;gap:10px;margin:18px 0 22px}
   .sw{
-    display:flex;align-items:center;gap:8px;padding:9px 13px;border-radius:8px;
+    display:flex;align-items:center;gap:8px;padding:9px 13px;border-radius:5px;
     border:1px solid var(--line);background:var(--sunk);font-size:13px;color:var(--dim);
   }
   .sw input{accent-color:var(--accent);width:15px;height:15px}
@@ -208,7 +220,7 @@
   .modal__scrim{position:absolute;inset:0;background:rgba(5,5,9,.72);backdrop-filter:blur(6px)}
   .modal__box{
     position:relative;width:min(520px,100%);max-height:90vh;overflow:auto;
-    background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:24px;
+    background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:24px;
   }
   .modal__box.wide{width:min(760px,100%)}
   .content-group{
@@ -221,7 +233,7 @@
 
   .note{
     background:var(--sunk);border:1px solid var(--line);border-left:2px solid var(--accent);
-    border-radius:0 8px 8px 0;padding:12px 14px;font-size:12.5px;color:var(--dim);line-height:1.6;
+    border-radius:0 5px 5px 0;padding:12px 14px;font-size:12.5px;color:var(--dim);line-height:1.6;
     margin:16px 0;
   }
   .note code{font-family:var(--mono);font-size:11.5px;color:#ffb27a}
@@ -232,7 +244,7 @@
   /* ---- toast ---- */
   .toast{
     position:fixed;left:50%;bottom:74px;transform:translate(-50%,14px);
-    background:#1b1b23;border:1px solid var(--line-hi);border-radius:10px;
+    background:#1b1b23;border:1px solid var(--line-hi);border-radius:6px;
     padding:11px 16px;font-size:13px;z-index:80;
     opacity:0;pointer-events:none;transition:opacity .22s,transform .28s var(--ease);
     box-shadow:0 12px 40px rgba(0,0,0,.5);
@@ -262,7 +274,7 @@
   .lock__box h1{font-size:16px;font-weight:600;margin:0 0 6px}
   .lock__box p{font-size:13px;color:var(--dim);margin:0 0 22px;line-height:1.6}
   .lock__box input{
-    width:100%;background:var(--panel);border:1px solid var(--line);border-radius:9px;
+    width:100%;background:var(--panel);border:1px solid var(--line);border-radius:5px;
     padding:12px 14px;font-size:15px;text-align:center;letter-spacing:.04em;
     font-family:var(--mono);margin-bottom:12px;
   }
@@ -277,7 +289,7 @@
 
   /* ---- messages inbox ---- */
   .msg-item{
-    border:1px solid var(--line);border-radius:10px;padding:12px 14px;margin-bottom:10px;
+    border:1px solid var(--line);border-radius:6px;padding:12px 14px;margin-bottom:10px;
     background:var(--sunk);position:relative;
   }
   .msg-item.unread{border-left:2px solid var(--accent)}
@@ -295,7 +307,7 @@
     opacity:0;transition:opacity .13s,background .13s,color .13s;
   }
   .msg-item:hover .msg-item__del{opacity:1}
-  .msg-item__del:hover{background:#2a1519;color:var(--bad)}
+  .msg-item__del:hover{background:color-mix(in srgb,var(--bad) 14%,transparent);color:var(--bad)}
   .msg-empty{color:var(--faint);font-size:13px;padding:20px 0;text-align:center}
 </style>
 </head>
@@ -325,10 +337,9 @@
     <div class="brand"><span class="dot"></span> Work <small>/ pluseshot</small></div>
     <div class="spacer"></div>
     <button class="pill" id="connPill"><span class="led"></span><span id="connText">Not connected</span></button>
-    <button class="btn ghost sm" id="contentBtn" title="Every heading, paragraph and label on the site">Content</button>
+    <button class="btn ghost sm" id="contentBtn" title="Every piece of copy on the site">Content</button>
     <button class="btn ghost sm" id="linksBtn" title="Instagram, YouTube, LinkedIn, Behance">Links</button>
-    <button class="btn ghost sm" id="profileBtn" title="Your profile photo in the About section">Profile</button>
-    <button class="btn ghost sm" id="resumeBtn" title="Your downloadable CV in the Resume section">Resume</button>
+    <button class="btn ghost sm" id="resumeBtn" title="The downloadable CV linked in your contact footer">Resume</button>
     <button class="btn ghost sm" id="msgBtn" title="Where contact form messages go">Messages</button>
     <button class="btn ghost sm" id="pwBtn" title="Change the dashboard password">Password</button>
     <button class="btn primary" id="publishBtn" disabled>Publish to site</button>
@@ -493,46 +504,16 @@
   </div>
 </div>
 
-<!-- profile photo -->
-<div class="modal" id="profileModal">
-  <div class="modal__scrim" data-x></div>
-  <div class="modal__box">
-    <h2>Profile photo</h2>
-    <p>Shows in the About section, in place of the "AC" mark. Publishing uploads the file straight into
-      <code style="font-family:var(--mono)">media/</code> in your repo — no third-party image host.</p>
-
-    <div style="border:1px solid var(--line);border-radius:12px;overflow:hidden;background:var(--sunk);margin-bottom:14px">
-      <img id="profilePreview" style="display:none;width:100%;max-height:260px;object-fit:cover" alt="">
-      <div id="profileEmpty" style="padding:28px 14px;text-align:center;color:var(--faint);font-size:12.5px">
-        No photo published yet.
-      </div>
-    </div>
-
-    <div class="f"><label>Choose an image</label>
-      <input type="file" id="profileFile" accept="image/*"></div>
-    <div class="hint">Any size works — it gets center-cropped into the About section's frame, so a fairly
-      centered subject looks best. A few hundred KB is plenty; huge files just slow down the page.</div>
-
-    <div style="display:flex;gap:10px;margin-top:14px">
-      <button class="btn danger sm" id="profileRemove">Remove photo</button>
-      <div class="spacer"></div>
-      <button class="btn primary" id="profileSave">Publish photo</button>
-    </div>
-
-    <div class="status" id="profileStatus"></div>
-  </div>
-</div>
-
 <!-- resume / CV -->
 <div class="modal" id="resumeModal">
   <div class="modal__scrim" data-x></div>
   <div class="modal__box">
     <h2>Resume / CV</h2>
-    <p>Powers the "Resume" section on the site — visitors can view or download it there. Publishing
-      uploads the file straight into <code style="font-family:var(--mono)">media/</code> in your repo —
-      no third-party file host.</p>
+    <p>Adds a "Download CV" link to the contact footer, beside your email and phone — the row only
+      appears once something is published here. Publishing uploads the file straight into
+      <code style="font-family:var(--mono)">media/</code> in your repo — no third-party file host.</p>
 
-    <div style="border:1px solid var(--line);border-radius:12px;padding:14px;background:var(--sunk);margin-bottom:14px">
+    <div style="border:1px solid var(--line);border-radius:8px;padding:14px;background:var(--sunk);margin-bottom:14px">
       <div id="resumeCurrent" style="display:none;align-items:center;gap:10px">
         <i class="fa-regular fa-file-pdf" style="font-size:20px;color:var(--accent)"></i>
         <a id="resumeCurrentLink" href="#" target="_blank" rel="noopener" class="mono" style="font-size:12.5px;word-break:break-all"></a>
@@ -562,9 +543,9 @@
   <div class="modal__scrim" data-x></div>
   <div class="modal__box wide">
     <h2>Site content</h2>
-    <p>Every heading, paragraph, button label and list item on the live site, in one place. Publishes to
-      <code style="font-family:var(--mono)">data/content.json</code>. Leave a field empty to keep whatever's
-      already hand-written in the page for it.</p>
+    <p>Every piece of copy on the live site, in the order you meet it scrolling down. Publishes to
+      <code style="font-family:var(--mono)">data/content.json</code>. Leave a field empty and the page
+      falls back to its built-in wording for that one line.</p>
 
     <div id="contentFields"></div>
 
@@ -839,7 +820,7 @@
     var v = items[sel];
     if (v.type === 'external') { renderInspExternal(v); return; }
 
-    var cats = ['Motion Design', 'Brand Film', 'Short Form', 'Explainer', 'Title Sequence', '3D', 'Real Estate'];
+    var cats = siteCategories();
 
     host.innerHTML =
     '<div class="insp__inner">' +
@@ -955,7 +936,7 @@
 
   function renderInspExternal(v) {
     var host = $('#insp');
-    var cats = ['Motion Design', 'Brand Film', 'Short Form', 'Explainer', 'Title Sequence', '3D', 'Real Estate'];
+    var cats = siteCategories();
     var kindLabel = v.externalKind === 'instagram' ? 'Instagram' : 'Behance';
 
     host.innerHTML =
@@ -1623,85 +1604,55 @@
   var CONTENT_PATH = 'data/content.json';
   var contentData = {};
 
-  // Every editable field on the live site: which key in content.json it
-  // maps to, its label here, and whether it needs a multi-line box.
+  // Every editable piece of copy on the live site, in the order you meet it
+  // scrolling down the page. Each entry maps to a key in content.json, and
+  // index.html reads exactly these keys — nothing here is decorative.
   var CONTENT_FIELDS = [
-    { group: 'Navigation', key: 'nav.brand', label: 'Logo text' },
-    { group: 'Navigation', key: 'nav.linkWork', label: 'Nav link — Work' },
-    { group: 'Navigation', key: 'nav.linkServices', label: 'Nav link — Services' },
-    { group: 'Navigation', key: 'nav.linkAbout', label: 'Nav link — About' },
-    { group: 'Navigation', key: 'nav.linkResume', label: 'Nav link — Resume' },
-    { group: 'Navigation', key: 'nav.linkProcess', label: 'Nav link — Process' },
-    { group: 'Navigation', key: 'nav.linkContact', label: 'Nav link — Contact' },
-    { group: 'Navigation', key: 'nav.headerCta', label: 'Header button' },
-    { group: 'Navigation', key: 'nav.mobileCta', label: 'Mobile menu button' },
+    { group: 'Header', key: 'nav.brand', label: 'Your name, top left' },
+    { group: 'Header', key: 'nav.cta', label: 'Button, top right' },
 
-    { group: 'Hero', key: 'hero.eyebrow', label: 'Eyebrow badge' },
-    { group: 'Hero', key: 'hero.titleLine1', label: 'Headline — line 1' },
-    { group: 'Hero', key: 'hero.titleLine1Accent', label: 'Headline — line 1 accent word' },
-    { group: 'Hero', key: 'hero.titleLine2', label: 'Headline — line 2' },
-    { group: 'Hero', key: 'hero.titleLine2Accent', label: 'Headline — line 2 accent word' },
-    { group: 'Hero', key: 'hero.sub', label: 'Subheading (HTML allowed)', big: true },
-    { group: 'Hero', key: 'hero.ctaPrimary', label: 'Primary button' },
-    { group: 'Hero', key: 'hero.ctaSecondary', label: 'Secondary button' },
-    { group: 'Hero', key: 'hero.marquee', label: 'Scrolling strip words (comma-separated)', big: true },
+    { group: 'Hero', key: 'hero.intro', label: 'Intro paragraph above your name', big: true,
+      hint: 'The short pitch in the top-left corner. Two or three lines reads best.' },
 
-    { group: 'Work section', key: 'work.eyebrow', label: 'Eyebrow' },
-    { group: 'Work section', key: 'work.title', label: 'Title' },
-    { group: 'Work section', key: 'work.sub', label: 'Subtitle' },
+    { group: 'Work', key: 'work.note', label: 'Note beside the "Work" heading', big: true },
 
-    { group: 'Services', key: 'services.eyebrow', label: 'Eyebrow' },
-    { group: 'Services', key: 'services.title', label: 'Title' },
-    { group: 'Services', key: 'services.item1Title', label: 'Card 1 — title' },
-    { group: 'Services', key: 'services.item1Body', label: 'Card 1 — body', big: true },
-    { group: 'Services', key: 'services.item2Title', label: 'Card 2 — title' },
-    { group: 'Services', key: 'services.item2Body', label: 'Card 2 — body', big: true },
-    { group: 'Services', key: 'services.item3Title', label: 'Card 3 — title' },
-    { group: 'Services', key: 'services.item3Body', label: 'Card 3 — body', big: true },
-    { group: 'Services', key: 'services.item4Title', label: 'Card 4 — title' },
-    { group: 'Services', key: 'services.item4Body', label: 'Card 4 — body', big: true },
+    { group: 'Clients', key: 'clients.list', label: 'Client names', big: true,
+      hint: 'Comma-separated. These scroll across the strip under the hero.' },
 
-    { group: 'About', key: 'about.eyebrow', label: 'Eyebrow' },
-    { group: 'About', key: 'about.title', label: 'Title (HTML — <br/> allowed)' },
-    { group: 'About', key: 'about.p1', label: 'Paragraph 1', big: true },
-    { group: 'About', key: 'about.p2', label: 'Paragraph 2 (HTML allowed)', big: true },
-    { group: 'About', key: 'about.li1', label: 'Bullet 1' },
-    { group: 'About', key: 'about.li2', label: 'Bullet 2' },
-    { group: 'About', key: 'about.li3', label: 'Bullet 3' },
+    { group: 'How I work', key: 'vision.lines', label: 'Scrolling lines', big: true, rows: 5,
+      hint: 'One line per row. Each gets its own animated tile as you scroll — add or remove as many as you like.' },
 
-    { group: 'Resume', key: 'resume.eyebrow', label: 'Eyebrow' },
-    { group: 'Resume', key: 'resume.title', label: 'Title' },
-    { group: 'Resume', key: 'resume.sub', label: 'Subtitle' },
-    { group: 'Resume', key: 'resume.downloadLabel', label: '"Download CV" button text' },
+    { group: 'Services', key: 'services.statement', label: 'Big statement', big: true },
+    { group: 'Services', key: 'services.note', label: 'Note beside the statement', big: true },
+    { group: 'Services', key: 'services.item1Name', label: 'Category 1 — name', cat: true },
+    { group: 'Services', key: 'services.item1Desc', label: 'Category 1 — description', big: true },
+    { group: 'Services', key: 'services.item2Name', label: 'Category 2 — name', cat: true },
+    { group: 'Services', key: 'services.item2Desc', label: 'Category 2 — description', big: true },
+    { group: 'Services', key: 'services.item3Name', label: 'Category 3 — name', cat: true },
+    { group: 'Services', key: 'services.item3Desc', label: 'Category 3 — description', big: true },
+    { group: 'Services', key: 'services.item4Name', label: 'Category 4 — name', cat: true },
+    { group: 'Services', key: 'services.item4Desc', label: 'Category 4 — description', big: true },
 
-    { group: 'Process', key: 'process.eyebrow', label: 'Eyebrow' },
-    { group: 'Process', key: 'process.title', label: 'Title' },
-    { group: 'Process', key: 'process.step1Num', label: 'Step 1 — number' },
-    { group: 'Process', key: 'process.step1Title', label: 'Step 1 — title' },
-    { group: 'Process', key: 'process.step1Body', label: 'Step 1 — body', big: true },
-    { group: 'Process', key: 'process.step2Num', label: 'Step 2 — number' },
-    { group: 'Process', key: 'process.step2Title', label: 'Step 2 — title' },
-    { group: 'Process', key: 'process.step2Body', label: 'Step 2 — body', big: true },
-    { group: 'Process', key: 'process.step3Num', label: 'Step 3 — number' },
-    { group: 'Process', key: 'process.step3Title', label: 'Step 3 — title' },
-    { group: 'Process', key: 'process.step3Body', label: 'Step 3 — body', big: true },
-    { group: 'Process', key: 'process.step4Num', label: 'Step 4 — number' },
-    { group: 'Process', key: 'process.step4Title', label: 'Step 4 — title' },
-    { group: 'Process', key: 'process.step4Body', label: 'Step 4 — body', big: true },
-
-    { group: 'Contact', key: 'contact.eyebrow', label: 'Eyebrow' },
-    { group: 'Contact', key: 'contact.title', label: 'Title' },
-    { group: 'Contact', key: 'contact.sub', label: 'Subtitle', big: true },
-    { group: 'Contact', key: 'contact.directTitle', label: '"Prefer direct?" heading' },
+    { group: 'Contact', key: 'contact.headline', label: 'Big headline' },
     { group: 'Contact', key: 'contact.email', label: 'Email address' },
     { group: 'Contact', key: 'contact.phone', label: 'Phone (as displayed)' },
-    { group: 'Contact', key: 'contact.socialTitle', label: '"Social" heading' },
-    { group: 'Contact', key: 'contact.statusLabel', label: 'Status label' },
-    { group: 'Contact', key: 'contact.statusText', label: 'Status text (HTML allowed)' },
 
-    { group: 'Footer', key: 'footer.brand', label: 'Footer name' },
-    { group: 'Footer', key: 'footer.tagline', label: 'Footer tagline' }
+    { group: 'Footer', key: 'footer.note', label: 'Copyright line' }
   ];
+
+  // The four category names double as the tags on your videos, so renaming
+  // one here leaves any video still carrying the old tag out of that block.
+  var CAT_HINT = 'Also the tag on your videos — rename it here and re-tag those videos to match.';
+
+  // Categories offered in the video inspector, read from whatever the
+  // Services fields above currently say so the two can't drift apart.
+  var DEFAULT_CATS = ['Motion design', 'Storytelling', 'Short-form reels', 'After Effects tools'];
+  function siteCategories() {
+    var names = [1, 2, 3, 4].map(function (i) {
+      return (getPath(contentData, 'services.item' + i + 'Name') || '').trim();
+    }).filter(Boolean);
+    return names.length ? names : DEFAULT_CATS;
+  }
 
   function getPath(obj, path) {
     return path.split('.').reduce(function (o, k) { return o && o[k] !== undefined ? o[k] : undefined; }, obj);
@@ -1724,9 +1675,11 @@
       var heading = '';
       if (f.group !== lastGroup) { heading = '<div class="content-group">' + f.group + '</div>'; lastGroup = f.group; }
       var input = f.big
-        ? '<textarea data-key="' + f.key + '" rows="2">' + esc(val) + '</textarea>'
+        ? '<textarea data-key="' + f.key + '" rows="' + (f.rows || 2) + '">' + esc(val) + '</textarea>'
         : '<input data-key="' + f.key + '" class="mono" value="' + esc(val) + '">';
-      return heading + '<div class="f"><label>' + f.label + '</label>' + input + '</div>';
+      var hint = f.hint || (f.cat ? CAT_HINT : '');
+      return heading + '<div class="f"><label>' + f.label + '</label>' + input +
+        (hint ? '<div class="hint">' + hint + '</div>' : '') + '</div>';
     }).join('');
   }
 
@@ -1796,9 +1749,7 @@
     }
   });
 
-  /* ---------- profile photo ------------------------------------------- */
-
-  var PROFILE_PATH = 'data/profile.json';
+  /* ---------- file uploads ------------------------------------------------ */
 
   function fileToBase64(file) {
     return new Promise(function (resolve, reject) {
@@ -1811,135 +1762,6 @@
       reader.readAsDataURL(file);
     });
   }
-
-  function showProfilePreview(src) {
-    var img = $('#profilePreview'), empty = $('#profileEmpty');
-    if (src) {
-      img.src = src; img.style.display = ''; empty.style.display = 'none';
-    } else {
-      img.removeAttribute('src'); img.style.display = 'none'; empty.style.display = '';
-    }
-  }
-
-  async function pullProfile() {
-    var status = $('#profileStatus');
-    status.className = 'status busy';
-    status.textContent = 'Reading current photo…';
-    try {
-      var remote = await getRemote(PROFILE_PATH);
-      var data = remote.text ? JSON.parse(remote.text) : {};
-      showProfilePreview(data.image || '');
-      status.className = 'status';
-      status.textContent = remote.text ? 'Loaded.' : 'No photo published yet.';
-    } catch (err) {
-      status.className = 'status err';
-      status.textContent = err.message || 'Could not read data/profile.json.';
-    }
-  }
-
-  $('#profileBtn').addEventListener('click', function () {
-    $('#profileModal').classList.add('on');
-    $('#profileStatus').textContent = '';
-    $('#profileFile').value = '';
-    if (cfg.token && cfg.owner && cfg.repo) pullProfile();
-  });
-  $('#profileModal').addEventListener('click', function (e) {
-    if (e.target.hasAttribute('data-x')) $('#profileModal').classList.remove('on');
-  });
-
-  $('#profileFile').addEventListener('change', function () {
-    var file = this.files[0];
-    if (file) showProfilePreview(URL.createObjectURL(file));
-  });
-
-  $('#profileSave').addEventListener('click', async function () {
-    var status = $('#profileStatus');
-    if (!cfg.token || !cfg.owner || !cfg.repo) {
-      status.className = 'status err';
-      status.textContent = 'Connect to your repo first — use the connection pill, top right.';
-      return;
-    }
-    var file = $('#profileFile').files[0];
-    if (!file) {
-      status.className = 'status err';
-      status.textContent = 'Choose an image first.';
-      return;
-    }
-
-    var btn = $('#profileSave');
-    btn.disabled = true;
-    status.className = 'status busy';
-    status.textContent = 'Uploading…';
-
-    try {
-      var ext = (file.name.split('.').pop() || 'jpg').toLowerCase().replace(/[^a-z0-9]/g, '') || 'jpg';
-      var imgPath = 'media/profile-' + Date.now() + '.' + ext;
-      var content = await fileToBase64(file);
-
-      var upload = await gh(filePath(imgPath), {
-        method: 'PUT',
-        body: JSON.stringify({ message: 'Update profile photo', content: content, branch: cfg.branch })
-      });
-      if (!upload.ok) throw new Error(ghError(upload));
-
-      var remote = await getRemote(PROFILE_PATH);
-      var body = {
-        message: 'Point profile photo at ' + imgPath,
-        content: b64enc(JSON.stringify({ image: imgPath }, null, 2)),
-        branch: cfg.branch
-      };
-      if (remote.sha) body.sha = remote.sha;
-      var res = await gh(filePath(PROFILE_PATH), { method: 'PUT', body: JSON.stringify(body) });
-      if (!res.ok) throw new Error(ghError(res));
-
-      status.className = 'status ok';
-      status.textContent = 'Published. Live on the site shortly.';
-      toast('Profile photo updated.', 'ok');
-      showProfilePreview(imgPath);
-    } catch (err) {
-      status.className = 'status err';
-      status.textContent = err.message || 'Could not publish the photo.';
-    } finally {
-      btn.disabled = false;
-    }
-  });
-
-  $('#profileRemove').addEventListener('click', async function () {
-    var status = $('#profileStatus');
-    if (!cfg.token || !cfg.owner || !cfg.repo) {
-      status.className = 'status err';
-      status.textContent = 'Connect to your repo first — use the connection pill, top right.';
-      return;
-    }
-
-    var btn = $('#profileRemove');
-    btn.disabled = true;
-    status.className = 'status busy';
-    status.textContent = 'Removing…';
-
-    try {
-      var remote = await getRemote(PROFILE_PATH);
-      var body = {
-        message: 'Remove profile photo',
-        content: b64enc(JSON.stringify({ image: '' }, null, 2)),
-        branch: cfg.branch
-      };
-      if (remote.sha) body.sha = remote.sha;
-      var res = await gh(filePath(PROFILE_PATH), { method: 'PUT', body: JSON.stringify(body) });
-      if (!res.ok) throw new Error(ghError(res));
-
-      status.className = 'status ok';
-      status.textContent = 'Removed — the About section falls back to the default mark.';
-      toast('Profile photo removed.', 'ok');
-      $('#profileFile').value = '';
-      showProfilePreview('');
-    } catch (err) {
-      status.className = 'status err';
-      status.textContent = err.message || 'Could not remove the photo.';
-    } finally {
-      btn.disabled = false;
-    }
-  });
 
   /* ---------- resume / CV ------------------------------------------------ */
 
@@ -2076,7 +1898,6 @@
       $('#pwModal').classList.remove('on');
       $('#msgModal').classList.remove('on');
       $('#linksModal').classList.remove('on');
-      $('#profileModal').classList.remove('on');
       $('#resumeModal').classList.remove('on');
       $('#contentModal').classList.remove('on');
     }
