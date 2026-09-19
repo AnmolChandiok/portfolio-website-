@@ -455,13 +455,13 @@
   <div class="modal__scrim" data-x></div>
   <div class="modal__box" style="max-width:640px">
     <h2>Messages</h2>
-    <p>Enquiries from your contact form \u2014 stored in <code style="font-family:var(--mono)">data/messages.json</code>
+    <p>Enquiries from your contact form — stored in <code style="font-family:var(--mono)">data/messages.json</code>
       in this repo. Nothing third-party, nothing external.</p>
 
     <div id="msgList" style="margin-top:16px"></div>
 
     <div class="note" id="msgSetupNote" style="margin-top:16px">
-      Not receiving anything yet? The form needs a one-time Worker deploy \u2014 see
+      Not receiving anything yet? The form needs a one-time Worker deploy — see
       <code style="font-family:var(--mono)">cloudflare-worker.js</code> in the repo root for the 5-minute setup,
       then paste its URL into <code style="font-family:var(--mono)">CONTACT_FORM_ENDPOINT</code> in
       <code style="font-family:var(--mono)">js/config.js</code>.
@@ -482,7 +482,7 @@
   <div class="modal__scrim" data-x></div>
   <div class="modal__box">
     <h2>Social links</h2>
-    <p>Publishes to <code style="font-family:var(--mono)">data/social.json</code> \u2014 the icons in your site\u2019s
+    <p>Publishes to <code style="font-family:var(--mono)">data/social.json</code> — the icons in your site’s
       footer read this. Leave any of these blank and that icon just hides itself rather than sitting there as a dead link.</p>
 
     <div class="f"><label>Instagram</label>
@@ -835,7 +835,7 @@
         '<input data-k="title" value="' + esc(v.title) + '" placeholder="What is this piece called?"></div>' +
 
       '<div class="f"><label>Description</label>' +
-        '<textarea data-k="description" rows="3" placeholder="A sentence or two about this project \u2014 shows under the video when someone plays it.">' + esc(v.description || '') + '</textarea></div>' +
+        '<textarea data-k="description" rows="3" placeholder="A sentence or two about this project — shows under the video when someone plays it.">' + esc(v.description || '') + '</textarea></div>' +
 
       '<div class="grid2">' +
         '<div class="f"><label>Client</label>' +
@@ -887,7 +887,7 @@
 
       '<div class="f"><label>Also on Instagram (optional)</label>' +
         '<input data-k="instagramUrl" class="mono" value="' + esc(v.instagramUrl || '') + '" placeholder="https://instagram.com/reel/...">' +
-        '<div class="hint">Instagram doesn\u2019t allow embedding a reel that plays in place like YouTube does \u2014 this just adds a link next to the player so people can open it there too.</div></div>' +
+        '<div class="hint">Instagram doesn’t allow embedding a reel that plays in place like YouTube does — this just adds a link next to the player so people can open it there too.</div></div>' +
 
       '<div class="switches">' +
         '<label class="sw"><input type="checkbox" data-k="featured"' + (v.featured ? ' checked' : '') + '> Featured</label>' +
@@ -945,12 +945,12 @@
       '<div class="card" data-aspect="' + esc(v.aspect) + '" id="cardPrev" style="background:var(--sunk)">' +
         (v.poster
           ? '<img src="' + esc(v.poster) + '" alt="">'
-          : '<div style="height:100%;display:grid;place-items:center;color:var(--faint);font-size:12.5px;padding:20px;text-align:center">No thumbnail yet \u2014 add a poster URL below</div>') +
+          : '<div style="height:100%;display:grid;place-items:center;color:var(--faint);font-size:12.5px;padding:20px;text-align:center">No thumbnail yet — add a poster URL below</div>') +
         '<span class="card__tag">' + kindLabel + '</span>' +
       '</div>' +
 
       '<div class="note" style="margin:14px 0">' +
-        kindLabel + ' doesn\u2019t allow embedding that plays in place, so this card opens ' + kindLabel +
+        kindLabel + ' doesn’t allow embedding that plays in place, so this card opens ' + kindLabel +
         ' itself in a new tab when clicked, instead of playing inline like your YouTube pieces.' +
       '</div>' +
 
@@ -980,7 +980,7 @@
           }).join('') +
         '</select></div>' +
 
-      '<div class="f"><label>Thumbnail (required \u2014 ' + kindLabel + ' won\u2019t give us one automatically)</label>' +
+      '<div class="f"><label>Thumbnail (required — ' + kindLabel + ' won’t give us one automatically)</label>' +
         '<input data-k="poster" class="mono" value="' + esc(v.poster || '') + '" placeholder="assets/posters/' + esc(v.id) + '.jpg">' +
         '<div class="hint">Screenshot the post and drop the image in your repo, then paste its path here.</div></div>' +
 
@@ -990,7 +990,7 @@
       '</div>' +
 
       '<div style="display:flex;gap:10px;padding-top:18px;border-top:1px solid var(--line)">' +
-        '<a class="btn ghost sm" href="' + esc(v.externalUrl) + '" target="_blank" rel="noopener">Open on ' + kindLabel + ' \u2197</a>' +
+        '<a class="btn ghost sm" href="' + esc(v.externalUrl) + '" target="_blank" rel="noopener">Open on ' + kindLabel + ' ↗</a>' +
         '<div class="spacer" style="flex:1"></div>' +
         '<button class="btn danger sm" id="delBtn">Remove</button>' +
       '</div>' +
@@ -1068,7 +1068,7 @@
       return;
     }
 
-    toast('That\u2019s not a link I recognise \u2014 paste a YouTube, Instagram, or Behance URL.', 'err');
+    toast('That’s not a link I recognise — paste a YouTube, Instagram, or Behance URL.', 'err');
     input.focus();
   }
 
@@ -1363,12 +1363,12 @@
     }
     if (next !== confirm) {
       status.className = 'status err';
-      status.textContent = 'New password and confirmation don\u2019t match.';
+      status.textContent = 'New password and confirmation don’t match.';
       return;
     }
     if (next.length < 6) {
       status.className = 'status err';
-      status.textContent = 'Pick something a little longer \u2014 6 characters minimum.';
+      status.textContent = 'Pick something a little longer — 6 characters minimum.';
       return;
     }
 
@@ -1381,21 +1381,21 @@
 
     if (!cfg.token || !cfg.owner || !cfg.repo) {
       status.className = 'status err';
-      status.textContent = 'Connect to your repo first \u2014 use the connection pill, top right.';
+      status.textContent = 'Connect to your repo first — use the connection pill, top right.';
       return;
     }
 
     var btn = $('#pwSave');
     btn.disabled = true;
     status.className = 'status busy';
-    status.textContent = 'Reading ' + path + '\u2026';
+    status.textContent = 'Reading ' + path + '…';
 
     try {
       var remote = await getRemote(path);
-      if (remote.text === null) throw new Error('Can\u2019t find ' + path + ' in the repo. Check the file path above.');
+      if (remote.text === null) throw new Error('Can’t find ' + path + ' in the repo. Check the file path above.');
 
       if (!/var PW_HASH = '[0-9a-f]{64}';/.test(remote.text)) {
-        throw new Error('Could not find the password line in ' + path + '. If you renamed or heavily edited the file, this won\u2019t find it.');
+        throw new Error('Could not find the password line in ' + path + '. If you renamed or heavily edited the file, this won’t find it.');
       }
 
       var newHash = await sha256Hex(next);
@@ -1404,7 +1404,7 @@
         "var PW_HASH = '" + newHash + "';"
       );
 
-      status.textContent = 'Saving\u2026';
+      status.textContent = 'Saving…';
 
       var body = {
         message: 'Update dashboard password',
@@ -1459,7 +1459,7 @@
     host.innerHTML = msgCache.map(function (m) {
       return '' +
       '<div class="msg-item' + (m.read ? '' : ' unread') + '" data-id="' + escHtml(m.id) + '">' +
-        '<button class="msg-item__del" data-del="' + escHtml(m.id) + '" title="Delete">\u2715</button>' +
+        '<button class="msg-item__del" data-del="' + escHtml(m.id) + '" title="Delete">✕</button>' +
         '<div class="msg-item__head">' +
           '<span class="msg-item__name">' + escHtml(m.name || 'Someone') + '</span>' +
           '<span class="msg-item__email">' + escHtml(m.email || '') + '</span>' +
@@ -1475,11 +1475,11 @@
     var status = $('#msgStatus');
     if (!cfg.token || !cfg.owner || !cfg.repo) {
       status.className = 'status err';
-      status.textContent = 'Connect to your repo first \u2014 use the connection pill, top right.';
+      status.textContent = 'Connect to your repo first — use the connection pill, top right.';
       return;
     }
     status.className = 'status busy';
-    status.textContent = 'Checking for messages\u2026';
+    status.textContent = 'Checking for messages…';
     try {
       var remote = await getRemote(MSG_PATH);
       msgSha = remote.sha;
@@ -1537,13 +1537,13 @@
   async function pullLinks() {
     var status = $('#linksStatus');
     status.className = 'status busy';
-    status.textContent = 'Reading current links\u2026';
+    status.textContent = 'Reading current links…';
     try {
       var remote = await getRemote(SOCIAL_PATH);
       var data = remote.text ? JSON.parse(remote.text) : {};
       Object.keys(SOCIAL_FIELDS).forEach(function (k) { $(SOCIAL_FIELDS[k]).value = data[k] || ''; });
       status.className = 'status';
-      status.textContent = remote.text ? 'Loaded.' : 'No links published yet \u2014 these are all blank.';
+      status.textContent = remote.text ? 'Loaded.' : 'No links published yet — these are all blank.';
     } catch (err) {
       status.className = 'status err';
       status.textContent = err.message || 'Could not read data/social.json.';
@@ -1564,7 +1564,7 @@
     var status = $('#linksStatus');
     if (!cfg.token || !cfg.owner || !cfg.repo) {
       status.className = 'status err';
-      status.textContent = 'Connect to your repo first \u2014 use the connection pill, top right.';
+      status.textContent = 'Connect to your repo first — use the connection pill, top right.';
       return;
     }
 
@@ -1574,7 +1574,7 @@
     var btn = $('#linksSave');
     btn.disabled = true;
     status.className = 'status busy';
-    status.textContent = 'Publishing\u2026';
+    status.textContent = 'Publishing…';
 
     try {
       var remote = await getRemote(SOCIAL_PATH);

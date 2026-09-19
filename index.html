@@ -6,6 +6,19 @@
 <title>Anmol Chandiok — Motion designer & video editor</title>
 <meta name="description" content="Anmol Chandiok is a motion designer and video editor in Delhi NCR, running the studio Pluseshot.">
 <meta name="theme-color" content="#EDEDEA">
+<script>
+/* Settles the theme before the first paint. Without this, a visitor whose
+   own device is set to dark gets a flash of the dark palette (the
+   prefers-color-scheme rule below applies immediately) before the script
+   at the bottom of the page can put the light default in place. Light is
+   the default for everyone; a returning visitor gets whatever they last
+   chose with the toggle. */
+(function(){
+  var t = null;
+  try { t = localStorage.getItem("anmol-theme"); } catch (e) {}
+  document.documentElement.setAttribute("data-theme", t === "dark" ? "dark" : "light");
+})();
+</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&display=swap" rel="stylesheet">
@@ -19,6 +32,8 @@
   :root:not([data-theme="light"]){ --bg:#101010; --ink:#F1F1EE; --muted:#9A9A95; --line:#2B2B2A; --card:#1B1B1A; }
 }
 :root[data-theme="dark"]{ --bg:#101010; --ink:#F1F1EE; --muted:#9A9A95; --line:#2B2B2A; --card:#1B1B1A; }
+html[data-theme="light"]{ color-scheme:light; }
+html[data-theme="dark"]{ color-scheme:dark; }
 
 *{box-sizing:border-box;margin:0;padding:0}
 html.lenis,html.lenis body{height:auto}
@@ -34,6 +49,23 @@ img,canvas{display:block;max-width:100%}
 .btn-line{display:inline-flex;align-items:center;gap:8px;padding:9px 16px;border-radius:999px;border:1px solid var(--line);font-size:15px;white-space:nowrap;transition:background .2s,color .2s,border-color .2s}
 .btn-line:hover{background:var(--ink);color:var(--bg);border-color:var(--ink)}
 
+/* Theme + smart-preview transitions, matching everywhere the "window" touches */
+html,body,.nav,.nav a,.pill,.theme-toggle,.vcard,.work,.hero,main,footer,.aw,.aw-head,.chip,.jgrid .vmeta,.lb-title,.lb-close,section{
+  transition: background-color .55s ease, color .55s ease, border-color .55s ease, box-shadow .55s ease, fill .55s ease, stroke .55s ease;
+}
+::view-transition-old(root),
+::view-transition-new(root){
+  animation-duration:.55s;
+  animation-timing-function:cubic-bezier(.22,1,.36,1);
+}
+@media (prefers-reduced-motion:reduce){
+  html,body,.nav,.nav a,.pill,.theme-toggle,.vcard,.work,.hero,main,footer,.aw,.aw-head,.chip,.jgrid .vmeta,.lb-title,.lb-close,section{
+    transition:none;
+  }
+  ::view-transition-old(root),
+  ::view-transition-new(root){animation:none !important;}
+}
+
 /* ---------- Nav ---------- */
 .nav{position:fixed;inset:0 0 auto 0;z-index:30;display:flex;align-items:center;justify-content:space-between;gap:16px;padding:calc(12px + env(safe-area-inset-top)) var(--pad) 12px;background:color-mix(in srgb,var(--bg) 84%,transparent);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);transition:transform .5s var(--e)}
 .nav.hide{transform:translateY(-110%)}
@@ -45,6 +77,17 @@ img,canvas{display:block;max-width:100%}
 .nav-right{display:flex;align-items:center;gap:8px}
 .pill{background:var(--ink);color:var(--bg);padding:9px 18px;border-radius:999px;font-size:15px;font-weight:500;white-space:nowrap}
 .menu-btn{display:none;padding:9px 14px;border-radius:999px;border:1px solid var(--line);font-size:15px}
+
+/* Theme toggle button — part of the permanent nav now */
+.theme-toggle{
+  width:40px;height:40px;border-radius:999px;border:1px solid var(--line);
+  display:inline-grid;place-items:center;color:var(--ink);background:transparent;
+  transition:background .2s,border-color .2s,color .2s;flex-shrink:0;
+}
+.theme-toggle:hover{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.theme-toggle svg{width:16px;height:16px;display:block}
+html[data-theme="light"] .theme-toggle .icon-sun{display:none}
+html[data-theme="dark"] .theme-toggle .icon-moon{display:none}
 
 main{position:relative;z-index:2;background:var(--bg)}
 
@@ -64,6 +107,64 @@ button.vcard:hover .vplay{background:var(--accent);transform:scale(1.08)}
 .jgrid{position:relative}
 .jgrid .vcard{position:absolute}
 #workGrid .vcard,#awGrid .vcard{border-radius:12px}
+
+/* ---------- Cinema hover: dark room, one film, no player chrome (the "window") ---------- */
+.smart-hover-blur{
+  /* Above the All-work panel (60) and the nav (30) so those blur too,
+     below the lift and the click-through lightbox (80). */
+  position:fixed;inset:0;z-index:70;
+  background:rgba(4,4,4,.84);
+  backdrop-filter:blur(14px) saturate(.55);
+  -webkit-backdrop-filter:blur(14px) saturate(.55);
+  opacity:0;pointer-events:none;
+  transition:opacity .4s ease;
+}
+.smart-hover-blur.on{opacity:1;}
+.smart-preview-lift{
+  position:fixed;z-index:75;overflow:hidden;pointer-events:none;
+  border-radius:14px;background:#000;
+  box-shadow:0 0 0 1px rgba(255,255,255,.14), 0 40px 110px rgba(0,0,0,.68), 0 10px 34px rgba(0,0,0,.45);
+  opacity:0;
+  transform-origin:center center;
+  /* Rises toward you: starts pushed back and tilted, settles perfectly
+     flat — so the depth is in the movement, and the video is never left
+     sitting at an angle that distorts it. */
+  transform:perspective(1400px) translate3d(0,16px,-90px) rotateX(9deg) scale(.94);
+  transition:transform .48s cubic-bezier(.22,1,.36,1),opacity .32s ease,
+             left .48s cubic-bezier(.22,1,.36,1),top .48s cubic-bezier(.22,1,.36,1),
+             width .48s cubic-bezier(.22,1,.36,1),height .48s cubic-bezier(.22,1,.36,1);
+}
+.smart-preview-lift.on{
+  transform:perspective(1400px) translate3d(0,0,0) rotateX(0deg) scale(1);
+  opacity:1;
+}
+/* The box already carries the video's own shape, so the player is given
+   the exact width and extra height instead of being zoomed on both axes.
+   YouTube then fits the video to the width — landing it exactly on the
+   visible box — while its title bar and controls sit in the overflow
+   above and below and get clipped. Full bleed, nothing cropped, and no
+   squashing of 9:16 reels the way the old both-axis zoom did. */
+.smart-preview-lift iframe{
+  position:absolute;left:50%;top:50%;
+  width:100%;height:142%;
+  transform:translate(-50%,-50%);
+  border:0;background:#000;pointer-events:none;
+}
+.vcard.smart-active{opacity:0;}
+.vcard.smart-active .vplay{opacity:0;}
+
+/* Featured videos play muted in their own card once on screen (desktop). */
+.vcard .vinline{
+  position:absolute;left:50%;top:50%;
+  width:100%;height:142%;
+  transform:translate(-50%,-50%);
+  border:0;background:#000;
+  opacity:0;pointer-events:none;transition:opacity .45s ease;
+}
+.vcard.is-inline-playing .vinline{opacity:1}
+.vcard.is-inline-playing .vmedia img{opacity:0}
+.vcard.is-inline-playing .vplay{opacity:0}
+.vcard .vmedia img{transition:transform .7s var(--e),opacity .45s ease}
 
 /* ---------- Hero ---------- */
 .hero{display:grid;grid-template-columns:1.35fr 1fr;gap:clamp(16px,2vw,32px);height:100svh;min-height:640px;padding:0 var(--pad);overflow:hidden}
@@ -243,6 +344,15 @@ section.block{padding:clamp(64px,9vw,140px) var(--pad)}
 .lb-title span{opacity:.6;margin-left:8px}
 .lb-close{position:absolute;top:calc(14px + env(safe-area-inset-top));right:16px;color:#F1F1EE;border:1px solid rgba(255,255,255,.3);padding:8px 14px;border-radius:999px;font-size:14px}
 .lb-close:hover{background:#F1F1EE;color:#000}
+.lightbox.smart-lightbox{
+  background:rgba(4,4,4,.9);
+  backdrop-filter:blur(18px) saturate(.6);
+  -webkit-backdrop-filter:blur(18px) saturate(.6);
+}
+.smart-lightbox .lb-frame{
+  border-radius:16px;
+  box-shadow:0 40px 120px rgba(0,0,0,.55), 0 0 0 1px rgba(255,255,255,.1);
+}
 
 /* ---------- Tablet ---------- */
 @media (max-width:980px){
@@ -288,6 +398,37 @@ section.block{padding:clamp(64px,9vw,140px) var(--pad)}
   .intro{font-size:17px}
   .aw-head h2{font-size:34px}
   .contact{border-radius:20px 20px 0 0}
+
+  #lightbox{
+    padding:0 !important;gap:0 !important;
+    align-items:flex-end !important;justify-content:center !important;
+    background:rgba(4,4,5,.90) !important;
+  }
+  #lightbox .lb-frame{
+    width:min(100vw, calc(76svh * 16 / 9)) !important;
+    max-width:100vw !important;max-height:76svh !important;
+    aspect-ratio:16/9 !important;
+    border-radius:18px 18px 0 0 !important;margin:0 auto !important;transform:none !important;
+  }
+  #lightbox .lb-frame.is-vertical{
+    width:min(100vw, calc(76svh * 9 / 16)) !important;
+    height:min(76svh, calc(100vw * 16 / 9)) !important;
+    aspect-ratio:9/16 !important;
+  }
+  #lightbox .lb-title{
+    width:100%;box-sizing:border-box;margin:0 !important;
+    padding:14px 66px 14px 16px !important;min-height:54px;
+    display:flex;align-items:center;
+    background:var(--card,#1b1b1a) !important;color:var(--ink,#f1f1ee) !important;
+    border-radius:0 0 18px 18px;text-align:left !important;
+    font-size:14px !important;line-height:1.35;
+  }
+  #lightbox .lb-close{
+    top:auto !important;bottom:calc(10px + env(safe-area-inset-bottom)) !important;
+    right:14px !important;z-index:5;padding:8px 12px !important;border-radius:999px !important;
+    background:rgba(0,0,0,.35) !important;color:#F1F1EE !important;
+    border-color:rgba(255,255,255,.22) !important;
+  }
 }
 @media (prefers-reduced-motion:reduce){
   .col,.name{animation:none}
@@ -312,6 +453,10 @@ section.block{padding:clamp(64px,9vw,140px) var(--pad)}
     <a href="#contact">Contact</a>
   </nav>
   <div class="nav-right">
+    <button class="theme-toggle" id="themeToggle" type="button" title="Toggle theme">
+      <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 14.5A8.5 8.5 0 1 1 9.5 3 7 7 0 0 0 21 14.5z"/></svg>
+      <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
+    </button>
     <a class="pill" href="#contact" id="navCta">Let's talk</a>
     <button class="menu-btn" id="menuBtn" type="button" aria-expanded="false" aria-controls="navLinks">Menu</button>
   </div>
@@ -454,6 +599,37 @@ const easeOut=x=>1-Math.pow(1-x,3);
 const $=id=>document.getElementById(id);
 function place(el,x,y,w,h){ Object.assign(el.style,{left:x+"px",top:y+"px",width:w+"px",height:h+"px"}); }
 
+/* ---------- Theme toggle: light default, remembers preference, View
+   Transition crossfade to match the "window" look ---------- */
+const root=document.documentElement;
+const THEME_KEY="anmol-theme";
+function currentTheme(){ return root.getAttribute("data-theme")==="dark"?"dark":"light"; }
+let themeReady=false;
+function applyTheme(theme){
+  const next=theme==="dark"?"dark":"light";
+  root.setAttribute("data-theme",next);
+  try{ localStorage.setItem(THEME_KEY,next); }catch(e){}
+  const meta=document.querySelector('meta[name="theme-color"]');
+  if(meta) meta.setAttribute("content",next==="dark"?"#101010":"#EDEDEA");
+  const btn=$("themeToggle");
+  if(btn){
+    const toDark=next==="light";
+    btn.setAttribute("aria-label",toDark?"Switch to dark mode":"Switch to light mode");
+    btn.title=toDark?"Switch to dark mode":"Switch to light mode";
+  }
+}
+function setTheme(theme){
+  if(themeReady && document.startViewTransition && !REDUCED) document.startViewTransition(()=>applyTheme(theme));
+  else applyTheme(theme);
+}
+(function bootTheme(){
+  let saved=null;
+  try{ saved=localStorage.getItem(THEME_KEY); }catch(e){}
+  applyTheme(saved==="dark"||saved==="light"?saved:"light");
+  themeReady=true;
+})();
+$("themeToggle").addEventListener("click",()=>setTheme(currentTheme()==="dark"?"light":"dark"));
+
 /* ---------- Videos ---------- */
 let VIDEOS=[], REAL=[];
 function setVideos(raw){
@@ -478,6 +654,12 @@ function videoCard(v,{meta=false,decorative=false}={}){
   el.className="vcard"+(v.id?"":" is-empty");
   el.style.setProperty("--ratio",v.vertical?"9/16":"16/9");
   el._ratio=v.ratio;
+  if(v.id){
+    el.dataset.videoId=v.id;
+    // "Featured" in the dashboard is what opts a video into playing by
+    // itself on the page; previewMode "none" is the explicit opt-out.
+    if(v.featured && v.previewMode!=="none") el.dataset.autoplay="1";
+  }
   const media=document.createElement("div"); media.className="vmedia"; el.appendChild(media);
   if(v.id){
     media.appendChild(thumbImg(v));
@@ -641,6 +823,8 @@ function buildWorkGrid(){
   workCards=featured.map(v=>{ const c=videoCard(v,{meta:true}); workGrid.appendChild(c); return c; });
   $("workCount").textContent=`(${REAL.length||VIDEOS.length})`;
   layoutWork();
+  attachSmartHover(workGrid);
+  attachFeaturedAutoplay(workGrid);
 }
 function layoutWork(){
   const lim=innerWidth<640?PHONE_WORK_LIMIT:workCards.length;
@@ -832,6 +1016,9 @@ const lb=$("lightbox"), lbFrame=$("lbFrame"), lbTitle=$("lbTitle");
 let lbReturn=null;
 function openLightbox(v,from){
   lbReturn=from||null;
+  // The heavy backdrop blur is a desktop treatment only — phones get the
+  // plain sheet-style player from the media query instead.
+  if(canHover.matches) lb.classList.add("smart-lightbox");
   lbFrame.classList.toggle("is-vertical",v.vertical);
   lbFrame.innerHTML=""; const f=document.createElement("iframe");
   f.src=ytEmbed(v.id); f.title=v.title; f.allow="autoplay; encrypted-media; picture-in-picture; fullscreen"; f.allowFullscreen=true;
@@ -845,6 +1032,7 @@ function closeLightbox(){
   lb.classList.remove("open"); lbFrame.innerHTML="";
   if(!aw.classList.contains("open")) lockPage(false);
   if(lbReturn) lbReturn.focus({preventScroll:true});
+  setTimeout(reconcileSmartHover,30);
 }
 $("lbClose").addEventListener("click",closeLightbox);
 lb.addEventListener("click",e=>{ if(e.target===lb) closeLightbox(); });
@@ -870,6 +1058,8 @@ function renderAll(){
   awCards=list.map(v=>{ const c=videoCard(v,{meta:true}); awGrid.appendChild(c); return c; });
   justify(awGrid,awCards);
   $("awBody").scrollTop=0;
+  attachSmartHover(awGrid);
+  attachFeaturedAutoplay(awGrid);
 }
 function openAll(from){
   awReturn=from||null; setMenu(false);
@@ -888,6 +1078,160 @@ addEventListener("keydown",e=>{
   else if(nav.classList.contains("menu-open")) setMenu(false);
   else closeNiche();
 });
+
+/* ---------- Smart hover preview (the "window"): desktop only — hover
+   lifts a .vcard into a larger floating film with a muted YouTube loop,
+   dimming and blurring the rest of the page behind it. Click still opens
+   the real lightbox, unaffected — this only adds the preview. ---------- */
+(function(){
+  const desktop=matchMedia("(hover:hover) and (pointer:fine)");
+  const blur=document.createElement("div");
+  blur.className="smart-hover-blur"; blur.setAttribute("aria-hidden","true");
+  // Never put the blur layer in front of a phone — its backdrop-filter
+  // costs compositing work even while it's sitting at opacity 0.
+  if(desktop.matches) document.body.appendChild(blur);
+  let activeCard=null, sourceCard=null, lastX=-1, lastY=-1;
+  document.addEventListener("mousemove",e=>{ lastX=e.clientX; lastY=e.clientY; },{passive:true});
+
+  function ytPreview(id){
+    const p={autoplay:1,mute:1,controls:0,disablekb:1,iv_load_policy:3,playsinline:1,rel:0,modestbranding:1,fs:0,cc_load_policy:0,loop:1,playlist:id};
+    return "https://www.youtube-nocookie.com/embed/"+encodeURIComponent(id)+"?"+Object.keys(p).map(k=>k+"="+encodeURIComponent(p[k])).join("&");
+  }
+  window.ytPreviewURL=ytPreview;
+
+  /* Grows the card into something comfortably watchable without taking
+     over the screen — the blurred page stays visible around it. The card's
+     own width:height is carried through exactly, so a 9:16 reel grows as a
+     9:16 reel instead of being stretched toward the landscape shape. */
+  function grownRect(r0){
+    const ar=r0.width/r0.height, margin=28;
+    const maxW=Math.min(innerWidth-margin*2, innerWidth*0.72);
+    const maxH=Math.min(innerHeight-margin*2, innerHeight*0.70);
+    // Aim both shapes at the same comfortable height rather than a flat
+    // multiplier — otherwise a reel, which starts narrow, grows to
+    // something still too small to actually watch.
+    let h=Math.min(innerHeight*0.62, r0.height*2.6), w=h*ar;
+    if(h>maxH){ h=maxH; w=h*ar; }
+    if(w>maxW){ w=maxW; h=w/ar; }
+    if(w<r0.width){ w=r0.width; h=r0.height; }   // never end up smaller than the card
+    const cx=r0.left+r0.width/2, cy=r0.top+r0.height/2;
+    return {
+      left:Math.min(Math.max(cx-w/2,margin), Math.max(margin,innerWidth-w-margin)),
+      top: Math.min(Math.max(cy-h/2,margin), Math.max(margin,innerHeight-h-margin)),
+      width:w, height:h
+    };
+  }
+
+  function startPreview(card){
+    if(!card||card._smartPreview) return;
+    const id=card.dataset.videoId; if(!id) return;
+    const r=card.getBoundingClientRect();
+    const lift=document.createElement("div");
+    lift.className="smart-preview-lift";
+    lift.style.left=r.left+"px"; lift.style.top=r.top+"px";
+    lift.style.width=r.width+"px"; lift.style.height=r.height+"px";
+    const frame=document.createElement("iframe");
+    frame.src=ytPreview(id);
+    frame.allow="autoplay; encrypted-media; picture-in-picture";
+    frame.setAttribute("tabindex","-1"); frame.setAttribute("aria-hidden","true");
+    lift.appendChild(frame);
+    document.body.appendChild(lift);
+    card._smartPreview=lift;
+    void lift.offsetWidth;                        // commit the start box so the grow animates
+    requestAnimationFrame(()=>{
+      if(card._smartPreview!==lift) return;
+      const g=grownRect(r);
+      lift.style.left=g.left+"px"; lift.style.top=g.top+"px";
+      lift.style.width=g.width+"px"; lift.style.height=g.height+"px";
+      lift.classList.add("on");
+    });
+  }
+  function stopPreview(card){
+    if(!card||!card._smartPreview) return;
+    const lift=card._smartPreview; card._smartPreview=null;
+    // Settle back onto the card it grew out of, then clean up.
+    const r=card.getBoundingClientRect();
+    lift.classList.remove("on");
+    lift.style.left=r.left+"px"; lift.style.top=r.top+"px";
+    lift.style.width=r.width+"px"; lift.style.height=r.height+"px";
+    setTimeout(()=>{ if(lift.parentNode) lift.remove(); },340);
+  }
+  function activate(card){
+    if(!card||!desktop.matches) return;
+    if(lb.classList.contains("open")) return;
+    if(activeCard&&activeCard!==card) deactivate(activeCard);
+    activeCard=card;
+    root.classList.add("smart-preview-on");
+    card.classList.add("smart-active");
+    blur.classList.add("on");
+    if(card._stopInline) card._stopInline();   // the lift takes over from the in-card player
+    startPreview(card);
+  }
+  function deactivate(card){
+    if(!card||card._smartLocked) return;
+    card.classList.remove("smart-active");
+    stopPreview(card);
+    if(activeCard===card) activeCard=null;
+    if(!activeCard){ blur.classList.remove("on"); root.classList.remove("smart-preview-on"); }
+    if(card._startInline&&card._onScreen) card._startInline();
+  }
+  function attachOne(card){
+    if(card._smartAttached||!card.classList.contains("vcard")||!card.dataset.videoId) return;
+    card._smartAttached=true;
+    card.addEventListener("mouseenter",()=>activate(card));
+    card.addEventListener("mouseleave",()=>deactivate(card));
+  }
+  window.attachSmartHover=function(container){ container.querySelectorAll(".vcard").forEach(attachOne); };
+
+  /* Featured videos play by themselves, muted, inside their own card once
+     they're actually on screen — and stop again when they scroll off, so
+     only what's visible is ever running. Desktop only: a phone shouldn't be
+     asked to run several YouTube players at once. */
+  window.attachFeaturedAutoplay=function(container){
+    if(!desktop.matches) return;
+    container.querySelectorAll('.vcard[data-autoplay="1"]').forEach(card=>{
+      if(card._autoWired) return;
+      card._autoWired=true;
+      const id=card.dataset.videoId; if(!id) return;
+      let frame=null;
+      card._onScreen=false;
+      card._startInline=function(){
+        if(frame||card.classList.contains("smart-active")) return;
+        frame=document.createElement("iframe");
+        frame.className="vinline";
+        frame.src=ytPreview(id);
+        frame.allow="autoplay; encrypted-media";
+        frame.setAttribute("tabindex","-1");
+        frame.setAttribute("aria-hidden","true");
+        card.querySelector(".vmedia").appendChild(frame);
+        requestAnimationFrame(()=>card.classList.add("is-inline-playing"));
+      };
+      card._stopInline=function(){
+        card.classList.remove("is-inline-playing");
+        if(!frame) return;
+        const f=frame; frame=null;
+        setTimeout(()=>{ if(f.parentNode) f.remove(); },320);
+      };
+      new IntersectionObserver(entries=>entries.forEach(e=>{
+        card._onScreen=e.isIntersecting&&e.intersectionRatio>0.55;
+        if(card._onScreen) card._startInline(); else card._stopInline();
+      }),{threshold:[0,0.55,1]}).observe(card);
+    });
+  };
+
+  document.addEventListener("click",e=>{
+    const card=e.target.closest&&e.target.closest(".vcard");
+    if(!card||!card.classList.contains("smart-active")) return;
+    sourceCard=card; card._smartLocked=true;
+  },true);
+
+  window.reconcileSmartHover=function(){
+    const card=sourceCard; sourceCard=null; if(!card) return;
+    card._smartLocked=false;
+    const el=document.elementFromPoint(lastX,lastY);
+    if(el&&el.closest&&el.closest(".vcard")===card) activate(card); else deactivate(card);
+  };
+})();
 
 /* ---------- Scroll effects ---------- */
 const nameEl=$("name"), heroTop=$("heroTop"), wrapA=$("wrapA"), wrapB=$("wrapB");
