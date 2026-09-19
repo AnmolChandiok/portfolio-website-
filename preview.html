@@ -94,10 +94,7 @@ html[data-theme="dark"] .theme-toggle .icon-moon{display:none}
   'use strict';
   const root = document.documentElement;
   const THEME_KEY = 'anmol-theme';
-
-  function currentTheme(){
-    return root.getAttribute('data-theme') === 'dark' ? 'dark' : 'light';
-  }
+  function currentTheme(){ return root.getAttribute('data-theme') === 'dark' ? 'dark' : 'light'; }
   function setTheme(theme){
     const next = theme === 'dark' ? 'dark' : 'light';
     root.setAttribute('data-theme', next);
@@ -131,18 +128,13 @@ html[data-theme="dark"] .theme-toggle .icon-moon{display:none}
     btn.addEventListener('click', function(){ setTheme(currentTheme()==='dark'?'light':'dark'); });
     setTheme(currentTheme());
   }
-
   const desktop = matchMedia('(hover:hover) and (pointer:fine)');
   const blur = document.createElement('div');
   blur.className = 'smart-hover-blur';
   blur.setAttribute('aria-hidden','true');
   document.body.appendChild(blur);
-
-  let activeCard = null;
-  let sourceCard = null;
-  let lastX = -1, lastY = -1;
+  let activeCard = null, sourceCard = null, lastX = -1, lastY = -1;
   document.addEventListener('mousemove', function(e){ lastX = e.clientX; lastY = e.clientY; }, {passive:true});
-
   function videoId(card){
     if(card.dataset.videoId) return card.dataset.videoId;
     const img = card.querySelector('.vmedia img');
@@ -156,13 +148,10 @@ html[data-theme="dark"] .theme-toggle .icon-moon{display:none}
   }
   function startPreview(card){
     if(!card || card._smartPreview) return;
-    const id = videoId(card);
-    if(!id) return;
+    const id = videoId(card); if(!id) return;
     card.dataset.videoId = id;
     const r = card.getBoundingClientRect();
-    const scale = 1.14;
-    const w = r.width * scale;
-    const h = r.height * scale;
+    const scale = 1.14, w = r.width * scale, h = r.height * scale;
     const lift = document.createElement('div');
     lift.className = 'smart-preview-lift';
     lift.style.left = (r.left - (w - r.width) / 2) + 'px';
@@ -200,47 +189,33 @@ html[data-theme="dark"] .theme-toggle .icon-moon{display:none}
     card.classList.remove('smart-active');
     stopPreview(card);
     if(activeCard === card) activeCard = null;
-    if(!activeCard){
-      blur.classList.remove('on');
-      root.classList.remove('smart-preview-on');
-    }
+    if(!activeCard){ blur.classList.remove('on'); root.classList.remove('smart-preview-on'); }
   }
   function attach(card){
     if(card._smartAttached || !card.classList.contains('vcard')) return;
     card._smartAttached = true;
-    if(!card.dataset.videoId){
-      const id = videoId(card);
-      if(id) card.dataset.videoId = id;
-    }
+    if(!card.dataset.videoId){ const id = videoId(card); if(id) card.dataset.videoId = id; }
     card.addEventListener('mouseenter', function(){ activate(card); });
     card.addEventListener('mouseleave', function(){ deactivate(card); });
   }
-  function attachAll(){
-    document.querySelectorAll('.vcard').forEach(attach);
-  }
+  function attachAll(){ document.querySelectorAll('.vcard').forEach(attach); }
   document.addEventListener('click', function(e){
     const card = e.target.closest && e.target.closest('.vcard');
     if(!card || !card.classList.contains('smart-active')) return;
-    sourceCard = card;
-    card._smartLocked = true;
+    sourceCard = card; card._smartLocked = true;
   }, true);
-
   const lb = document.getElementById('lightbox');
   const close = document.getElementById('lbClose');
   function reconcile(){
-    const card = sourceCard;
-    sourceCard = null;
-    if(!card) return;
+    const card = sourceCard; sourceCard = null; if(!card) return;
     card._smartLocked = false;
     const el = document.elementFromPoint(lastX, lastY);
-    if(el && el.closest && el.closest('.vcard') === card) activate(card);
-    else deactivate(card);
+    if(el && el.closest && el.closest('.vcard') === card) activate(card); else deactivate(card);
   }
   if(close) close.addEventListener('click', function(){ setTimeout(reconcile, 30); });
   if(lb) new MutationObserver(function(){
     if(!lb.classList.contains('open') && sourceCard) setTimeout(reconcile, 20);
   }).observe(lb, {attributes:true, attributeFilter:['class']});
-
   function isPortrait(card){
     if(typeof card._ratio === 'number') return card._ratio < 1;
     return String(card.style.getPropertyValue('--ratio')||'').replace(/\s/g,'') === '9/16';
@@ -259,10 +234,8 @@ html[data-theme="dark"] .theme-toggle .icon-moon{display:none}
     if(!W || !cards.length){ grid.style.height = '0px'; return; }
     const gap = innerWidth < 640 ? 10 : 16;
     let y = 0;
-
     if(innerWidth < 720){
-      const queue = cards.slice();
-      const rows = [];
+      const queue = cards.slice(); const rows = [];
       while(queue.length){
         const c = queue.shift();
         if(!isPortrait(c)){ rows.push([c]); continue; }
@@ -282,20 +255,13 @@ html[data-theme="dark"] .theme-toggle .icon-moon{display:none}
       grid.style.height = Math.max(0,y-gap)+'px';
       return;
     }
-
     const land = cards.filter(c => !isPortrait(c));
     const port = cards.filter(c => isPortrait(c));
     const used = new Set();
-    function take(list){
-      const c = list.find(item => !used.has(item));
-      if(c) used.add(c);
-      return c || null;
-    }
-
+    function take(list){ const c = list.find(item => !used.has(item)); if(c) used.add(c); return c || null; }
     while(used.size < cards.length){
       const freeL = land.filter(c => !used.has(c));
       const freeP = port.filter(c => !used.has(c));
-
       if(freeL.length >= 2 && freeP.length >= 1){
         const a = take(land), b = take(land), p = take(port);
         const leftW = Math.round(W * 0.64);
@@ -307,10 +273,8 @@ html[data-theme="dark"] .theme-toggle .icon-moon{display:none}
         placeCard(a, 0, y, leftW, landH);
         placeCard(b, 0, y + landH + gap, leftW, landH);
         placeCard(p, portX, y, portW, totalH);
-        y += totalH + gap;
-        continue;
+        y += totalH + gap; continue;
       }
-
       if(freeL.length >= 1 && freeP.length >= 1){
         const a = take(land), p = take(port);
         const portW = Math.round(W * 0.34);
@@ -320,62 +284,54 @@ html[data-theme="dark"] .theme-toggle .icon-moon{display:none}
         const portY = y + Math.max(0, (landH - portH) / 2);
         placeCard(a, 0, y, landW, landH);
         placeCard(p, landW + gap, portY, portW, portH);
-        y += landH + gap;
-        continue;
+        y += landH + gap; continue;
       }
-
       if(freeL.length >= 2){
         const a = take(land), b = take(land);
-        const w = (W - gap) / 2;
-        const h = w * 9 / 16;
-        placeCard(a, 0, y, w, h);
-        placeCard(b, w + gap, y, w, h);
-        y += h + gap;
-        continue;
+        const w = (W - gap) / 2, h = w * 9 / 16;
+        placeCard(a, 0, y, w, h); placeCard(b, w + gap, y, w, h);
+        y += h + gap; continue;
       }
-
       if(freeL.length === 1){
         const a = take(land);
         const h = Math.min(W * 9 / 16, 520);
-        placeCard(a, 0, y, W, h);
-        y += h + gap;
-        continue;
+        placeCard(a, 0, y, W, h); y += h + gap; continue;
       }
-
       if(freeP.length){
         const cols = freeP.length === 1 ? 1 : (freeP.length === 2 || W < 1100 ? 2 : 3);
         const row = [];
-        for(let i=0;i<cols;i++){
-          const c = take(port);
-          if(c) row.push(c);
-        }
-        const w = (W - gap * (row.length - 1)) / row.length;
-        const h = w * 16 / 9;
+        for(let i=0;i<cols;i++){ const c = take(port); if(c) row.push(c); }
+        const w = (W - gap * (row.length - 1)) / row.length, h = w * 16 / 9;
         row.forEach((c,i) => placeCard(c, i * (w + gap), y, w, h));
-        y += h + gap;
-        continue;
+        y += h + gap; continue;
       }
       break;
     }
     grid.style.height = Math.max(0, y - gap) + 'px';
   }
+  function hijackGrid(id){
+    const old = document.getElementById(id);
+    if(!old) return null;
+    if(old.dataset.bentoReady === '1') return old;
+    const neu = old.cloneNode(false);
+    neu.id = id;
+    neu.dataset.bentoReady = '1';
+    while(old.firstChild) neu.appendChild(old.firstChild);
+    old.removeAttribute('id');
+    old.style.display = 'none';
+    old.setAttribute('aria-hidden','true');
+    old.parentNode.insertBefore(neu, old);
+    return neu;
+  }
   function relayoutGrids(){
-    layoutBento(document.getElementById('workGrid'));
+    layoutBento(hijackGrid('workGrid') || document.getElementById('workGrid'));
     layoutBento(document.getElementById('awGrid'));
   }
-
-  bootTheme();
-  ensureThemeButton();
-  attachAll();
-  relayoutGrids();
+  bootTheme(); ensureThemeButton(); attachAll(); relayoutGrids();
   setTimeout(function(){ ensureThemeButton(); attachAll(); relayoutGrids(); }, 80);
   setTimeout(function(){ attachAll(); relayoutGrids(); }, 350);
   setTimeout(relayoutGrids, 1000);
   addEventListener('resize', function(){ relayoutGrids(); }, {passive:true});
-  const workGridEl = document.getElementById('workGrid');
-  if(workGridEl && typeof ResizeObserver === 'function'){
-    new ResizeObserver(function(){ requestAnimationFrame(relayoutGrids); }).observe(workGridEl);
-  }
   document.addEventListener('click', function(e){
     if(e.target.closest && (e.target.closest('[data-open-all]') || e.target.closest('#awFilters') || e.target.closest('#navLinks'))){
       setTimeout(function(){ attachAll(); relayoutGrids(); }, 80);
@@ -391,9 +347,7 @@ html[data-theme="dark"] .theme-toggle .icon-moon{display:none}
     html = html.replace(/<head>/i, '<head>\n<base href="'+BASE+'">');
     html = html.replace(/<\/head>/i, '<style id="smart-local-css">'+CSS+'</style>\n</head>');
     html = html.replace(/<\/body>\s*<\/html>/i, '<script id="smart-local-js">'+JS+'<\/script>\n</body>\n</html>');
-    document.open();
-    document.write(html);
-    document.close();
+    document.open(); document.write(html); document.close();
   }catch(err){
     const status = document.getElementById('status');
     status.innerHTML = '<div class="error"><strong>Preview could not start.</strong><br>'+String(err.message||err)+'</div>';
