@@ -32,27 +32,27 @@ html[data-theme="dark"]{
 html[data-theme="light"] .theme-toggle .icon-sun{display:none}
 html[data-theme="dark"] .theme-toggle .icon-moon{display:none}
 .smart-hover-blur{
-  position:fixed;inset:0;z-index:28;
+  position:fixed;inset:0;z-index:40;
   background:rgba(12,12,12,.32);
   backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);
   opacity:0;pointer-events:none;
   transition:opacity .35s ease;
 }
 .smart-hover-blur.on{opacity:1;}
+.smart-preview-lift{
+  position:fixed;z-index:80;overflow:hidden;pointer-events:none;
+  border-radius:5px;background:#000;
+  box-shadow:0 30px 70px rgba(0,0,0,.45),0 0 0 1px rgba(255,255,255,.08);
+  transform:scale(.96);opacity:0;
+  transition:transform .35s cubic-bezier(.22,1,.36,1),opacity .28s ease;
+}
+.smart-preview-lift.on{transform:scale(1);opacity:1;}
+.smart-preview-lift iframe{
+  position:absolute;inset:0;width:100%;height:100%;border:0;background:#000;
+}
+.vcard.smart-active .vplay{opacity:0;}
 @media (hover:hover) and (pointer:fine){
-  html.smart-preview-on main{z-index:auto !important;}
-  html.smart-preview-on .nav{z-index:36;}
-  .vcard.smart-active{
-    z-index:60 !important;
-    transform:scale(1.14);
-    box-shadow:0 30px 70px rgba(0,0,0,.42),0 0 0 1px rgba(255,255,255,.08);
-    transition:transform .42s cubic-bezier(.22,1,.36,1),box-shadow .42s ease;
-  }
-  .vcard.smart-active .vplay{opacity:0;}
-  .vcard .smart-preview-frame{
-    position:absolute;inset:0;width:100%;height:100%;border:0;z-index:4;
-    pointer-events:none;background:#000;
-  }
+  html.smart-preview-on .nav{z-index:90;}
 }
 @media (max-width:640px){
   #lightbox{
@@ -157,15 +157,25 @@ html[data-theme="dark"] .theme-toggle .icon-moon{display:none}
     const id = videoId(card);
     if(!id) return;
     card.dataset.videoId = id;
+    const r = card.getBoundingClientRect();
+    const scale = 1.14;
+    const w = r.width * scale;
+    const h = r.height * scale;
+    const lift = document.createElement('div');
+    lift.className = 'smart-preview-lift';
+    lift.style.left = (r.left - (w - r.width) / 2) + 'px';
+    lift.style.top = (r.top - (h - r.height) / 2) + 'px';
+    lift.style.width = w + 'px';
+    lift.style.height = h + 'px';
     const frame = document.createElement('iframe');
-    frame.className = 'smart-preview-frame';
     frame.src = ytPreview(id);
     frame.allow = 'autoplay; encrypted-media; picture-in-picture';
     frame.setAttribute('tabindex','-1');
     frame.setAttribute('aria-hidden','true');
-    const media = card.querySelector('.vmedia') || card;
-    media.appendChild(frame);
-    card._smartPreview = frame;
+    lift.appendChild(frame);
+    document.body.appendChild(lift);
+    requestAnimationFrame(function(){ lift.classList.add('on'); });
+    card._smartPreview = lift;
   }
   function stopPreview(card){
     if(!card || !card._smartPreview) return;
