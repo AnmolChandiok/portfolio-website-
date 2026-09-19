@@ -46,28 +46,43 @@ html,body,.nav,.nav a,.pill,.theme-toggle,.vcard,.work,.hero,main,footer,.aw,.aw
   ::view-transition-old(root),
   ::view-transition-new(root){animation:none !important;}
 }
+
+/* Cinema hover: dark room, one film, no player chrome */
 .smart-hover-blur{
   position:fixed;inset:0;z-index:40;
-  background:rgba(12,12,12,.32);
-  backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);
+  background:rgba(4,4,4,.84);
+  backdrop-filter:blur(14px) saturate(.55);
+  -webkit-backdrop-filter:blur(14px) saturate(.55);
   opacity:0;pointer-events:none;
-  transition:opacity .35s ease;
+  transition:opacity .4s ease;
 }
 .smart-hover-blur.on{opacity:1;}
 .smart-preview-lift{
   position:fixed;z-index:80;overflow:hidden;pointer-events:none;
-  border-radius:12px;background:#000;
-  box-shadow:0 30px 70px rgba(0,0,0,.45),0 0 0 1px rgba(255,255,255,.08);
-  transform:scale(.96);opacity:0;
-  transition:transform .35s cubic-bezier(.22,1,.36,1),opacity .28s ease;
+  border-radius:14px;background:#000;
+  box-shadow:0 0 0 1px rgba(255,255,255,.16), 0 32px 90px rgba(0,0,0,.62);
+  transform:scale(.985);opacity:0;
+  transform-origin:center center;
+  transition:transform .4s cubic-bezier(.22,1,.36,1),opacity .3s ease;
 }
 .smart-preview-lift.on{transform:scale(1);opacity:1;}
 .smart-preview-lift iframe{
-  position:absolute;left:50%;top:50%;width:130%;height:130%;
+  position:absolute;left:50%;top:50%;
+  width:140%;height:140%;
   transform:translate(-50%,-50%);
   border:0;background:#000;pointer-events:none;
 }
+.vcard.smart-active{opacity:0;}
 .vcard.smart-active .vplay{opacity:0;}
+.lightbox{
+  background:rgba(4,4,4,.9) !important;
+  backdrop-filter:blur(18px) saturate(.6);
+  -webkit-backdrop-filter:blur(18px) saturate(.6);
+}
+.lb-frame{
+  border-radius:16px !important;
+  box-shadow:0 40px 120px rgba(0,0,0,.55), 0 0 0 1px rgba(255,255,255,.1) !important;
+}
 @media (hover:hover) and (pointer:fine){
   html.smart-preview-on .nav{z-index:90;}
 }
@@ -167,7 +182,7 @@ html,body,.nav,.nav a,.pill,.theme-toggle,.vcard,.work,.hero,main,footer,.aw,.aw
     return m ? m[1] : null;
   }
   function ytPreview(id){
-    const p = {autoplay:1,mute:1,controls:0,disablekb:1,iv_load_policy:3,playsinline:1,rel:0,modestbranding:1,fs:0,cc_load_policy:0};
+    const p = {autoplay:1,mute:1,controls:0,disablekb:1,iv_load_policy:3,playsinline:1,rel:0,modestbranding:1,fs:0,cc_load_policy:0,showinfo:0};
     return 'https://www.youtube-nocookie.com/embed/'+encodeURIComponent(id)+'?'+Object.keys(p).map(function(k){return k+'='+encodeURIComponent(p[k]);}).join('&');
   }
   function startPreview(card){
@@ -175,13 +190,12 @@ html,body,.nav,.nav a,.pill,.theme-toggle,.vcard,.work,.hero,main,footer,.aw,.aw
     const id = videoId(card); if(!id) return;
     card.dataset.videoId = id;
     const r = card.getBoundingClientRect();
-    const scale = 1.14, w = r.width * scale, h = r.height * scale;
     const lift = document.createElement('div');
     lift.className = 'smart-preview-lift';
-    lift.style.left = (r.left - (w - r.width) / 2) + 'px';
-    lift.style.top = (r.top - (h - r.height) / 2) + 'px';
-    lift.style.width = w + 'px';
-    lift.style.height = h + 'px';
+    lift.style.left = r.left + 'px';
+    lift.style.top = r.top + 'px';
+    lift.style.width = r.width + 'px';
+    lift.style.height = r.height + 'px';
     const frame = document.createElement('iframe');
     frame.src = ytPreview(id);
     frame.allow = 'autoplay; encrypted-media; picture-in-picture';
