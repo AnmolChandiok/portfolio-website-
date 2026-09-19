@@ -63,6 +63,7 @@ button.vcard:hover .vplay{background:var(--accent);transform:scale(1.08)}
 .vc{font-size:13px;opacity:.75}
 .jgrid{position:relative}
 .jgrid .vcard{position:absolute}
+#workGrid .vcard,#awGrid .vcard{border-radius:12px}
 
 /* ---------- Hero ---------- */
 .hero{display:grid;grid-template-columns:1.35fr 1fr;gap:clamp(16px,2vw,32px);height:100svh;min-height:640px;padding:0 var(--pad);overflow:hidden}
@@ -507,6 +508,20 @@ function justify(grid,cards){
     if(pending.length) pair(pending);
     grid.style.height=Math.max(0,y-gap)+"px"; return;
   }
+  const vis=cards.filter(c=>c.style.display!=="none");
+  const lands=vis.filter(c=>c._ratio>=1);
+  const ports=vis.filter(c=>c._ratio<1);
+  if(lands.length===2 && ports.length===1 && vis.length===3){
+    const leftW=Math.round(W*0.62);
+    const rightW=W-leftW-gap;
+    const landH=leftW*9/16;
+    const totalH=landH*2+gap;
+    place(lands[0],0,0,leftW,landH);
+    place(lands[1],0,landH+gap,leftW,landH);
+    place(ports[0],leftW+gap,0,rightW,totalH);
+    grid.style.height=totalH+"px";
+    return;
+  }
   const target=rowTarget();
   let y=0,row=[],sum=0;
   const flush=last=>{
@@ -518,7 +533,7 @@ function justify(grid,cards){
     row.forEach((c,i)=>{ const w=(fill&&i===row.length-1)?W-x:h*c._ratio; place(c,x,y,w,h); x+=w+gap; });
     y+=h+gap; row=[]; sum=0;
   };
-  cards.forEach(c=>{ row.push(c); sum+=c._ratio; if(sum*target+gap*(row.length-1)>=W) flush(false); });
+  vis.forEach(c=>{ row.push(c); sum+=c._ratio; if(sum*target+gap*(row.length-1)>=W) flush(false); });
   flush(true);
   grid.style.height=Math.max(0,y-gap)+"px";
 }
