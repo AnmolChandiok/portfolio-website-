@@ -41,7 +41,7 @@ html[data-theme="dark"] .theme-toggle .icon-moon{display:none}
 .smart-hover-blur.on{opacity:1;}
 .smart-preview-lift{
   position:fixed;z-index:80;overflow:hidden;pointer-events:none;
-  border-radius:5px;background:#000;
+  border-radius:12px;background:#000;
   box-shadow:0 30px 70px rgba(0,0,0,.45),0 0 0 1px rgba(255,255,255,.08);
   transform:scale(.96);opacity:0;
   transition:transform .35s cubic-bezier(.22,1,.36,1),opacity .28s ease;
@@ -51,6 +51,8 @@ html[data-theme="dark"] .theme-toggle .icon-moon{display:none}
   position:absolute;inset:0;width:100%;height:100%;border:0;background:#000;
 }
 .vcard.smart-active .vplay{opacity:0;}
+#workGrid.jgrid .vcard,#awGrid.jgrid .vcard{border-radius:12px;}
+#workGrid.jgrid .vplay{--s:42px;}
 @media (hover:hover) and (pointer:fine){
   html.smart-preview-on .nav{z-index:90;}
 }
@@ -239,15 +241,145 @@ html[data-theme="dark"] .theme-toggle .icon-moon{display:none}
     if(!lb.classList.contains('open') && sourceCard) setTimeout(reconcile, 20);
   }).observe(lb, {attributes:true, attributeFilter:['class']});
 
+  function isPortrait(card){
+    if(typeof card._ratio === 'number') return card._ratio < 1;
+    return String(card.style.getPropertyValue('--ratio')||'').replace(/\s/g,'') === '9/16';
+  }
+  function placeCard(el,x,y,w,h){
+    el.style.left = Math.round(x)+'px';
+    el.style.top = Math.round(y)+'px';
+    el.style.width = Math.round(w)+'px';
+    el.style.height = Math.round(h)+'px';
+    el.style.position = 'absolute';
+  }
+  function layoutBento(grid){
+    if(!grid) return;
+    const cards = [...grid.querySelectorAll('.vcard')].filter(c => c.style.display !== 'none' && !c.classList.contains('is-empty'));
+    const W = grid.clientWidth;
+    if(!W || !cards.length){ grid.style.height = '0px'; return; }
+    const gap = innerWidth < 640 ? 10 : 16;
+    let y = 0;
+
+    if(innerWidth < 720){
+      const queue = cards.slice();
+      const rows = [];
+      while(queue.length){
+        const c = queue.shift();
+        if(!isPortrait(c)){ rows.push([c]); continue; }
+        let pair = -1;
+        for(let i=0;i<queue.length;i++) if(isPortrait(queue[i])){ pair=i; break; }
+        rows.push(pair===-1 ? [c] : [c, queue.splice(pair,1)[0]]);
+      }
+      rows.forEach(row => {
+        if(row.length===2){
+          const w=(W-gap)/2, h=w*16/9;
+          placeCard(row[0],0,y,w,h); placeCard(row[1],w+gap,y,w,h); y+=h+gap;
+        }else{
+          const h = isPortrait(row[0]) ? W*16/9 : W*9/16;
+          placeCard(row[0],0,y,W,h); y+=h+gap;
+        }
+      });
+      grid.style.height = Math.max(0,y-gap)+'px';
+      return;
+    }
+
+    const land = cards.filter(c => !isPortrait(c));
+    const port = cards.filter(c => isPortrait(c));
+    const used = new Set();
+    function take(list){
+      const c = list.find(item => !used.has(item));
+      if(c) used.add(c);
+      return c || null;
+    }
+
+    while(used.size < cards.length){
+      const freeL = land.filter(c => !used.has(c));
+      const freeP = port.filter(c => !used.has(c));
+
+      if(freeL.length >= 2 && freeP.length >= 1){
+        const a = take(land), b = take(land), p = take(port);
+        const leftW = Math.round(W * 0.64);
+        const rightW = W - leftW - gap;
+        const landH = leftW * 9 / 16;
+        const totalH = landH * 2 + gap;
+        const portW = Math.min(rightW, totalH * 9 / 16);
+        const portX = leftW + gap + Math.max(0, (rightW - portW) / 2);
+        placeCard(a, 0, y, leftW, landH);
+        placeCard(b, 0, y + landH + gap, leftW, landH);
+        placeCard(p, portX, y, portW, totalH);
+        y += totalH + gap;
+        continue;
+      }
+
+      if(freeL.length >= 1 && freeP.length >= 1){
+        const a = take(land), p = take(port);
+        const portW = Math.round(W * 0.34);
+        const landW = W - portW - gap;
+        const landH = landW * 9 / 16;
+        const portH = Math.min(landH, portW * 16 / 9);
+        const portY = y + Math.max(0, (landH - portH) / 2);
+        placeCard(a, 0, y, landW, landH);
+        placeCard(p, landW + gap, portY, portW, portH);
+        y += landH + gap;
+        continue;
+      }
+
+      if(freeL.length >= 2){
+        const a = take(land), b = take(land);
+        const w = (W - gap) / 2;
+        const h = w * 9 / 16;
+        placeCard(a, 0, y, w, h);
+        placeCard(b, w + gap, y, w, h);
+        y += h + gap;
+        continue;
+      }
+
+      if(freeL.length === 1){
+        const a = take(land);
+        const h = Math.min(W * 9 / 16, 520);
+        placeCard(a, 0, y, W, h);
+        y += h + gap;
+        continue;
+      }
+
+      if(freeP.length){
+        const cols = freeP.length === 1 ? 1 : (freeP.length === 2 || W < 1100 ? 2 : 3);
+        const row = [];
+        for(let i=0;i<cols;i++){
+          const c = take(port);
+          if(c) row.push(c);
+        }
+        const w = (W - gap * (row.length - 1)) / row.length;
+        const h = w * 16 / 9;
+        row.forEach((c,i) => placeCard(c, i * (w + gap), y, w, h));
+        y += h + gap;
+        continue;
+      }
+      break;
+    }
+    grid.style.height = Math.max(0, y - gap) + 'px';
+  }
+  function relayoutGrids(){
+    layoutBento(document.getElementById('workGrid'));
+    layoutBento(document.getElementById('awGrid'));
+  }
+
   bootTheme();
   ensureThemeButton();
   attachAll();
-  setTimeout(function(){ ensureThemeButton(); attachAll(); }, 300);
-  setTimeout(attachAll, 1000);
+  relayoutGrids();
+  setTimeout(function(){ ensureThemeButton(); attachAll(); relayoutGrids(); }, 80);
+  setTimeout(function(){ attachAll(); relayoutGrids(); }, 350);
+  setTimeout(relayoutGrids, 1000);
+  addEventListener('resize', function(){ relayoutGrids(); }, {passive:true});
+  const workGridEl = document.getElementById('workGrid');
+  if(workGridEl && typeof ResizeObserver === 'function'){
+    new ResizeObserver(function(){ requestAnimationFrame(relayoutGrids); }).observe(workGridEl);
+  }
   document.addEventListener('click', function(e){
     if(e.target.closest && (e.target.closest('[data-open-all]') || e.target.closest('#awFilters') || e.target.closest('#navLinks'))){
-      setTimeout(attachAll, 80);
-      setTimeout(attachAll, 400);
+      setTimeout(function(){ attachAll(); relayoutGrids(); }, 80);
+      setTimeout(function(){ attachAll(); relayoutGrids(); }, 400);
     }
   });
 })();
