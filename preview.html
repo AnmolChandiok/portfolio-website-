@@ -31,6 +31,21 @@ html[data-theme="dark"]{
 .theme-toggle svg{width:16px;height:16px;display:block}
 html[data-theme="light"] .theme-toggle .icon-sun{display:none}
 html[data-theme="dark"] .theme-toggle .icon-moon{display:none}
+html,body,.nav,.nav a,.pill,.theme-toggle,.vcard,.work,.hero,main,footer,.aw,.aw-head,.chip,.jgrid .vmeta,.lb-title,.lb-close,section{
+  transition: background-color .55s ease, color .55s ease, border-color .55s ease, box-shadow .55s ease, fill .55s ease, stroke .55s ease;
+}
+::view-transition-old(root),
+::view-transition-new(root){
+  animation-duration:.55s;
+  animation-timing-function:cubic-bezier(.22,1,.36,1);
+}
+@media (prefers-reduced-motion:reduce){
+  html,body,.nav,.nav a,.pill,.theme-toggle,.vcard,.work,.hero,main,footer,.aw,.aw-head,.chip,.jgrid .vmeta,.lb-title,.lb-close,section{
+    transition:none;
+  }
+  ::view-transition-old(root),
+  ::view-transition-new(root){animation:none !important;}
+}
 .smart-hover-blur{
   position:fixed;inset:0;z-index:40;
   background:rgba(12,12,12,.32);
@@ -97,7 +112,8 @@ html[data-theme="dark"] .theme-toggle .icon-moon{display:none}
   const root = document.documentElement;
   const THEME_KEY = 'anmol-theme';
   function currentTheme(){ return root.getAttribute('data-theme') === 'dark' ? 'dark' : 'light'; }
-  function setTheme(theme){
+  let themeReady = false;
+  function applyTheme(theme){
     const next = theme === 'dark' ? 'dark' : 'light';
     root.setAttribute('data-theme', next);
     try{ localStorage.setItem(THEME_KEY, next); }catch(e){}
@@ -110,10 +126,18 @@ html[data-theme="dark"] .theme-toggle .icon-moon{display:none}
       btn.title = toDark ? 'Switch to dark mode' : 'Switch to light mode';
     }
   }
+  function setTheme(theme){
+    if(themeReady && document.startViewTransition){
+      document.startViewTransition(function(){ applyTheme(theme); });
+    }else{
+      applyTheme(theme);
+    }
+  }
   function bootTheme(){
     let saved = null;
     try{ saved = localStorage.getItem(THEME_KEY); }catch(e){}
-    setTheme(saved === 'dark' || saved === 'light' ? saved : 'light');
+    applyTheme(saved === 'dark' || saved === 'light' ? saved : 'light');
+    themeReady = true;
   }
   function ensureThemeButton(){
     if(document.getElementById('themeToggle')) return;
@@ -128,7 +152,7 @@ html[data-theme="dark"] .theme-toggle .icon-moon{display:none}
     if(pill) host.insertBefore(btn, pill);
     else host.insertBefore(btn, host.firstChild);
     btn.addEventListener('click', function(){ setTheme(currentTheme()==='dark'?'light':'dark'); });
-    setTheme(currentTheme());
+    applyTheme(currentTheme());
   }
   const desktop = matchMedia('(hover:hover) and (pointer:fine)');
   const blur = document.createElement('div');
