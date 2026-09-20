@@ -574,14 +574,17 @@
        crypto.subtle.digest('SHA-256', new TextEncoder().encode('yourNewPassword'))
          .then(b => console.log([...new Uint8Array(b)].map(x => x.toString(16).padStart(2,'0')).join('')))
 
-     Default password is: Pluseshot-2026 — change it before you push this live.
+     This hash ships with the public site, so anyone can read it and test
+     guesses against it offline. Treat the lock as a deterrent, not a
+     wall: publishing anything still needs a GitHub token, and that never
+     leaves this browser.
 
      This asks for the password on EVERY page load, on purpose — no "stay
      unlocked" behaviour, so closing the tab always means entering it again
      next time, regardless of what your browser does with tab restores.
   ------------------------------------------------------------------------- */
 
-  var PW_HASH = 'e8b3abdb658b91480eecfff5e7764727cbd920b9a232acba511a846bd3ae9730';
+  var PW_HASH = '831f183e4d71551e5d3fbfd822c61a90703239fceaa6b212bb3db46e541b5f0f';
   var LOGIN_EMAIL = 'anmol.chandiok9@gmail.com';
 
   async function sha256Hex(str) {
