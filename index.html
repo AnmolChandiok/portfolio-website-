@@ -165,15 +165,15 @@ button.vcard:hover .vplay{background:var(--accent);transform:scale(1.08)}
      mouse, so the sound button can actually be pressed. */
   pointer-events:auto;
 }
-.spl-sound{
+.spl-btn{
   flex:0 0 auto;width:32px;height:32px;border-radius:50%;
   display:grid;place-items:center;cursor:pointer;
   color:var(--ink);background:transparent;
   border:1px solid color-mix(in srgb,var(--ink) 20%,transparent);
   transition:background .2s,color .2s,border-color .2s;
 }
-.spl-sound:hover{background:var(--ink);color:var(--card);border-color:var(--ink)}
-.spl-sound svg{width:16px;height:16px;display:block}
+.spl-btn:hover{background:var(--ink);color:var(--card);border-color:var(--ink)}
+.spl-btn svg{width:16px;height:16px;display:block}
 .spl-sound .snd-on{display:none}
 .spl-sound.is-on .snd-on{display:block}
 .spl-sound.is-on .snd-off{display:none}
@@ -375,10 +375,80 @@ section.block{padding:clamp(64px,9vw,140px) var(--pad)}
 /* ---------- Lightbox ---------- */
 .lightbox{position:fixed;inset:0;z-index:80;background:rgba(0,0,0,.9);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:64px 16px 24px;opacity:0;visibility:hidden;transition:opacity .3s,visibility 0s .3s}
 .lightbox.open{opacity:1;visibility:visible;transition:opacity .3s}
-.lb-frame{position:relative;width:min(92vw,calc(76svh*16/9));aspect-ratio:16/9;border-radius:var(--r);overflow:hidden;background:#000;transform:scale(.96);transition:transform .45s var(--e)}
-.lb-frame.is-vertical{aspect-ratio:9/16;width:min(92vw,calc(76svh*9/16))}
+.lb-shell{display:flex;gap:22px;align-items:flex-start;max-width:100%}
+.lb-main{display:flex;flex-direction:column;gap:12px;min-width:0}
+.lb-frame{position:relative;width:min(62vw,calc(64svh*16/9));aspect-ratio:16/9;border-radius:var(--r);overflow:hidden;background:#000;transform:scale(.96);transition:transform .45s var(--e)}
+.lb-frame.is-vertical{aspect-ratio:9/16;width:min(30vw,calc(64svh*9/16))}
+
+/* Player bar: the same idea as the preview's caption strip, sized up for
+   this window without shouting over the film. */
+.lb-controls{
+  display:flex;align-items:center;gap:14px;
+  padding:0 16px;height:60px;border-radius:999px;
+  background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.13);
+  backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);
+  color:#F1F1EE;
+}
+.lb-ctl{
+  flex:0 0 auto;width:38px;height:38px;border-radius:50%;
+  display:grid;place-items:center;color:#F1F1EE;background:transparent;
+  border:1px solid rgba(255,255,255,.22);cursor:pointer;
+  transition:background .2s,color .2s,border-color .2s;
+}
+.lb-ctl:hover{background:#F1F1EE;color:#000;border-color:#F1F1EE}
+.lb-ctl svg{width:18px;height:18px;display:block}
+#lbPlay .ic-play{display:none}
+#lbPlay.is-paused .ic-play{display:block}
+#lbPlay.is-paused .ic-pause{display:none}
+#lbMute .snd-on{display:none}
+#lbMute.is-on .snd-on{display:block}
+#lbMute.is-on .snd-off{display:none}
+.lb-seek{flex:1 1 auto;min-width:60px;height:5px;border-radius:999px;background:rgba(255,255,255,.2);cursor:pointer;position:relative}
+.lb-seek-fill{position:absolute;left:0;top:0;bottom:0;width:0;border-radius:999px;background:var(--accent)}
+.lb-time{flex:0 0 auto;font-size:13px;font-variant-numeric:tabular-nums;color:rgba(241,241,238,.75);min-width:82px;text-align:right}
+
+/* Notes, alongside the film rather than under it */
+.lb-notes{
+  flex:0 0 auto;width:min(320px,26vw);max-height:min(76svh,640px);
+  display:flex;flex-direction:column;gap:10px;
+  background:var(--card);color:var(--ink);
+  border:1px solid color-mix(in srgb,var(--ink) 12%,transparent);
+  border-radius:var(--r);padding:16px;
+}
+.lbn-head{display:flex;align-items:baseline;justify-content:space-between;gap:10px}
+.lbn-title{font-size:15px;font-weight:600;letter-spacing:-.01em}
+.lbn-count{font-size:12.5px;color:var(--muted)}
+.lbn-text{
+  flex:1 1 auto;min-height:150px;resize:vertical;
+  background:var(--bg);color:var(--ink);
+  border:1px solid color-mix(in srgb,var(--ink) 14%,transparent);
+  border-radius:8px;padding:10px 12px;font:inherit;font-size:14px;line-height:1.5;
+}
+.lbn-text:focus{outline:none;border-color:var(--accent)}
+.lbn-actions{display:flex;flex-wrap:wrap;gap:6px}
+.lbn-btn{
+  flex:1 1 auto;padding:8px 10px;border-radius:999px;font-size:12.5px;font-weight:500;
+  border:1px solid color-mix(in srgb,var(--ink) 18%,transparent);
+  background:transparent;color:var(--ink);cursor:pointer;
+  transition:background .2s,color .2s,border-color .2s;
+}
+.lbn-btn:hover{background:var(--ink);color:var(--card);border-color:var(--ink)}
+.lbn-danger{color:#C4342B;border-color:color-mix(in srgb,#C4342B 35%,transparent)}
+.lbn-danger:hover{background:#C4342B;color:#fff;border-color:#C4342B}
+.lbn-status{font-size:12px;color:var(--muted);min-height:16px;line-height:1.4}
+@media (max-width:900px){ .lb-notes{display:none} .lb-frame{width:min(88vw,calc(64svh*16/9))} .lb-frame.is-vertical{width:min(88vw,calc(64svh*9/16))} }
 .lightbox.open .lb-frame{transform:none}
-.lb-frame iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
+/* Same trick as the preview: exact width, extra height. YouTube fits the
+   video to the width so it lands on the visible box, and its title and
+   "More videos" strip end up in the overflow and get clipped. Clicks are
+   turned off too - the bar below is the only interface now, and letting
+   the pointer onto the player just brings its chrome back. */
+.lb-frame iframe{
+  position:absolute;left:50%;top:50%;
+  width:100%;height:142%;
+  transform:translate(-50%,-50%);
+  border:0;pointer-events:none;
+}
 .lb-title{color:#F1F1EE;font-size:15px;text-align:center;max-width:60ch}
 .lb-title span{opacity:.6;margin-left:8px}
 .lb-close{position:absolute;top:calc(14px + env(safe-area-inset-top));right:16px;color:#F1F1EE;border:1px solid rgba(255,255,255,.3);padding:8px 14px;border-radius:999px;font-size:14px}
@@ -440,9 +510,31 @@ section.block{padding:clamp(64px,9vw,140px) var(--pad)}
 
   #lightbox{
     padding:0 !important;gap:0 !important;
-    align-items:flex-end !important;justify-content:center !important;
+    /* Column flex: the main axis is vertical, so it's justify-content
+       that pins the sheet to the bottom - align-items was only ever
+       pushing it right. */
+    align-items:stretch !important;justify-content:flex-end !important;
     background:rgba(4,4,5,.90) !important;
   }
+  /* The sheet used to be built out of the lightbox's direct children.
+     Those are wrapped now, so the wrappers have to carry the full-width
+     stacking or the player ends up floating mid-screen. */
+  #lightbox .lb-shell{
+    width:100% !important;flex-direction:column !important;
+    gap:0 !important;align-items:stretch !important;
+  }
+  #lightbox .lb-main{width:100% !important;gap:0 !important;min-width:0}
+  #lightbox .lb-controls{
+    width:100% !important;height:56px;border-radius:0 !important;
+    border-left:0;border-right:0;
+    background:var(--card) !important;color:var(--ink) !important;
+    border-color:color-mix(in srgb,var(--ink) 12%,transparent) !important;
+    backdrop-filter:none !important;-webkit-backdrop-filter:none !important;
+  }
+  #lightbox .lb-ctl{color:var(--ink);border-color:color-mix(in srgb,var(--ink) 22%,transparent)}
+  #lightbox .lb-ctl:hover{background:var(--ink);color:var(--card);border-color:var(--ink)}
+  #lightbox .lb-seek{background:color-mix(in srgb,var(--ink) 20%,transparent)}
+  #lightbox .lb-time{color:var(--muted);min-width:74px}
   #lightbox .lb-frame{
     width:min(100vw, calc(76svh * 16 / 9)) !important;
     max-width:100vw !important;max-height:76svh !important;
@@ -463,7 +555,8 @@ section.block{padding:clamp(64px,9vw,140px) var(--pad)}
     font-size:14px !important;line-height:1.35;
   }
   #lightbox .lb-close{
-    top:auto !important;bottom:calc(10px + env(safe-area-inset-bottom)) !important;
+    /* The sheet now occupies the bottom, so Close moves up out of it. */
+    top:calc(12px + env(safe-area-inset-top)) !important;bottom:auto !important;
     right:14px !important;z-index:5;padding:8px 12px !important;border-radius:999px !important;
     background:rgba(0,0,0,.35) !important;color:#F1F1EE !important;
     border-color:rgba(255,255,255,.22) !important;
@@ -593,8 +686,41 @@ section.block{padding:clamp(64px,9vw,140px) var(--pad)}
 
 <div class="lightbox" id="lightbox" role="dialog" aria-modal="true" aria-label="Video player">
   <button class="lb-close" type="button" id="lbClose">Close</button>
-  <div class="lb-frame" id="lbFrame"></div>
-  <p class="lb-title" id="lbTitle"></p>
+  <div class="lb-shell">
+    <div class="lb-main">
+      <div class="lb-frame" id="lbFrame"></div>
+      <div class="lb-controls" id="lbControls">
+        <button class="lb-ctl" type="button" id="lbPlay" title="Pause" aria-label="Pause">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><g class="ic-pause"><path d="M9 5v14"/><path d="M15 5v14"/></g><g class="ic-play"><path d="M7 4.5v15l12-7.5-12-7.5z"/></g></svg>
+        </button>
+        <button class="lb-ctl" type="button" id="lbRestart" title="Start over" aria-label="Start over">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12a9 9 0 1 0 2.6-6.4"/><path d="M3 4.5V10h5.5"/></svg>
+        </button>
+        <div class="lb-seek" id="lbSeek" role="slider" aria-label="Seek" tabindex="0"><span class="lb-seek-fill" id="lbSeekFill"></span></div>
+        <span class="lb-time" id="lbTime">0:00</span>
+        <button class="lb-ctl" type="button" id="lbMute" title="Mute" aria-label="Mute">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9.5v5h3.5L12 18V6L7.5 9.5H4z"/><g class="snd-on"><path d="M15.5 9.2a4 4 0 0 1 0 5.6"/><path d="M18 6.8a7.5 7.5 0 0 1 0 10.4"/></g><g class="snd-off"><path d="M16 10l4 4"/><path d="M20 10l-4 4"/></g></svg>
+        </button>
+      </div>
+      <p class="lb-title" id="lbTitle"></p>
+    </div>
+
+    <aside class="lb-notes" id="lbNotes" aria-label="Notes">
+      <div class="lbn-head">
+        <span class="lbn-title">Notes</span>
+        <span class="lbn-count" id="lbnCount"></span>
+      </div>
+      <textarea class="lbn-text" id="lbnText" rows="8"
+        placeholder="Thoughts on this piece - what works, what you'd want changed. Saved as you type, kept per video."></textarea>
+      <div class="lbn-actions">
+        <button class="lbn-btn" type="button" id="lbnMail">Email all</button>
+        <button class="lbn-btn" type="button" id="lbnWa">WhatsApp</button>
+        <button class="lbn-btn" type="button" id="lbnCopy">Copy</button>
+        <button class="lbn-btn lbn-danger" type="button" id="lbnClear">Clear all</button>
+      </div>
+      <p class="lbn-status" id="lbnStatus"></p>
+    </aside>
+  </div>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/lenis@1.1.13/dist/lenis.min.js"></script>
@@ -902,7 +1028,13 @@ const canHover=matchMedia("(hover:hover) and (pointer:fine)");
 let openI=-1, hoverI=-1, front=0, dragged=false;
 let niches=[];
 const dots=document.createElement("div"); dots.className="deck-dots"; stage.appendChild(dots);
-function ytEmbed(id){ return `https://www.youtube-nocookie.com/embed/${id}?autoplay=1&rel=0&playsinline=1&modestbranding=1`; }
+function ytEmbed(id,startAt){
+  // controls=0 because the player carries its own bar underneath;
+  // enablejsapi so those buttons can drive it.
+  let u=`https://www.youtube-nocookie.com/embed/${id}?autoplay=1&rel=0&playsinline=1&modestbranding=1&controls=0&enablejsapi=1&iv_load_policy=3`;
+  if(startAt>0) u+="&start="+Math.floor(startAt);
+  return u;
+}
 function buildNiches(){
   niches=SERVICES.map((sv,i)=>{
     const vids=REAL.filter(v=>v.category===sv.name);
@@ -1057,24 +1189,217 @@ const lb=$("lightbox"), lbFrame=$("lbFrame"), lbTitle=$("lbTitle");
 let lbReturn=null;
 function openLightbox(v,from){
   lbReturn=from||null;
+  // Read this before the preview is taken down - once it's gone, so is
+  // the position it had reached.
+  const resumeAt=(window.smartHoverPlayhead&&from)?window.smartHoverPlayhead():0;
   // The heavy backdrop blur is a desktop treatment only — phones get the
   // plain sheet-style player from the media query instead.
   if(canHover.matches) lb.classList.add("smart-lightbox");
   lbFrame.classList.toggle("is-vertical",v.vertical);
   lbFrame.innerHTML=""; const f=document.createElement("iframe");
-  f.src=ytEmbed(v.id); f.title=v.title; f.allow="autoplay; encrypted-media; picture-in-picture; fullscreen"; f.allowFullscreen=true;
+  f.src=ytEmbed(v.id,resumeAt); f.title=v.title; f.allow="autoplay; encrypted-media; picture-in-picture; fullscreen"; f.allowFullscreen=true;
   lbFrame.appendChild(f);
   lbTitle.textContent=v.title; const s=document.createElement("span"); s.textContent=v.category; lbTitle.appendChild(s);
+  // Take the hover preview down first, or its audio plays under this one.
+  if(window.silenceSmartHover) window.silenceSmartHover();
+  // Opening the full player is a deliberate "I want to watch this", so it
+  // always starts with sound - and the button has to say so, since the
+  // embed itself isn't muted.
+  lbStartControls(resumeAt,false);
+  openNotesFor(v);
   lb.classList.add("open"); lockPage(true);
   setTimeout(()=>$("lbClose").focus({preventScroll:true}),50);
 }
 function closeLightbox(){
   if(!lb.classList.contains("open")) return;
+  lbStopControls();
   lb.classList.remove("open"); lbFrame.innerHTML="";
   if(!aw.classList.contains("open")) lockPage(false);
   if(lbReturn) lbReturn.focus({preventScroll:true});
   setTimeout(reconcileSmartHover,30);
 }
+/* ---------- Full player: its own controls, and notes beside it --------
+   The player runs with YouTube's chrome off and enablejsapi on, so the
+   bar underneath drives it over postMessage. Position and play state
+   come back on the same channel; if that never arrives the buttons still
+   work, the seek bar just doesn't move. */
+const lbPlayBtn=$("lbPlay"), lbMuteBtn=$("lbMute"), lbRestartBtn=$("lbRestart"),
+      lbSeek=$("lbSeek"), lbSeekFill=$("lbSeekFill"), lbTimeEl=$("lbTime");
+let lbCur=0, lbDur=0, lbPlaying=true, lbMuted=false, lbPoll=null, lbSeekLock=0;
+
+function lbPost(msg){
+  const f=lbFrame.querySelector("iframe");
+  if(!f||!f.contentWindow) return;
+  try{ f.contentWindow.postMessage(JSON.stringify(msg),"*"); }catch(e){}
+}
+function lbCmd(func,args){ lbPost({event:"command",func:func,args:args||[]}); }
+function lbListen(){ lbPost({event:"listening",id:1,channel:"widget"}); }
+
+function fmt(t){
+  if(!isFinite(t)||t<0) t=0;
+  const m=Math.floor(t/60), sec=Math.floor(t%60);
+  return m+":"+String(sec).padStart(2,"0");
+}
+function lbPaint(){
+  lbPlayBtn.classList.toggle("is-paused",!lbPlaying);
+  lbPlayBtn.title=lbPlaying?"Pause":"Play";
+  lbPlayBtn.setAttribute("aria-label",lbPlayBtn.title);
+  lbMuteBtn.classList.toggle("is-on",!lbMuted);
+  lbMuteBtn.title=lbMuted?"Unmute":"Mute";
+  lbMuteBtn.setAttribute("aria-label",lbMuteBtn.title);
+  const pct=lbDur>0?Math.min(100,(lbCur/lbDur)*100):0;
+  lbSeekFill.style.width=pct+"%";
+  lbSeek.setAttribute("aria-valuenow",Math.round(pct));
+  lbTimeEl.textContent=lbDur>0?(fmt(lbCur)+" / "+fmt(lbDur)):fmt(lbCur);
+}
+addEventListener("message",e=>{
+  if(typeof e.origin!=="string"||e.origin.indexOf("youtube")<0) return;
+  // Every player on the page reports to this same window - the in-grid
+  // ones that play by themselves, and the hover preview. Without pinning
+  // this to the player actually on screen, the bar gets fed whichever
+  // video reported last, which is why it jumped around and kept crawling
+  // forward while this one was paused.
+  const f=lbFrame.querySelector("iframe");
+  if(!f||!e.source||e.source!==f.contentWindow) return;
+
+  let d; try{ d=JSON.parse(e.data); }catch(_){ return; }
+  const i=d&&d.info; if(!i) return;
+
+  // A reading sent just before a seek lands would drag the bar back to
+  // where it was; ignore position for a moment after moving the playhead.
+  if(typeof i.currentTime==="number"&&performance.now()>lbSeekLock) lbCur=i.currentTime;
+  if(typeof i.duration==="number"&&i.duration>0) lbDur=i.duration;
+  if(typeof i.playerState==="number"){
+    lbPlaying=(i.playerState===1);
+    // 0 is ENDED. Run it again from the top rather than sitting on a
+    // frozen last frame - looping via loop/playlist is what put those
+    // prev/next arrows over the video, so it's done by hand here.
+    if(i.playerState===0){
+      lbCur=0; lbSeekLock=performance.now()+700;
+      lbCmd("seekTo",[0,true]); lbCmd("playVideo");
+      lbPlaying=true;
+    }
+  }
+  if(typeof i.muted==="boolean") lbMuted=i.muted;
+  if(lbPoll&&typeof i.currentTime==="number"){ clearInterval(lbPoll); lbPoll=null; }
+  lbPaint();
+});
+
+lbPlayBtn.addEventListener("click",()=>{
+  lbPlaying=!lbPlaying;
+  lbCmd(lbPlaying?"playVideo":"pauseVideo");
+  lbPaint();
+});
+lbRestartBtn.addEventListener("click",()=>{
+  lbCur=0; lbSeekLock=performance.now()+700;
+  lbCmd("seekTo",[0,true]); lbCmd("playVideo");
+  lbPlaying=true; lbPaint();
+});
+lbMuteBtn.addEventListener("click",()=>{
+  lbMuted=!lbMuted;
+  lbCmd(lbMuted?"mute":"unMute");
+  if(!lbMuted) lbCmd("setVolume",[100]);
+  lbPaint();
+});
+lbSeek.addEventListener("click",e=>{
+  if(!lbDur) return;
+  const r=lbSeek.getBoundingClientRect();
+  const to=Math.max(0,Math.min(1,(e.clientX-r.left)/r.width))*lbDur;
+  lbCur=to; lbSeekLock=performance.now()+700;
+  lbCmd("seekTo",[to,true]); lbPaint();
+});
+
+function lbStartControls(startAt,muted){
+  lbCur=startAt||0; lbDur=0; lbPlaying=true; lbMuted=!!muted; lbSeekLock=0;
+  lbPaint();
+  clearInterval(lbPoll);
+  // The player ignores the handshake until it has booted, and gives no
+  // ready signal on this channel, so keep offering for a few seconds.
+  let n=0;
+  lbPoll=setInterval(()=>{ lbListen(); if(++n>12) clearInterval(lbPoll); },400);
+  lbListen();
+}
+function lbStopControls(){ clearInterval(lbPoll); lbPoll=null; }
+
+/* ---------- Notes, one per video, kept in this browser --------------- */
+const NOTES_KEY="anmol-video-notes";
+const lbnText=$("lbnText"), lbnCount=$("lbnCount"), lbnStatus=$("lbnStatus");
+let notesFor=null, notesSaveT=null;
+
+function loadNotes(){ try{ return JSON.parse(localStorage.getItem(NOTES_KEY)||"{}"); }catch(e){ return {}; } }
+function saveNotes(n){ try{ localStorage.setItem(NOTES_KEY,JSON.stringify(n)); }catch(e){} }
+function notesWithText(){
+  const n=loadNotes();
+  return Object.keys(n).filter(k=>n[k]&&n[k].note&&n[k].note.trim());
+}
+function paintNotesCount(){
+  const k=notesWithText().length;
+  lbnCount.textContent=k?(k+(k===1?" video":" videos")):"";
+}
+function openNotesFor(v){
+  notesFor=v;
+  const n=loadNotes();
+  lbnText.value=(n[v.id]&&n[v.id].note)||"";
+  lbnStatus.textContent="";
+  paintNotesCount();
+}
+lbnText.addEventListener("input",()=>{
+  if(!notesFor) return;
+  clearTimeout(notesSaveT);
+  notesSaveT=setTimeout(()=>{
+    const n=loadNotes();
+    const val=lbnText.value;
+    if(val.trim()) n[notesFor.id]={title:notesFor.title||"",cat:notesFor.category||"",note:val};
+    else delete n[notesFor.id];
+    saveNotes(n); paintNotesCount();
+    lbnStatus.textContent="Saved.";
+    setTimeout(()=>{ if(lbnStatus.textContent==="Saved.") lbnStatus.textContent=""; },1400);
+  },400);
+});
+
+function notesBody(){
+  const n=loadNotes(), out=[];
+  notesWithText().forEach(id=>{
+    const e=n[id];
+    out.push((e.title||"Untitled")+(e.cat?" ("+e.cat+")":"")+
+             "\nhttps://youtu.be/"+id+"\n"+e.note.trim());
+  });
+  return out.join("\n\n----------\n\n");
+}
+function withNotes(fn){
+  const body=notesBody();
+  if(!body){ lbnStatus.textContent="No notes yet - type one first."; return; }
+  fn(body,notesWithText().length);
+}
+$("lbnMail").addEventListener("click",()=>withNotes((body,k)=>{
+  const url="mailto:?subject="+encodeURIComponent("Notes on "+k+" video"+(k===1?"":"s"))+
+            "&body="+encodeURIComponent(body);
+  // Mail clients drop very long mailto links, so say so rather than
+  // letting it silently arrive truncated.
+  if(url.length>1900){ lbnStatus.textContent="Too long for email - use Copy instead."; return; }
+  location.href=url;
+  lbnStatus.textContent="Opening your email app...";
+}));
+$("lbnWa").addEventListener("click",()=>withNotes(body=>{
+  window.open("https://wa.me/?text="+encodeURIComponent(body),"_blank","noopener");
+  lbnStatus.textContent="Opening WhatsApp...";
+}));
+$("lbnCopy").addEventListener("click",()=>withNotes(async (body,k)=>{
+  let ok=false;
+  try{ await navigator.clipboard.writeText(body); ok=true; }
+  catch(e){
+    try{ const ta=document.createElement("textarea"); ta.value=body;
+         document.body.appendChild(ta); ta.select(); ok=document.execCommand("copy"); ta.remove(); }catch(_){}
+  }
+  lbnStatus.textContent=ok?("Copied "+k+" note"+(k===1?"":"s")+" - paste anywhere."):"Couldn't copy.";
+}));
+$("lbnClear").addEventListener("click",()=>{
+  if(!notesWithText().length){ lbnStatus.textContent="Nothing to clear."; return; }
+  if(!confirm("Delete the notes on every video? This can't be undone.")) return;
+  saveNotes({}); lbnText.value=""; paintNotesCount();
+  lbnStatus.textContent="All notes cleared.";
+});
+
 $("lbClose").addEventListener("click",closeLightbox);
 lb.addEventListener("click",e=>{ if(e.target===lb) closeLightbox(); });
 
@@ -1142,6 +1467,10 @@ addEventListener("keydown",e=>{
   function sendYT(frame,func,args){
     if(!frame||!frame.contentWindow) return;
     try{ frame.contentWindow.postMessage(JSON.stringify({event:"command",func:func,args:args||[]}),"*"); }catch(e){}
+  }
+  function listenYT(frame){
+    if(!frame||!frame.contentWindow) return;
+    try{ frame.contentWindow.postMessage(JSON.stringify({event:"listening",id:1,channel:"widget"}),"*"); }catch(e){}
   }
   function applySound(frame,on){
     if(!frame) return;
@@ -1245,8 +1574,21 @@ addEventListener("keydown",e=>{
     const c=document.createElement("span"); c.className="spl-cat";
     c.textContent=card.dataset.cat||"";
 
+    const again=document.createElement("button");
+    again.type="button"; again.className="spl-btn spl-again";
+    again.title="Start over"; again.setAttribute("aria-label","Start over");
+    again.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" '+
+      'stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'+
+      '<path d="M3 12a9 9 0 1 0 2.6-6.4"/><path d="M3 4.5V10h5.5"/></svg>';
+    again.addEventListener("click",e=>{
+      e.preventDefault(); e.stopPropagation();
+      sendYT(frame,"seekTo",[0,true]); sendYT(frame,"playVideo");
+      // the card underneath should agree about where we are now
+      card._handoffAt=0; card._handoffFrom=performance.now();
+    });
+
     const snd=document.createElement("button");
-    snd.type="button"; snd.className="spl-sound"+(soundOn?" is-on":"");
+    snd.type="button"; snd.className="spl-btn spl-sound"+(soundOn?" is-on":"");
     snd.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" '+
       'stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'+
       '<path d="M4 9.5v5h3.5L12 18V6L7.5 9.5H4z"/>'+
@@ -1262,7 +1604,7 @@ addEventListener("keydown",e=>{
       applySound(frame,soundOn);
     });
 
-    bar.append(t,c,snd);
+    bar.append(t,c,again,snd);
 
     // Moving onto the bar means leaving the card, which would otherwise
     // schedule the close before the button could be clicked.
@@ -1270,7 +1612,12 @@ addEventListener("keydown",e=>{
     bar.addEventListener("mouseleave",()=>{ card._closeT=setTimeout(()=>deactivate(card),CLOSE_DELAY); });
 
     // Carry the current sound setting into this preview once it is up.
-    frame.addEventListener("load",()=>{ if(soundOn) applySound(frame,true); });
+    frame.addEventListener("load",()=>{
+      if(soundOn) applySound(frame,true);
+      // Open the reporting channel so the end of the clip can be caught
+      // and looped; it stays quiet until asked.
+      listenYT(frame); setTimeout(()=>listenYT(frame),500); setTimeout(()=>listenYT(frame),1200);
+    });
 
     lift.append(vid,bar);
     document.body.appendChild(lift);
@@ -1287,6 +1634,9 @@ addEventListener("keydown",e=>{
   function stopPreview(card){
     if(!card||!card._smartPreview) return;
     const lift=card._smartPreview; card._smartPreview=null;
+    // Silence it now rather than letting it play on through the shrink.
+    const old=lift.querySelector("iframe");
+    if(old){ sendYT(old,"mute"); sendYT(old,"pauseVideo"); }
     // Settle back onto the card it grew out of, then clean up.
     const r=card.getBoundingClientRect();
     lift.classList.add("closing");
@@ -1353,7 +1703,10 @@ addEventListener("keydown",e=>{
       if(card._autoWired) return;
       card._autoWired=true;
       const id=card.dataset.videoId; if(!id) return;
-      let host=null, player=null;
+      // Commands queued before the player has finished booting throw
+      // from inside the API, asynchronously, where a try/catch around the
+      // call can't reach them - so nothing is sent until it says ready.
+      let host=null, player=null, ready=false;
       card._onScreen=false;
 
       card._startInline=function(){
@@ -1378,6 +1731,7 @@ addEventListener("keydown",e=>{
                 }
               },
               onReady:e=>{
+              ready=true;
               try{ e.target.mute(); e.target.playVideo(); }catch(err){}
               const f=e.target.getIframe&&e.target.getIframe();
               if(f){ f.setAttribute("tabindex","-1"); f.setAttribute("aria-hidden","true"); }
@@ -1394,10 +1748,10 @@ addEventListener("keydown",e=>{
       // position, which is the whole point of the handoff.
       card._pauseInline=function(){
         card.classList.remove("is-inline-playing");
-        if(player&&player.pauseVideo){ try{ player.pauseVideo(); }catch(e){} }
+        if(ready&&player&&player.pauseVideo){ try{ player.pauseVideo(); }catch(e){} }
       };
       card._resumeInline=function(at){
-        if(!player||!player.playVideo){ card._startInline(); return; }
+        if(!ready||!player||!player.playVideo){ if(!player) card._startInline(); return; }
         try{
           let t=at||0;
           const d=player.getDuration&&player.getDuration();
@@ -1410,9 +1764,10 @@ addEventListener("keydown",e=>{
       card._stopInline=function(){
         card.classList.remove("is-inline-playing");
         card._ytPlayer=null;
-        const h=host, pl=player; host=null; player=null;
+        const h=host, pl=player, wasReady=ready;
+        host=null; player=null; ready=false;
         setTimeout(()=>{
-          if(pl&&pl.destroy){ try{ pl.destroy(); }catch(e){} }
+          if(wasReady&&pl&&pl.destroy){ try{ pl.destroy(); }catch(e){} }
           if(h&&h.parentNode) h.remove();
         },320);
       };
@@ -1431,6 +1786,47 @@ addEventListener("keydown",e=>{
     if(!card||!card.classList.contains("smart-active")) return;
     sourceCard=card; card._smartLocked=true;
   },true);
+
+  /* Clicking through to the full player used to leave the preview alive
+     behind it, so that closing would drop you back into it. That was
+     silent while previews were always muted - now it means two videos
+     playing at once. The preview is taken down instead, and the hover is
+     rebuilt on close if the pointer is still on the card. */
+  /* Where the hover preview has reached, so clicking through can carry
+     on from the same frame instead of starting the video again. */
+  // Loop whatever is showing in the preview, pinned to that player so the
+  // other videos reporting on this same channel can't trigger it.
+  addEventListener("message",e=>{
+    if(typeof e.origin!=="string"||e.origin.indexOf("youtube")<0) return;
+    const card=activeCard; if(!card||!card._smartPreview) return;
+    const f=card._smartPreview.querySelector("iframe");
+    if(!f||!e.source||e.source!==f.contentWindow) return;
+    let d; try{ d=JSON.parse(e.data); }catch(_){ return; }
+    const i=d&&d.info; if(!i) return;
+    if(i.playerState===0){ sendYT(f,"seekTo",[0,true]); sendYT(f,"playVideo"); }
+  });
+
+  window.smartHoverMuted=function(){ return !soundOn; };
+
+  window.smartHoverPlayhead=function(){
+    const card=activeCard; if(!card) return 0;
+    let t=card._handoffAt||0;
+    if(card._handoffFrom) t+=(performance.now()-card._handoffFrom)/1000;
+    return t;
+  };
+
+  window.silenceSmartHover=function(){
+    const card=activeCard;
+    if(!card) return;
+    card.classList.remove("smart-active");
+    stopPreview(card);
+    activeCard=null;
+    blur.classList.remove("on");
+    root.classList.remove("smart-preview-on");
+    card._handoffFrom=null;   // time spent in the full player shouldn't skew the resume
+    sourceCard=card;          // remember where to come back to
+    card._smartLocked=true;   // and don't let a stray mouseleave restart the card meanwhile
+  };
 
   window.reconcileSmartHover=function(){
     const card=sourceCard; sourceCard=null; if(!card) return;
