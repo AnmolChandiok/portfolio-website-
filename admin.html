@@ -737,7 +737,7 @@
     return {
       type: 'youtube',
       id: id, title: '', client: '', category: '', year: String(new Date().getFullYear()),
-      description: '', instagramUrl: '',
+      description: '', instagramUrl: '', projectFile: '',
       aspect: vertical ? '9:16' : '16:9', duration: '', poster: '', preview: '',
       previewMode: 'youtube', start: 0, featured: false, hidden: false
     };
@@ -891,6 +891,10 @@
       '<div class="f"><label>Also on Instagram (optional)</label>' +
         '<input data-k="instagramUrl" class="mono" value="' + esc(v.instagramUrl || '') + '" placeholder="https://instagram.com/reel/...">' +
         '<div class="hint">Instagram doesn’t allow embedding a reel that plays in place like YouTube does — this just adds a link next to the player so people can open it there too.</div></div>' +
+
+      '<div class="f"><label>Project file (optional)</label>' +
+        '<input data-k="projectFile" class="mono" value="' + esc(v.projectFile || '') + '" placeholder="https://drive.google.com/...">' +
+        '<div class="hint">A Google Drive link to the raw project — brief, footage, source files. Adds a small badge on the thumbnail and a download link next to the player. Set the Drive link to "Anyone with the link can view" or it’ll be blocked for visitors.</div></div>' +
 
       '<div class="switches">' +
         '<label class="sw"><input type="checkbox" data-k="featured"' + (v.featured ? ' checked' : '') + '> Featured</label>' +
