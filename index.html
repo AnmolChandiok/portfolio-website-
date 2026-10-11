@@ -94,7 +94,7 @@ button{font:inherit;color:inherit}
 .hero{padding-top:clamp(120px,16vh,170px);text-align:center;overflow-x:clip}
 .hero h1{font-size:clamp(3rem,9vw,7.4rem);letter-spacing:-.06em;line-height:.95;margin-top:18px}
 .fan{position:relative;height:clamp(220px,26vw,320px);margin-top:clamp(28px,4vw,48px);perspective:1400px}
-.fan-inner{position:absolute;inset:0;transform-style:preserve-3d}
+.fan-inner{position:absolute;inset:0}   /* flat on purpose: each card tilts on its own layer and stacks by z-index, so cards never slice through each other */
 .hero-card{position:absolute;left:50%;top:50%;height:clamp(130px,17vw,220px);aspect-ratio:var(--ar);border-radius:8px;overflow:hidden;background:var(--tone);box-shadow:var(--lift);transform:translate(-50%,-50%) translateX(calc(var(--o) * min(10vw,130px))) rotate(calc(var(--o) * 3deg));z-index:calc(10 - var(--d));cursor:pointer}
 .js-motion .hero-card{transform:none}
 .hero-card img,.deck-card img{width:100%;height:100%;object-fit:cover}
@@ -445,7 +445,7 @@ footer{padding-block:28px 40px}
   /* ---------- 4. Hero fan + deck from your own thumbnails ---------- */
   const img = (v, alt = '') => `<img src="${esc(thumb(v))}" alt="${esc(alt)}" loading="lazy" onerror="this.parentNode.classList.add('noimg')"><div class="poster"><i>${label(v.aspect)} · ${esc(v.category)}</i><span>${esc(v.title)}</span></div>`;
   const byFeat = [...videos].sort((a, b) => (b.featured ? 1 : 0) - (a.featured ? 1 : 0) || a._i - b._i);
-  const fanPick = byFeat.slice(0, 7).sort((a, b) => b._ar - a._ar);               // widest first
+  const fanPick = byFeat.slice(0, innerWidth < 700 ? 3 : innerWidth < 1100 ? 5 : 7).sort((a, b) => b._ar - a._ar);               // widest first
   const slots = []; const midIdx = Math.floor((fanPick.length - 1) / 2);
   fanPick.forEach((v, k) => slots[midIdx + (k % 2 ? -1 : 1) * Math.ceil(k / 2)] = v); // widest in the centre, verticals at the edges
   const fanItems = slots.filter(Boolean);
@@ -655,13 +655,23 @@ footer{padding-block:28px 40px}
   const cards = gsap.utils.toArray('.hero-card');
   if (cards.length) {
     const cmid = (cards.length - 1) / 2, front = cards[Math.round(cmid)];
-    const spread = () => Math.min(innerWidth * (innerWidth < 700 ? .1 : .11), 140);
+    // Space cards by their real widths so a wide 16:9 never buries its neighbour, then shrink the overlap to fit the screen
+    const fanX = () => {
+      const m = Math.round(cmid), w = cards.map(c => c.offsetWidth), xs = cards.map(() => 0);
+      const place = k => { for (let i = m + 1; i < cards.length; i++) xs[i] = xs[i - 1] + (w[i - 1] + w[i]) / 2 * k;
+        for (let i = m - 1; i >= 0; i--) xs[i] = xs[i + 1] - (w[i + 1] + w[i]) / 2 * k;
+        return Math.max(...xs.map((x, i) => Math.abs(x) + w[i] / 2)); };
+      const room = innerWidth / 2 - 12;
+      let k = .58; while (k > .2 && place(k) > room) k -= .02;
+      return xs;
+    };
+    const xs = fanX();
     gsap.set(cards, { xPercent: -50, yPercent: -50, transformPerspective: 1400 });
     gsap.set(cards.filter(c => c !== front), { opacity: 0, scale: .92 });
     gsap.timeline({ delay: .25 })
       .from(front, { y: innerHeight * .7, rotation: -24, scale: .8, duration: 1.1, ease: 'power3.out' })
       .to(cards.filter(c => c !== front), { opacity: 1, scale: 1, duration: .35 }, '-=.25')
-      .to(cards, { x: i => (i - cmid) * spread(), y: i => Math.abs(i - cmid) * 9, rotation: i => (i - cmid) * 3, rotationY: i => (i - cmid) * -8, duration: 1.3, ease: 'expo.inOut', stagger: { each: .03, from: 'center' } }, '-=.05')
+      .to(cards, { x: i => xs[i], y: i => Math.abs(i - cmid) * 10, rotation: i => (i - cmid) * 2.5, rotationY: i => (i - cmid) * -6, duration: 1.3, ease: 'expo.inOut', stagger: { each: .03, from: 'center' } }, '-=.05')
       .from('.bubble', { scale: 0, opacity: 0, transformOrigin: '20% 100%', duration: .7, ease: 'back.out(2.2)', stagger: .12 }, '-=.6')
       .add(() => {
         gsap.utils.toArray('.bubble').forEach((b, i) => gsap.to(b, { y: -7, duration: 2 + i * .4, repeat: -1, yoyo: true, ease: 'sine.inOut' }));
