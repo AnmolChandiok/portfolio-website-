@@ -1,2013 +1,717 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Anmol Chandiok — Motion designer & video editor</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Anmol Chandiok — Motion designer &amp; video editor</title>
 <meta name="description" content="Anmol Chandiok is a motion designer and video editor in Delhi NCR, running the studio Pluseshot.">
-<meta name="theme-color" content="#EDEDEA">
+<meta property="og:title" content="Anmol Chandiok — Motion designer &amp; video editor">
+<meta property="og:description" content="Reels, brand motion and After Effects tools from Delhi NCR, through the studio Pluseshot.">
+<meta property="og:type" content="website">
+<meta property="og:image" content="media/profile-1784040982966.jpg">
+<meta name="theme-color" content="#fafafa" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0b0b0c" media="(prefers-color-scheme: dark)">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect x='2' y='2' width='28' height='28' rx='8' fill='%23111112'/%3E%3Cpath d='M8 16h4l2.5-6 3 12 2.5-6h4' stroke='%23ff5a1f' stroke-width='2.4' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
 <script>
-/* Settles the theme before the first paint. Without this, a visitor whose
-   own device is set to dark gets a flash of the dark palette (the
-   prefers-color-scheme rule below applies immediately) before the script
-   at the bottom of the page can put the light default in place. Light is
-   the default for everyone; a returning visitor gets whatever they last
-   chose with the toggle. */
+/* Settle the theme before first paint: a visitor's saved choice wins, otherwise follow their device. */
 (function(){
   var t = null;
   try { t = localStorage.getItem("anmol-theme"); } catch (e) {}
-  document.documentElement.setAttribute("data-theme", t === "dark" ? "dark" : "light");
+  if (t !== "light" && t !== "dark") t = matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+  document.documentElement.setAttribute("data-theme", t);
 })();
 </script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&family=DM+Mono:wght@400;500&display=swap">
 <style>
+/* Layout: a quiet paper-white canvas where the videos are the only colour. Text comes from data/content.json,
+   work from data/videos.json, and the work grid packs 9:16 and 16:9 clips into justified rows on its own. */
 :root{
-  --bg:#EDEDEA; --ink:#000000; --muted:#6E6E6A; --line:#D0D0CB; --card:#E1E1DD; --accent:#FB5607; --accent-2:#FF9A4D;
-  --pad:clamp(16px,2.6vw,40px); --r:5px; --nav-h:64px; --e:cubic-bezier(.65,0,.35,1);
-  --font:"Geist", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+  --bg:#fafafa;
+  --surface:#ffffff;
+  --ink:#111112;
+  --muted:#85858b;
+  --ghost:#d4d4d8;
+  --line:#ebebed;
+  --tone:#f0f0f1;
+  --accent:#ff5a1f;      /* tiny signals only: logo pulse, dots */
+  --f-sans:"DM Sans","Helvetica Neue",Arial,system-ui,sans-serif;
+  --f-mono:"DM Mono",ui-monospace,"SF Mono",Menlo,monospace;
+  --gutter:clamp(20px,5vw,64px);
+  --max:1240px;
+  --r-tile:5px;
+  --r-card:12px;
+  --lift:0 0 0 1px var(--line),0 24px 48px -28px rgba(0,0,0,.28);
 }
-@media (prefers-color-scheme: dark){
-  :root:not([data-theme="light"]){ --bg:#101010; --ink:#F1F1EE; --muted:#9A9A95; --line:#2B2B2A; --card:#1B1B1A; }
-}
-:root[data-theme="dark"]{ --bg:#101010; --ink:#F1F1EE; --muted:#9A9A95; --line:#2B2B2A; --card:#1B1B1A; }
-html[data-theme="light"]{ color-scheme:light; }
-html[data-theme="dark"]{ color-scheme:dark; }
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#0b0b0c;--surface:#131315;--ink:#f2f2f3;--muted:#7f7f86;--ghost:#2d2d31;--line:#202023;--tone:#19191c;--accent:#ff6a33;
+  --lift:0 0 0 1px var(--line),0 24px 48px -28px rgba(0,0,0,.8);color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0b0b0c;--surface:#131315;--ink:#f2f2f3;--muted:#7f7f86;--ghost:#2d2d31;--line:#202023;--tone:#19191c;--accent:#ff6a33;
+  --lift:0 0 0 1px var(--line),0 24px 48px -28px rgba(0,0,0,.8);color-scheme:dark}
 
-*{box-sizing:border-box;margin:0;padding:0}
+*,*::before,*::after{box-sizing:border-box}
+[hidden]{display:none!important}
+html,body{overflow-x:clip}
 html.lenis,html.lenis body{height:auto}
 .lenis.lenis-smooth{scroll-behavior:auto!important}
 .lenis.lenis-stopped{overflow:hidden}
-body{background:var(--bg);color:var(--ink);font-family:var(--font);font-size:16px;line-height:1.5;-webkit-font-smoothing:antialiased;overflow-x:hidden;-webkit-tap-highlight-color:transparent}
-body.locked{overflow:hidden}
-a{color:inherit;text-decoration:none}
-button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
-img,canvas{display:block;max-width:100%}
-:focus-visible{outline:2px solid var(--accent);outline-offset:3px;border-radius:4px}
-.label{color:var(--muted);font-size:14px}
-.btn-line{display:inline-flex;align-items:center;gap:8px;padding:9px 16px;border-radius:999px;border:1px solid var(--line);font-size:15px;white-space:nowrap;transition:background .2s,color .2s,border-color .2s}
-.btn-line:hover{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--f-sans);font-size:16px;line-height:1.55;-webkit-font-smoothing:antialiased;transition:background .4s,color .4s}
+a{color:inherit}
+img{display:block}
+h1,h2,h3{font-weight:400;letter-spacing:-.045em;line-height:1.04;margin:0;text-wrap:balance}
+p{margin:0}
+button{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--ink);outline-offset:3px;border-radius:6px}
+.wrap{max-width:var(--max);margin-inline:auto;padding-inline:var(--gutter)}
+.eyebrow{font-family:var(--f-mono);font-size:.7rem;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+.eyebrow b{color:var(--ink);font-weight:500}
+.soft{color:var(--muted)}
+.w{display:inline-block;will-change:transform,filter,opacity}
 
-/* Theme + smart-preview transitions, matching everywhere the "window" touches */
-html,body,.nav,.nav a,.pill,.theme-toggle,.vcard,.work,.hero,main,footer,.aw,.aw-head,.chip,.jgrid .vmeta,.lb-title,.lb-close,section{
-  transition: background-color .55s ease, color .55s ease, border-color .55s ease, box-shadow .55s ease, fill .55s ease, stroke .55s ease;
-}
-::view-transition-old(root),
-::view-transition-new(root){
-  animation-duration:.55s;
-  animation-timing-function:cubic-bezier(.22,1,.36,1);
-}
-@media (prefers-reduced-motion:reduce){
-  html,body,.nav,.nav a,.pill,.theme-toggle,.vcard,.work,.hero,main,footer,.aw,.aw-head,.chip,.jgrid .vmeta,.lb-title,.lb-close,section{
-    transition:none;
-  }
-  ::view-transition-old(root),
-  ::view-transition-new(root){animation:none !important;}
-}
+.btn{display:inline-flex;align-items:center;gap:.5em;padding:.8em 1.25em;border-radius:999px;font-weight:500;font-size:.9rem;line-height:1;text-decoration:none;border:0;cursor:pointer;transition:transform .3s cubic-bezier(.2,.8,.2,1),background .3s}
+.btn:hover{transform:translateY(-2px)}
+.btn-ink{background:var(--ink);color:var(--bg)}
+.btn-ghost{background:transparent;color:inherit;box-shadow:inset 0 0 0 1px color-mix(in srgb,currentColor 22%,transparent)}
 
-/* ---------- Nav ---------- */
-.nav{position:fixed;inset:0 0 auto 0;z-index:30;display:flex;align-items:center;justify-content:space-between;gap:16px;padding:calc(12px + env(safe-area-inset-top)) var(--pad) 12px;background:color-mix(in srgb,var(--bg) 84%,transparent);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);transition:transform .5s var(--e)}
-.nav.hide{transform:translateY(-110%)}
-.brand{font-weight:600;letter-spacing:-.02em;display:flex;align-items:center;gap:8px;white-space:nowrap}
-.brand i{width:9px;height:9px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--accent-2));display:inline-block}
-.nav nav{display:flex;gap:28px;font-size:15px}
-.nav nav a,.nav nav button{color:var(--muted);transition:color .2s;font-size:15px}
-.nav nav a:hover,.nav nav button:hover{color:var(--ink)}
-.nav-right{display:flex;align-items:center;gap:8px}
-.pill{background:var(--ink);color:var(--bg);padding:9px 18px;border-radius:999px;font-size:15px;font-weight:500;white-space:nowrap}
-.menu-btn{display:none;padding:9px 14px;border-radius:999px;border:1px solid var(--line);font-size:15px}
+/* nav */
+.nav{position:fixed;inset:0 0 auto 0;z-index:50;padding-top:env(safe-area-inset-top,0px)}
+.nav-in{display:flex;align-items:center;gap:24px;max-width:var(--max);margin:10px auto 0;padding:9px 10px 9px 18px;border-radius:999px;background:color-mix(in srgb,var(--bg) 80%,transparent);box-shadow:inset 0 0 0 1px var(--line);backdrop-filter:blur(14px) saturate(1.4);-webkit-backdrop-filter:blur(14px) saturate(1.4);width:calc(100% - 2*var(--gutter))}
+.logo{display:flex;align-items:center;gap:10px;font-weight:500;font-size:.98rem;letter-spacing:-.02em;text-decoration:none;white-space:nowrap}
+.logo svg{width:24px;height:24px;flex:none}
+.nav-links{display:flex;gap:22px;margin-left:auto;font-size:.88rem}
+.nav-links a{text-decoration:none;color:var(--muted);transition:color .2s}
+.nav-links a:hover{color:var(--ink)}
+.nav .btn{padding:.65em 1.1em;font-size:.84rem}
+.theme-btn{flex:none;width:34px;height:34px;margin-right:-12px;border:0;border-radius:50%;background:transparent;color:var(--muted);display:grid;place-items:center;cursor:pointer;transition:color .2s,background .2s}
+.theme-btn:hover{color:var(--ink);background:var(--tone)}
+.theme-btn svg{width:16px;height:16px}
+[data-theme="dark"] .theme-btn .i-moon,[data-theme="light"] .theme-btn .i-sun{display:none}
+@media (max-width:820px){.nav-links{display:none}.theme-btn{margin-left:auto}}
 
-/* Theme toggle button — part of the permanent nav now */
-.theme-toggle{
-  width:40px;height:40px;border-radius:999px;border:1px solid var(--line);
-  display:inline-grid;place-items:center;color:var(--ink);background:transparent;
-  transition:background .2s,border-color .2s,color .2s;flex-shrink:0;
-}
-.theme-toggle:hover{background:var(--ink);color:var(--bg);border-color:var(--ink)}
-.theme-toggle svg{width:16px;height:16px;display:block}
-html[data-theme="light"] .theme-toggle .icon-sun{display:none}
-html[data-theme="dark"] .theme-toggle .icon-moon{display:none}
+/* hero */
+.hero{padding-top:clamp(120px,16vh,170px);text-align:center;overflow-x:clip}
+.hero h1{font-size:clamp(3rem,9vw,7.4rem);letter-spacing:-.06em;line-height:.95;margin-top:18px}
+.fan{position:relative;height:clamp(220px,26vw,320px);margin-top:clamp(28px,4vw,48px);perspective:1400px}
+.fan-inner{position:absolute;inset:0;transform-style:preserve-3d}
+.hero-card{position:absolute;left:50%;top:50%;height:clamp(130px,17vw,220px);aspect-ratio:var(--ar);border-radius:8px;overflow:hidden;background:var(--tone);box-shadow:var(--lift);transform:translate(-50%,-50%) translateX(calc(var(--o) * min(10vw,130px))) rotate(calc(var(--o) * 3deg));z-index:calc(10 - var(--d));cursor:pointer}
+.js-motion .hero-card{transform:none}
+.hero-card img,.deck-card img{width:100%;height:100%;object-fit:cover}
+.bubble{position:absolute;z-index:20;padding:.5em .8em;border-radius:999px;font:400 .74rem/1 var(--f-mono);color:var(--ink);background:var(--surface);box-shadow:0 0 0 1px var(--line);white-space:nowrap}
+.bubble::before{content:"";display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--accent);margin-right:7px;vertical-align:1px}
+.hero-sub{max-width:46ch;margin:clamp(24px,3vw,36px) auto 0;color:var(--muted);font-size:1.02rem}
+.hero-cta{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-top:24px}
 
-main{position:relative;z-index:2;background:var(--bg)}
+/* poster fallback when a thumbnail can't load */
+.poster{position:absolute;inset:0;display:none;flex-direction:column;justify-content:space-between;padding:12px;background:var(--tone);color:var(--ink);text-align:left}
+.poster span{font-weight:500;font-size:.9rem;letter-spacing:-.02em;line-height:1.15;display:-webkit-box;-webkit-line-clamp:4;-webkit-box-orient:vertical;overflow:hidden}
+.poster i{font:400 .62rem/1 var(--f-mono);font-style:normal;color:var(--muted);letter-spacing:.08em;text-transform:uppercase}
+.noimg .poster{display:flex}
+.noimg img{display:none}
 
-/* ---------- Video cards (shared) ---------- */
-.vcard{position:relative;display:block;overflow:hidden;border-radius:var(--r);background:var(--card);text-align:left;flex-shrink:0}
-.vmedia{position:absolute;inset:0;will-change:transform}
-.vmedia img{width:100%;height:100%;object-fit:cover;transition:transform .7s var(--e)}
-button.vcard:hover .vmedia img{transform:scale(1.05)}
-.vplay{--s:48px;position:absolute;left:50%;top:50%;width:var(--s);height:var(--s);margin:calc(var(--s)/-2) 0 0 calc(var(--s)/-2);border-radius:50%;background:rgba(0,0,0,.5);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);transition:transform .35s var(--e),background .25s;pointer-events:none}
-.vplay::after{content:"";position:absolute;left:52%;top:50%;transform:translate(-40%,-50%);border-left:calc(var(--s)*.28) solid #fff;border-top:calc(var(--s)*.18) solid transparent;border-bottom:calc(var(--s)*.18) solid transparent}
-button.vcard:hover .vplay{background:var(--accent);transform:scale(1.08)}
-.vcard.is-empty .vplay{background:transparent;backdrop-filter:none;border:1.5px solid color-mix(in srgb,var(--muted) 45%,transparent)}
-.vcard.is-empty .vplay::after{border-left-color:color-mix(in srgb,var(--muted) 60%,transparent)}
-.vmeta{position:absolute;left:0;right:0;bottom:0;padding:32px 12px 10px;display:flex;flex-direction:column;gap:2px;color:#fff;background:linear-gradient(transparent,rgba(0,0,0,.75));pointer-events:none}
-.vt{font-size:15px;font-weight:500;line-height:1.25;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
-.vc{font-size:13px;opacity:.75}
-.vfile{position:absolute;top:10px;left:10px;z-index:2;display:inline-flex;align-items:center;gap:5px;padding:5px 10px 5px 8px;border-radius:999px;background:rgba(0,0,0,.55);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);color:#fff;font-size:11px;font-weight:600;letter-spacing:.02em;pointer-events:none}
-.vfile svg{width:12px;height:12px;display:block;flex-shrink:0}
-.jgrid{position:relative}
-.jgrid .vcard{position:absolute}
-#workGrid .vcard,#awGrid .vcard{border-radius:12px}
+/* clients marquee */
+.clients{padding-block:clamp(56px,8vw,96px) 0}
+.clients-head{display:flex;justify-content:space-between;align-items:end;gap:16px;flex-wrap:wrap}
+.clients-head h2{font-size:clamp(1.15rem,1.8vw,1.4rem)}
+.marquee{overflow:hidden;margin-top:22px;-webkit-mask-image:linear-gradient(90deg,transparent,#000 12%,#000 88%,transparent);mask-image:linear-gradient(90deg,transparent,#000 12%,#000 88%,transparent)}
+.marquee-track{display:flex;width:max-content;animation:slide 30s linear infinite}
+.marquee:hover .marquee-track{animation-play-state:paused}
+.marquee-track span{font-size:clamp(1.1rem,1.8vw,1.4rem);letter-spacing:-.025em;color:var(--muted);padding-inline:clamp(20px,3vw,40px);white-space:nowrap;display:flex;align-items:center;gap:14px}
+.marquee-track span::before{content:"";width:4px;height:4px;border-radius:50%;background:var(--ghost)}
+@keyframes slide{to{transform:translateX(-50%)}}
 
-/* ---------- Cinema hover: dark room, one film, no player chrome (the "window") ---------- */
-.smart-hover-blur{
-  /* Above the All-work panel (60) and the nav (30) so those blur too,
-     below the lift and the click-through lightbox (80). */
-  position:fixed;inset:0;z-index:70;
-  background:rgba(4,4,4,.84);
-  backdrop-filter:blur(14px) saturate(.55);
-  -webkit-backdrop-filter:blur(14px) saturate(.55);
-  opacity:0;pointer-events:none;
-  transition:opacity .4s ease;
-}
-.smart-hover-blur.on{opacity:1;}
-.smart-preview-lift{
-  position:fixed;z-index:75;overflow:hidden;pointer-events:none;
-  display:flex;flex-direction:column;
-  border-radius:16px;background:#000;
-  box-shadow:0 0 0 1px rgba(255,255,255,.14), 0 40px 110px rgba(0,0,0,.68), 0 10px 34px rgba(0,0,0,.45);
-  opacity:0;
-  transform-origin:center center;
-  /* Rises toward you: starts pushed back and tilted, settles perfectly
-     flat — so the depth is in the movement, and the video is never left
-     sitting at an angle that distorts it. */
-  transform:perspective(1400px) translate3d(0,18px,-110px) rotateX(8deg) scale(.95);
-  transition:transform .6s cubic-bezier(.16,1,.3,1),opacity .42s ease,
-             left .6s cubic-bezier(.16,1,.3,1),top .6s cubic-bezier(.16,1,.3,1),
-             width .6s cubic-bezier(.16,1,.3,1),height .6s cubic-bezier(.16,1,.3,1);
-}
-.smart-preview-lift.on{
-  transform:perspective(1400px) translate3d(0,0,0) rotateX(0deg) scale(1);
-  opacity:1;
-}
-/* The box already carries the video's own shape, so the player is given
-   the exact width and extra height instead of being zoomed on both axes.
-   YouTube then fits the video to the width — landing it exactly on the
-   visible box — while its title bar and controls sit in the overflow
-   above and below and get clipped. Full bleed, nothing cropped, and no
-   squashing of 9:16 reels the way the old both-axis zoom did. */
-/* Closing is quicker than opening - waiting out a slow fade after you
-   have already moved away feels sluggish. */
-.smart-preview-lift.closing{
-  transition:transform .4s cubic-bezier(.4,0,.2,1),opacity .3s ease,
-             left .4s cubic-bezier(.4,0,.2,1),top .4s cubic-bezier(.4,0,.2,1),
-             width .4s cubic-bezier(.4,0,.2,1),height .4s cubic-bezier(.4,0,.2,1);
-}
-.spl-video{position:relative;flex:1 1 auto;min-height:0;overflow:hidden;background:#000}
-/* Caption bar, joined to the film rather than floating under it - the
-   lift clips it to the same rounded corners, so the two read as one card. */
-.spl-bar{
-  flex:0 0 auto;height:54px;
-  display:flex;align-items:center;gap:12px;padding:0 10px 0 16px;
-  background:var(--card);color:var(--ink);
-  border-top:1px solid color-mix(in srgb,var(--ink) 12%,transparent);
-  /* The lift as a whole stays click-through so hovering the film still
-     counts as hovering the card underneath. Only this strip takes the
-     mouse, so the sound button can actually be pressed. */
-  pointer-events:auto;
-}
-.spl-btn{
-  flex:0 0 auto;width:32px;height:32px;border-radius:50%;
-  display:grid;place-items:center;cursor:pointer;
-  color:var(--ink);background:transparent;
-  border:1px solid color-mix(in srgb,var(--ink) 20%,transparent);
-  transition:background .2s,color .2s,border-color .2s;
-}
-.spl-btn:hover{background:var(--ink);color:var(--card);border-color:var(--ink)}
-.spl-btn svg{width:16px;height:16px;display:block}
-.spl-sound .snd-on{display:none}
-.spl-sound.is-on .snd-on{display:block}
-.spl-sound.is-on .snd-off{display:none}
-.spl-title{
-  flex:1 1 auto;min-width:0;font-size:14px;font-weight:500;letter-spacing:-.01em;
-  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
-}
-.spl-cat{flex:0 0 auto;font-size:12.5px;color:var(--muted);white-space:nowrap}
-.spl-video iframe{
-  position:absolute;left:50%;top:50%;
-  width:100%;height:165%;
-  transform:translate(-50%,-50%);
-  border:0;background:#000;pointer-events:none;
-}
-.vcard.smart-active{opacity:0;}
-.vcard.smart-active .vplay{opacity:0;}
+/* statement (pinned) */
+.statement{min-height:100vh;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;padding-block:100px 60px}
+.deck{position:relative;width:clamp(120px,13vw,160px);aspect-ratio:9/16;margin-bottom:clamp(24px,4vw,44px)}
+.deck-card{position:absolute;inset:0;border-radius:8px;overflow:hidden;background:var(--tone);box-shadow:var(--lift)}
+.statement-text{font-size:clamp(1.9rem,4.4vw,3.8rem);letter-spacing:-.045em;line-height:1.08;max-width:18ch}
+.statement-text span.line{display:block}
 
-/* Featured videos play muted in their own card once on screen (desktop). */
-.vcard .vinline{
-  position:absolute;left:50%;top:50%;
-  width:100%;height:165%;
-  transform:translate(-50%,-50%);
-  background:#000;
-  opacity:0;pointer-events:none;transition:opacity .45s ease;
-}
-.vcard .vinline iframe{width:100%;height:100%;border:0;display:block}
-.vcard.is-inline-playing .vinline{opacity:1}
-.vcard.is-inline-playing .vmedia img{opacity:0}
-.vcard.is-inline-playing .vplay{opacity:0}
-.vcard .vmedia img{transition:transform .7s var(--e),opacity .45s ease}
+/* work */
+.work{padding-block:clamp(60px,9vw,120px)}
+.work-head{display:flex;justify-content:space-between;align-items:end;gap:24px;flex-wrap:wrap}
+.work-head h2{font-size:clamp(2.4rem,6vw,5rem);letter-spacing:-.055em}
+.work-head p{max-width:40ch;color:var(--muted);margin-top:12px}
+.count{font:400 .74rem/1 var(--f-mono);color:var(--muted);font-variant-numeric:tabular-nums;white-space:nowrap}
+.tabs{position:relative;display:inline-flex;gap:2px;padding:4px;border-radius:999px;box-shadow:inset 0 0 0 1px var(--line);margin-top:30px;max-width:100%;overflow-x:auto;scrollbar-width:none}
+.tabs::-webkit-scrollbar{display:none}
+.tab{position:relative;z-index:1;border:0;background:none;font-size:.86rem;color:var(--muted);padding:.75em 1.1em;border-radius:999px;cursor:pointer;white-space:nowrap;transition:color .3s}
+.tab sup{font:400 .62rem var(--f-mono);margin-left:4px;opacity:.7}
+.tab[aria-selected="true"]{color:var(--bg)}
+.tab-pill{position:absolute;z-index:0;top:4px;bottom:4px;left:0;border-radius:999px;background:var(--ink);transition:transform .5s cubic-bezier(.7,0,.2,1),width .5s cubic-bezier(.7,0,.2,1)}
+.grid{position:relative;margin-top:26px;min-height:200px}
+.tile{position:absolute;left:0;top:0;cursor:pointer;outline:none}
+.tile-in{position:absolute;inset:0;border-radius:var(--r-tile);overflow:hidden;background:var(--tone);isolation:isolate}
+.tile img,.tile video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transition:transform 1s cubic-bezier(.2,.8,.2,1)}
+.tile:hover img,.tile:hover video{transform:scale(1.045)}
+.tile:focus-visible .tile-in{outline:2px solid var(--ink);outline-offset:3px}
+.tile-meta{position:absolute;top:10px;left:10px;z-index:2;font:400 .62rem/1 var(--f-mono);letter-spacing:.04em;padding:.45em .6em;border-radius:3px;background:rgba(255,255,255,.9);color:#111;font-variant-numeric:tabular-nums}
+.play{position:absolute;z-index:2;left:50%;top:50%;width:52px;height:52px;margin:-26px 0 0 -26px;border-radius:50%;background:rgba(255,255,255,.92);color:#111;display:grid;place-items:center;opacity:0;transform:scale(.7);transition:.4s cubic-bezier(.2,.8,.2,1)}
+.tile:hover .play,.tile:focus-visible .play{opacity:1;transform:none}
+.tile-info{position:absolute;inset:auto 0 0 0;z-index:2;display:flex;justify-content:space-between;align-items:end;gap:10px;padding:56px 12px 12px;background:linear-gradient(transparent,rgba(8,8,10,.62));color:#fff;opacity:0;transform:translateY(6px);transition:.4s cubic-bezier(.2,.8,.2,1)}
+.tile:hover .tile-info,.tile:focus-within .tile-info{opacity:1;transform:none}
+@media (hover:none){.tile-info{opacity:1;transform:none}}
+.tile-info>div{min-width:0}
+.tile-info h3{font-size:.95rem;font-weight:500;letter-spacing:-.02em;line-height:1.2;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.tile-info p{font-size:.74rem;opacity:.75;margin-top:3px}
+.file-btn{flex:none;font-size:.72rem;font-weight:500;text-decoration:none;padding:.6em .75em;border-radius:5px;background:rgba(255,255,255,.94);color:#111;white-space:nowrap}
+.tile.small .tile-info{padding:40px 8px 8px}
+.tile.small .tile-info h3{font-size:.8rem}
+.tile.small .tile-info p,.tile.small .tile-meta{display:none}
+.tile.small .file-btn{display:none}
 
-/* ---------- Hero ---------- */
-.hero{display:grid;grid-template-columns:1.35fr 1fr;gap:clamp(16px,2vw,32px);height:100svh;min-height:640px;padding:0 var(--pad);overflow:hidden}
-.hero-copy{display:flex;flex-direction:column;justify-content:flex-end;padding:calc(var(--nav-h) + 32px) 0 clamp(20px,3vw,40px);min-width:0}
-.hero-top{display:flex;justify-content:space-between;align-items:flex-end;gap:24px;margin-bottom:clamp(20px,3vw,40px)}
-.intro{max-width:34ch;font-size:clamp(16px,1.25vw,19px);line-height:1.45}
-.stat{text-align:right;flex-shrink:0}
-.stat strong{display:block;font-size:clamp(28px,2.8vw,44px);font-weight:500;letter-spacing:-.03em;line-height:1;font-variant-numeric:tabular-nums}
-.stat .stat-label{color:var(--muted);font-size:14px}
-.scroll-cue{display:inline-block;margin-top:10px;color:var(--muted);font-size:14px}
-.name{font-weight:600;font-size:clamp(64px,10.2vw,190px);line-height:.86;letter-spacing:-.058em;margin-left:-.04em;padding-bottom:.04em;will-change:transform;
-  background-image:linear-gradient(105deg,var(--ink) 0%,var(--ink) 40%,#E8430A 54%,var(--accent) 64%,var(--accent-2) 82%,#FFC48C 100%);
-  background-size:170% 100%;background-position:0% 0;-webkit-background-clip:text;background-clip:text;color:transparent;-webkit-text-fill-color:transparent;
-  animation:sheen 9s ease-in-out infinite alternate}
-.name span{display:block}
-@keyframes sheen{from{background-position:0% 0}to{background-position:100% 0}}
-.hero-reel{position:relative;display:grid;grid-template-columns:1fr 1fr;gap:12px;height:100%;overflow:hidden;
-  -webkit-mask-image:linear-gradient(transparent,#000 12%,#000 88%,transparent);mask-image:linear-gradient(transparent,#000 12%,#000 88%,transparent)}
-.col-wrap{will-change:transform}
-.col{display:flex;flex-direction:column;gap:12px;animation:up 46s linear infinite}
-.col.down{animation-name:down;animation-duration:54s}
-@keyframes up{from{transform:translateY(0)}to{transform:translateY(calc(-50% - 6px))}}
-@keyframes down{from{transform:translateY(calc(-50% - 6px))}to{transform:translateY(0)}}
-.tile{width:100%;border-radius:16px;overflow:hidden;background:var(--card);flex-shrink:0}
-.tile canvas{width:100%;height:100%}
-.tile.tall{aspect-ratio:4/5}.tile.sq{aspect-ratio:1/1}
+/* featured film */
+.featured{padding-block:clamp(30px,5vw,60px)}
+.feat-frame{position:relative;aspect-ratio:16/9;max-height:84vh;width:100%;overflow:hidden;border-radius:var(--r-card);background:#0e0e0f;color:#fff;cursor:pointer;display:block;border:0;padding:0;text-align:left}
+.feat-frame img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.feat-frame .poster{background:#161618;color:#fff}
+.feat-frame::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,.15),transparent 40%,rgba(0,0,0,.65))}
+.feat-copy{position:absolute;z-index:2;left:clamp(16px,4vw,44px);right:clamp(90px,14vw,180px);bottom:clamp(16px,4vw,40px)}
+.feat-copy .eyebrow{color:rgba(255,255,255,.7)}
+.feat-copy h3{font-size:clamp(1.4rem,3.6vw,3.2rem);letter-spacing:-.045em;margin-top:10px;max-width:22ch}
+.feat-play{position:absolute;z-index:2;right:clamp(16px,4vw,44px);bottom:clamp(16px,4vw,40px);width:clamp(54px,7vw,84px);aspect-ratio:1;border-radius:50%;background:#fff;color:#111;display:grid;place-items:center;transition:transform .4s cubic-bezier(.2,.8,.2,1)}
+.feat-frame:hover .feat-play{transform:scale(1.08)}
 
-/* ---------- Clients ---------- */
-.clients{padding:clamp(24px,3vw,40px) 0;border-top:1px solid var(--line);border-bottom:1px solid var(--line);overflow:hidden}
-.clients .label{padding:0 var(--pad);margin-bottom:10px}
-.track{display:flex;width:max-content;will-change:transform}
-.group{display:flex;align-items:center;flex-shrink:0}
-.group span{font-size:clamp(30px,4.4vw,72px);font-weight:500;letter-spacing:-.04em;line-height:1.1;white-space:nowrap;padding:0 .45em}
-.group i{width:.3em;height:.3em;border-radius:50%;background:var(--accent);font-size:clamp(30px,4.4vw,72px);flex-shrink:0}
+/* services */
+.services{padding-block:clamp(60px,8vw,110px)}
+.services h2{font-size:clamp(1.9rem,4.2vw,3.4rem);max-width:22ch}
+.services .note{color:var(--muted);max-width:52ch;margin-top:16px}
+.s-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-top:40px}
+.s-card{background:var(--surface);box-shadow:inset 0 0 0 1px var(--line);border-radius:var(--r-card);padding:22px;display:flex;flex-direction:column;gap:12px;min-width:0;min-height:250px;text-decoration:none;transition:background .3s,color .3s}
+.s-card:hover{background:var(--ink);color:var(--bg)}
+.s-card:hover p,.s-card:hover .s-num{color:color-mix(in srgb,var(--bg) 65%,transparent)}
+.s-num{font:400 .68rem/1 var(--f-mono);color:var(--muted);letter-spacing:.1em;display:flex;justify-content:space-between}
+.s-card h3{font-size:1.4rem;font-weight:500;letter-spacing:-.035em;margin-top:auto}
+.s-card p{color:var(--muted);font-size:.92rem;transition:color .3s}
+.s-go{font-size:.86rem;font-weight:500}
+@media (max-width:980px){.s-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:520px){.s-grid{grid-template-columns:1fr}.s-card{min-height:0}}
 
-/* ---------- Sections ---------- */
-section.block{padding:clamp(64px,9vw,140px) var(--pad)}
-.head{display:flex;justify-content:space-between;align-items:flex-end;gap:24px;margin-bottom:clamp(24px,4vw,56px)}
-.head-title{overflow:hidden}
-.h2{font-size:clamp(56px,8vw,140px);font-weight:600;line-height:.88;letter-spacing:-.055em;will-change:transform}
-.h2 sup{font-size:.2em;letter-spacing:0;font-weight:500;color:var(--muted);vertical-align:top;margin-left:.2em;position:relative;top:.35em}
-.head-side{display:flex;flex-direction:column;align-items:flex-end;gap:14px;text-align:right}
-.head-side p{max-width:30ch;color:var(--muted)}
+/* about */
+.about{display:grid;grid-template-columns:minmax(0,.8fr) minmax(0,1fr);gap:clamp(24px,5vw,72px);align-items:center;padding-block:clamp(40px,6vw,90px)}
+.portrait{position:relative;border-radius:var(--r-card);overflow:hidden;aspect-ratio:4/5;background:var(--tone);max-width:100%}
+.portrait img{width:100%;height:100%;object-fit:cover}
+.about h2{font-size:clamp(1.9rem,4vw,3.2rem);max-width:14ch}
+.about .lead{color:var(--muted);max-width:44ch;margin-top:16px}
+.facts{display:grid;margin:28px 0 0;border-top:1px solid var(--line)}
+.facts div{display:grid;grid-template-columns:120px minmax(0,1fr);gap:16px;padding-block:13px;border-bottom:1px solid var(--line);font-size:.94rem}
+.facts dt{font:400 .7rem/1.9 var(--f-mono);letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+.facts dd{margin:0}
+.about-cta{display:flex;gap:10px;flex-wrap:wrap;margin-top:26px}
+@media (max-width:760px){.about{grid-template-columns:1fr}.portrait{max-width:420px}}
 
-/* ---------- Vision ---------- */
-.vision{position:relative;height:320vh;border-top:1px solid var(--line)}
-.vision-stick{position:sticky;top:0;height:100svh;display:grid;grid-template-columns:1.3fr 1fr;align-items:center;gap:clamp(24px,4vw,64px);padding:0 var(--pad);overflow:hidden}
-.vision-meta{position:absolute;top:calc(var(--nav-h) + 20px);left:var(--pad);right:var(--pad);display:flex;justify-content:space-between}
-.words{--lh:1.04em;position:relative;font-size:clamp(34px,4.6vw,88px);font-weight:600;letter-spacing:-.05em;line-height:var(--lh);height:calc(var(--lh)*3);overflow:hidden;
-  -webkit-mask-image:linear-gradient(transparent,#000 30%,#000 70%,transparent);mask-image:linear-gradient(transparent,#000 30%,#000 70%,transparent)}
-.words ul{list-style:none;will-change:transform}
-.words li{height:var(--lh);white-space:nowrap}
-.vision-count{margin-top:18px;color:var(--muted);font-size:14px;font-variant-numeric:tabular-nums}
-.vision-tile{justify-self:end;width:min(100%,420px);aspect-ratio:4/5;max-height:68svh;border-radius:var(--r);overflow:hidden;background:var(--card)}
-.vision-tile canvas{width:100%;height:100%}
-.vision-bar{position:absolute;left:var(--pad);right:var(--pad);bottom:28px;height:2px;background:var(--line)}
-.vision-bar b{display:block;height:100%;width:100%;background:var(--ink);transform-origin:left;transform:scaleX(0)}
+/* contact */
+.band{position:relative;background:var(--surface);box-shadow:inset 0 0 0 1px var(--line);border-radius:var(--r-card);overflow:hidden;padding-block:clamp(24px,4vw,40px)}
+.band .marquee{margin-top:0}
+.band .marquee-track{animation-duration:20s}
+.band .marquee-track span{color:var(--ink);font-size:clamp(3rem,10vw,8.5rem);letter-spacing:-.065em;font-weight:300}
+.band .marquee-track span::before{width:clamp(8px,1vw,12px);height:clamp(8px,1vw,12px);background:var(--accent)}
+.contact-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;padding-inline:clamp(16px,3vw,32px);margin-top:clamp(20px,3vw,32px)}
+.c-item{border-top:1px solid var(--line);padding-top:14px;display:flex;flex-direction:column;gap:8px;min-width:0}
+.c-item .v{font-size:clamp(1rem,1.6vw,1.25rem);letter-spacing:-.02em;word-break:break-word}
+.c-item .v a{text-decoration:none}
+.c-item .v a:hover{text-decoration:underline;text-underline-offset:3px}
+.c-item .act{display:flex;gap:8px;flex-wrap:wrap}
+.mini{font:500 .76rem/1 var(--f-sans);padding:.6em .85em;border-radius:999px;border:0;background:var(--tone);color:var(--ink);cursor:pointer;text-decoration:none}
+.mini:hover{background:var(--ink);color:var(--bg)}
+@media (max-width:760px){.contact-grid{grid-template-columns:1fr}}
 
-/* ---------- Services ---------- */
-.services{border-top:1px solid var(--line)}
-.services-head{display:grid;grid-template-columns:1.4fr 1fr;gap:clamp(24px,5vw,80px);align-items:end;margin-bottom:clamp(32px,4vw,56px)}
-.statement{font-size:clamp(28px,3.2vw,50px);font-weight:500;line-height:1.08;letter-spacing:-.035em;max-width:15em}
-.statement .w{opacity:.15;transition:opacity .15s linear}
-.statement-note{color:var(--muted);max-width:40ch;justify-self:end}
-.stage{position:relative;height:460px;transition:height .7s var(--e)}
-.niche{position:absolute;left:0;top:0;width:0;height:0;border-radius:var(--r);overflow:hidden;background:var(--n-bg);color:var(--n-fg);
-  transition:left .7s var(--e),top .7s var(--e),width .7s var(--e),height .7s var(--e)}
-.niche .bgcv{position:absolute;inset:0;width:100%;height:100%;transition:opacity .4s}
-.niche .scrim{position:absolute;inset:0;pointer-events:none;background:linear-gradient(to top,var(--n-bg) 10%,color-mix(in srgb,var(--n-bg) 55%,transparent) 42%,transparent 72%);transition:opacity .4s}
-.niche .info{position:absolute;left:16px;right:16px;bottom:14px;display:flex;justify-content:space-between;align-items:flex-end;gap:12px;pointer-events:none;transition:opacity .3s}
-.niche .info h3{font-size:clamp(18px,1.6vw,26px);font-weight:500;letter-spacing:-.02em;line-height:1.1}
-.niche .count{font-size:14px;opacity:.72;white-space:nowrap}
-.niche .desc{font-size:15px;line-height:1.4;max-width:30ch;opacity:.8;max-height:0;overflow:hidden;transition:max-height .5s var(--e),margin .5s var(--e)}
-.niche.is-hover .desc{max-height:90px;margin-top:8px}
-.niche .cue{display:block;font-size:13px;opacity:0;margin-top:6px;transition:opacity .3s}
-.niche.is-hover .cue{opacity:.7}
-.niche .hit{position:absolute;inset:0;z-index:3;border-radius:var(--r)}
-.niche.is-mini .info{left:12px;right:12px;bottom:10px}
-.niche.is-mini .info h3{font-size:16px}
-.niche.is-mini .desc,.niche.is-mini .cue{display:none}
-.niche.is-big .hit{display:none}
-.niche.is-big .bgcv,.niche.is-big .scrim,.niche.is-big .info{opacity:0}
-.panel{position:absolute;inset:0;z-index:2;opacity:0;visibility:hidden;transition:opacity .25s,visibility 0s .25s}
-.niche.is-big .panel{opacity:1;visibility:visible;transition:opacity .45s .35s,visibility 0s}
-.panel-head{position:absolute;left:20px;top:18px;display:flex;justify-content:space-between;align-items:flex-start;gap:16px}
-.panel-head h3{font-size:clamp(26px,3vw,48px);font-weight:600;letter-spacing:-.045em;line-height:1}
-.panel-head p{font-size:15px;opacity:.75;margin-top:8px;max-width:52ch}
-.close{flex-shrink:0;padding:8px 14px;border-radius:var(--r);border:1px solid color-mix(in srgb,var(--n-fg) 30%,transparent);font-size:14px;transition:background .2s,color .2s}
-.close:hover{background:var(--n-fg);color:var(--n-bg)}
-.player{position:absolute;border-radius:var(--r);overflow:hidden;background:#000}
-.player iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
-.player .empty-note{position:absolute;inset:0;display:grid;place-items:center;color:#9A9A95;font-size:15px;text-align:center;padding:16px}
-.playlist{position:absolute;list-style:none;display:flex;flex-direction:column;gap:8px;overflow:auto;overscroll-behavior:contain}
-.playlist button{width:100%;display:flex;align-items:center;gap:10px;padding:6px 10px 6px 6px;border-radius:var(--r);text-align:left;font-size:14px;line-height:1.3;border:1px solid color-mix(in srgb,var(--n-fg) 22%,transparent);transition:background .2s,color .2s}
-.playlist button:hover{border-color:var(--n-fg)}
-.playlist button[aria-current="true"]{background:var(--n-fg);color:var(--n-bg)}
-.playlist .pthumb{position:relative;width:64px;height:40px;flex-shrink:0;border-radius:3px;overflow:hidden;background:#000}
-.playlist .pthumb img{width:100%;height:100%;object-fit:cover}
-.playlist .pthumb.is-vertical img{object-fit:contain}
-.notch{position:absolute;z-index:4;background:var(--bg);border-radius:var(--r) 0 0 0;pointer-events:none;opacity:0;
-  transition:left .7s var(--e),top .7s var(--e),width .7s var(--e),height .7s var(--e),opacity .3s}
-.more-label,.close-x,.view-pill,.deck-dots{display:none}
-/* Phones: categories become a stacked card deck */
-.stage.compact .niche{transform-origin:50% 0;touch-action:pan-y;will-change:transform;
-  transition:left .6s var(--e),top .6s var(--e),width .6s var(--e),height .6s var(--e),transform .55s var(--e),filter .55s var(--e),opacity .55s}
-.stage.compact .niche.is-behind .info,.stage.compact .niche.is-behind .scrim,.stage.compact .niche.is-behind .view-pill{opacity:0}
-.stage.compact .niche.is-front .scrim{background:linear-gradient(to top,var(--n-bg) 22%,color-mix(in srgb,var(--n-bg) 70%,transparent) 46%,transparent 70%)}
-.stage.compact .niche.is-front .info{left:18px;right:18px;bottom:18px;flex-direction:column;align-items:flex-start;gap:12px}
-.stage.compact .niche.is-front .info h3{font-size:30px;font-weight:600;letter-spacing:-.035em;line-height:1.05}
-.stage.compact .niche.is-front .desc{max-height:3em;margin-top:8px;font-size:15px;opacity:.78;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;max-width:34ch}
-.stage.compact .niche .cue{display:none}
-.stage.compact .niche.is-front .count{font-size:13px;line-height:1;padding:9px 12px;border-radius:999px;opacity:1;box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--n-fg) 28%,transparent)}
-.stage.compact .niche.is-front .view-pill{display:inline-flex;align-items:center;gap:8px;position:absolute;right:18px;bottom:18px;z-index:2;pointer-events:none;overflow:hidden;
-  padding:9px 16px 9px 13px;border-radius:999px;background:var(--n-fg);color:var(--n-bg);font-size:15px;font-weight:500;line-height:1;transition:transform .2s var(--e)}
-.view-pill i{width:0;height:0;border-left:8px solid currentColor;border-top:5px solid transparent;border-bottom:5px solid transparent}
-.view-pill::after{content:"";position:absolute;top:0;bottom:0;left:0;width:45%;background:linear-gradient(100deg,transparent,color-mix(in srgb,var(--n-bg) 35%,transparent),transparent);transform:translateX(-130%);animation:pill-sheen 4.2s ease-in-out 1.2s infinite}
-@keyframes pill-sheen{0%{transform:translateX(-130%)}35%,100%{transform:translateX(260%)}}
-.stage.compact .niche.is-front:active .view-pill{transform:scale(.94)}
-.stage.compact .deck-dots{display:flex;position:absolute;left:0;right:0;justify-content:center;gap:6px;transition:opacity .3s}
-.deck-dots button{width:8px;height:8px;border-radius:999px;background:var(--line);transition:width .35s var(--e),background .35s;position:relative}
-.deck-dots button::before{content:"";position:absolute;inset:-12px -6px}
-.deck-dots button[aria-current="true"]{width:24px;background:var(--ink)}
-.stage.compact .niche.is-mini .info{left:10px;right:10px;bottom:9px}
-.stage.compact .niche.is-mini .info h3{font-size:13px;line-height:1.15}
-.stage.compact .niche.is-mini .count{display:none}
-.stage.compact .more-label{display:block;position:absolute;left:2px;opacity:0;transition:opacity .3s .3s}
-.stage.compact .close{width:42px;height:42px;padding:0;border-radius:50%;display:grid;place-items:center}
-.stage.compact .close-txt{display:none}
-.stage.compact .close-x{display:block;width:18px;height:18px}
-.stage.compact .panel-head{left:12px;top:12px}
-.stage.compact .panel-head h3{font-size:26px}
-.stage.compact .panel-head p{font-size:14px}
-.stage.compact .playlist{flex-direction:row}
-.stage.compact .playlist li{flex-shrink:0}
-.stage.compact .playlist button{white-space:nowrap;height:100%}
+footer{padding-block:28px 40px}
+.legal{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;font:400 .74rem var(--f-mono);color:var(--muted)}
+.legal a{text-decoration:none}
 
-/* ---------- Contact ---------- */
-.contact{background:var(--ink);color:var(--bg);border-radius:28px 28px 0 0;padding:clamp(56px,7vw,110px) var(--pad) calc(24px + env(safe-area-inset-bottom));overflow:hidden}
-.contact .label{color:color-mix(in srgb,var(--bg) 55%,transparent)}
-.big{font-size:clamp(84px,17vw,320px);font-weight:600;line-height:.8;letter-spacing:-.065em;margin-left:-.05em;will-change:transform}
-.big i{font-style:normal;color:var(--accent)}
-.rows{display:grid;grid-template-columns:1.5fr 1fr 1fr auto;gap:32px;margin-top:clamp(48px,7vw,110px);padding-top:28px;border-top:1px solid color-mix(in srgb,var(--bg) 20%,transparent)}
-.rows a.val{display:inline-block;margin-top:6px;font-size:clamp(20px,1.9vw,28px);font-weight:500;letter-spacing:-.02em;word-break:break-word;background:linear-gradient(currentColor,currentColor) 0 100%/0 1px no-repeat;transition:background-size .35s}
-.rows a.val:hover{background-size:100% 1px}
-.copy{display:inline-flex;align-items:center;margin-top:14px;padding:8px 16px;border-radius:999px;border:1px solid color-mix(in srgb,var(--bg) 30%,transparent);font-size:14px;transition:background .2s,color .2s,border-color .2s}
-.copy:hover{background:var(--bg);color:var(--ink)}
-.copy.done{background:var(--accent);border-color:var(--accent);color:#000}
-.base{display:flex;justify-content:space-between;gap:16px;margin-top:clamp(40px,6vw,90px);font-size:14px;color:color-mix(in srgb,var(--bg) 55%,transparent)}
-.base a:hover{color:var(--bg)}
-@media (min-width:981px) and (min-height:720px){
-  main{border-radius:0 0 28px 28px}
-  .contact{position:sticky;bottom:0;z-index:1;border-radius:0;margin-top:-28px;padding-top:calc(clamp(56px,7vw,110px) + 28px)}
-}
+/* player */
+.modal{position:fixed;inset:0;z-index:100;display:grid;place-items:center;padding:clamp(12px,3vw,40px)}
+.modal-back{position:absolute;inset:0;background:color-mix(in srgb,var(--bg) 70%,rgba(0,0,0,.55));backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px)}
+.modal-box{position:relative;display:flex;flex-direction:column;gap:14px;max-width:100%}
+.modal-media{position:relative;aspect-ratio:var(--ar);width:min(92vw,calc(76vh * var(--ar)),1200px);border-radius:var(--r-card);overflow:hidden;background:#000;box-shadow:0 40px 80px -30px rgba(0,0,0,.6)}
+.modal-media iframe,.modal-media img,.modal-media video{position:absolute;inset:0;width:100%;height:100%;border:0;object-fit:cover}
+.modal-media .poster{background:#161618;color:#fff}
+.modal-info{display:flex;justify-content:space-between;align-items:start;gap:16px;flex-wrap:wrap;width:min(92vw,calc(76vh * var(--ar)),1200px);min-width:min(92vw,340px)}
+.modal-info h3{font-size:clamp(1.05rem,1.8vw,1.35rem);font-weight:500;letter-spacing:-.025em;max-width:46ch;margin-top:6px}
+.modal-act{display:flex;gap:8px;flex-wrap:wrap}
+.modal-close{position:absolute;top:-6px;right:-6px;transform:translate(0,-100%);width:40px;height:40px;border-radius:50%;border:0;background:var(--ink);color:var(--bg);cursor:pointer;display:grid;place-items:center}
+.ext-note{position:absolute;inset:auto 0 0 0;padding:16px;display:flex;justify-content:center;background:linear-gradient(transparent,rgba(0,0,0,.6))}
 
-/* ---------- All work window ---------- */
-.allwork{position:fixed;inset:0;z-index:60;background:var(--bg);display:flex;flex-direction:column;clip-path:inset(100% 0 0 0);visibility:hidden;transition:clip-path .7s var(--e),visibility 0s .7s}
-.allwork.open{clip-path:inset(0 0 0 0);visibility:visible;transition:clip-path .7s var(--e),visibility 0s}
-.aw-head{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:calc(16px + env(safe-area-inset-top)) var(--pad) 8px}
-.aw-head h2{font-size:clamp(34px,4.4vw,64px);font-weight:600;letter-spacing:-.05em;line-height:1}
-.aw-head h2 sup{font-size:.3em;letter-spacing:0;font-weight:500;color:var(--muted);vertical-align:top;margin-left:.2em;position:relative;top:.3em}
-.aw-filters{display:flex;gap:8px;overflow-x:auto;padding:10px var(--pad) 14px;border-bottom:1px solid var(--line);scrollbar-width:none}
-.aw-filters::-webkit-scrollbar{display:none}
-.chip{padding:8px 14px;border-radius:999px;border:1px solid var(--line);font-size:14px;white-space:nowrap;transition:background .2s,color .2s,border-color .2s}
-.chip:hover{border-color:var(--ink)}
-.chip[aria-pressed="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
-.chip span{opacity:.6;margin-left:4px}
-.aw-body{flex:1;overflow-y:auto;overscroll-behavior:contain;padding:16px var(--pad) calc(40px + env(safe-area-inset-bottom))}
+.toast{position:fixed;left:50%;bottom:calc(24px + env(safe-area-inset-bottom,0px));transform:translate(-50%,20px);opacity:0;z-index:120;background:var(--ink);color:var(--bg);padding:.7em 1.1em;border-radius:999px;font-size:.86rem;transition:.35s cubic-bezier(.2,.8,.2,1);pointer-events:none}
+.toast.on{opacity:1;transform:translate(-50%,0)}
 
-/* ---------- Lightbox ---------- */
-.lightbox{position:fixed;inset:0;z-index:80;background:rgba(0,0,0,.9);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:64px 16px 24px;opacity:0;visibility:hidden;transition:opacity .3s,visibility 0s .3s}
-.lightbox.open{opacity:1;visibility:visible;transition:opacity .3s}
-.lb-shell{display:flex;gap:22px;align-items:flex-start;max-width:100%}
-.lb-main{display:flex;flex-direction:column;gap:12px;min-width:0}
-.lb-frame{position:relative;width:min(62vw,calc(64svh*16/9));aspect-ratio:16/9;border-radius:var(--r);overflow:hidden;background:#000;transform:scale(.96);transition:transform .45s var(--e)}
-.lb-frame.is-vertical{aspect-ratio:9/16;width:min(30vw,calc(64svh*9/16))}
-
-/* Player bar: the same idea as the preview's caption strip, sized up for
-   this window without shouting over the film. */
-.lb-controls{
-  display:flex;align-items:center;gap:14px;
-  padding:0 16px;height:60px;border-radius:999px;
-  background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.13);
-  backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);
-  color:#F1F1EE;
-}
-.lb-ctl{
-  flex:0 0 auto;width:38px;height:38px;border-radius:50%;
-  display:grid;place-items:center;color:#F1F1EE;background:transparent;
-  border:1px solid rgba(255,255,255,.22);cursor:pointer;
-  transition:background .2s,color .2s,border-color .2s;
-}
-.lb-ctl:hover{background:#F1F1EE;color:#000;border-color:#F1F1EE}
-.lb-ctl svg{width:18px;height:18px;display:block}
-#lbPlay .ic-play{display:none}
-#lbPlay.is-paused .ic-play{display:block}
-#lbPlay.is-paused .ic-pause{display:none}
-#lbMute .snd-on{display:none}
-#lbMute.is-on .snd-on{display:block}
-#lbMute.is-on .snd-off{display:none}
-.lb-seek{flex:1 1 auto;min-width:60px;height:5px;border-radius:999px;background:rgba(255,255,255,.2);cursor:pointer;position:relative}
-.lb-seek-fill{position:absolute;left:0;top:0;bottom:0;width:0;border-radius:999px;background:var(--accent)}
-.lb-time{flex:0 0 auto;font-size:13px;font-variant-numeric:tabular-nums;color:rgba(241,241,238,.75);min-width:82px;text-align:right}
-
-/* Notes, alongside the film rather than under it */
-.lb-notes{
-  flex:0 0 auto;width:min(320px,26vw);max-height:min(76svh,640px);
-  display:flex;flex-direction:column;gap:10px;
-  background:var(--card);color:var(--ink);
-  border:1px solid color-mix(in srgb,var(--ink) 12%,transparent);
-  border-radius:var(--r);padding:16px;
-}
-.lbn-head{display:flex;align-items:baseline;justify-content:space-between;gap:10px}
-.lbn-title{font-size:15px;font-weight:600;letter-spacing:-.01em}
-.lbn-count{font-size:12.5px;color:var(--muted)}
-.lbn-text{
-  flex:1 1 auto;min-height:150px;resize:vertical;
-  background:var(--bg);color:var(--ink);
-  border:1px solid color-mix(in srgb,var(--ink) 14%,transparent);
-  border-radius:8px;padding:10px 12px;font:inherit;font-size:14px;line-height:1.5;
-}
-.lbn-text:focus{outline:none;border-color:var(--accent)}
-.lbn-actions{display:flex;flex-wrap:wrap;gap:6px}
-.lbn-btn{
-  flex:1 1 auto;padding:8px 10px;border-radius:999px;font-size:12.5px;font-weight:500;
-  border:1px solid color-mix(in srgb,var(--ink) 18%,transparent);
-  background:transparent;color:var(--ink);cursor:pointer;
-  transition:background .2s,color .2s,border-color .2s;
-}
-.lbn-btn:hover{background:var(--ink);color:var(--card);border-color:var(--ink)}
-.lbn-danger{color:#C4342B;border-color:color-mix(in srgb,#C4342B 35%,transparent)}
-.lbn-danger:hover{background:#C4342B;color:#fff;border-color:#C4342B}
-.lbn-status{font-size:12px;color:var(--muted);min-height:16px;line-height:1.4}
-@media (max-width:900px){ .lb-notes{display:none} .lb-frame{width:min(88vw,calc(64svh*16/9))} .lb-frame.is-vertical{width:min(88vw,calc(64svh*9/16))} }
-.lightbox.open .lb-frame{transform:none}
-/* Same trick as the preview: exact width, extra height. YouTube fits the
-   video to the width so it lands on the visible box, and its title and
-   "More videos" strip end up in the overflow and get clipped. Clicks are
-   turned off too - the bar below is the only interface now, and letting
-   the pointer onto the player just brings its chrome back. */
-.lb-frame iframe{
-  position:absolute;left:50%;top:50%;
-  width:100%;height:142%;
-  transform:translate(-50%,-50%);
-  border:0;pointer-events:none;
-}
-.lb-title{color:#F1F1EE;font-size:15px;text-align:center;max-width:60ch;display:flex;align-items:center;justify-content:center;gap:10px;flex-wrap:wrap}
-.lb-title span{opacity:.6}
-.lb-file{display:inline-flex;align-items:center;gap:5px;padding:5px 12px;border-radius:999px;border:1px solid rgba(255,255,255,.3);color:#F1F1EE;font-size:13px;transition:background .2s,color .2s}
-.lb-file:hover{background:#F1F1EE;color:#000}
-.lb-file svg{width:13px;height:13px;display:block}
-.lb-close{position:absolute;top:calc(14px + env(safe-area-inset-top));right:16px;color:#F1F1EE;border:1px solid rgba(255,255,255,.3);padding:8px 14px;border-radius:999px;font-size:14px}
-.lb-close:hover{background:#F1F1EE;color:#000}
-.lightbox.smart-lightbox{
-  background:rgba(4,4,4,.9);
-  backdrop-filter:blur(18px) saturate(.6);
-  -webkit-backdrop-filter:blur(18px) saturate(.6);
-}
-.smart-lightbox .lb-frame{
-  border-radius:16px;
-  box-shadow:0 40px 120px rgba(0,0,0,.55), 0 0 0 1px rgba(255,255,255,.1);
-}
-
-/* ---------- Tablet ---------- */
-@media (max-width:980px){
-  .nav{background:var(--bg);backdrop-filter:none;-webkit-backdrop-filter:none;border-bottom:1px solid var(--line)}
-  .hero{grid-template-columns:1fr;height:auto;min-height:0;padding-top:calc(var(--nav-h) + 14px);gap:0}
-  .hero-reel{order:-1;height:auto;grid-template-columns:1fr;margin:0 calc(var(--pad)*-1);
-    -webkit-mask-image:linear-gradient(90deg,transparent,#000 6%,#000 94%,transparent);mask-image:linear-gradient(90deg,transparent,#000 6%,#000 94%,transparent)}
-  .col-wrap.b{display:none}
-  .col{flex-direction:row;animation-name:left;animation-duration:40s;width:max-content}
-  .tile{width:clamp(150px,34vw,240px)}
-  @keyframes left{from{transform:translateX(0)}to{transform:translateX(calc(-50% - 6px))}}
-  .hero-copy{padding-top:24px}
-  .services-head{grid-template-columns:1fr}
-  .statement-note{justify-self:start}
-  .rows{grid-template-columns:1fr 1fr}
-  .vision-stick{grid-template-columns:1fr;align-content:center;gap:28px}
-  .vision-tile{justify-self:start;width:min(52vw,280px);order:-1}
-  .words{font-size:clamp(26px,7.4vw,56px)}
-}
-/* ---------- Phone ---------- */
-@media (max-width:640px){
-  .nav nav{position:absolute;top:100%;left:0;right:0;flex-direction:column;gap:0;padding:4px var(--pad) 16px;background:var(--bg);border-bottom:1px solid var(--line);
-    opacity:0;visibility:hidden;transform:translateY(-8px);transition:opacity .25s,transform .35s var(--e),visibility 0s .35s}
-  .nav.menu-open nav{opacity:1;visibility:visible;transform:none;transition:opacity .25s,transform .35s var(--e)}
-  .nav nav a,.nav nav button{display:block;width:100%;text-align:left;padding:14px 0;font-size:24px;font-weight:500;letter-spacing:-.02em;color:var(--ink);border-top:1px solid var(--line)}
-  .nav nav a:first-child{border-top:0}
-  .menu-btn{display:inline-flex}
-  .pill{padding:9px 14px}
-  .hero-top{flex-direction:column;align-items:flex-start;gap:16px}
-  .stat{text-align:left}
-  .scroll-cue{display:none}
-  .name{font-size:clamp(54px,17.5vw,120px)}
-  .head{flex-direction:column;align-items:flex-start}
-  .head-side{align-items:flex-start;text-align:left}
-  .rows{grid-template-columns:1fr;gap:24px}
-  .base{flex-direction:column;gap:8px}
-  .big{font-size:clamp(72px,24vw,140px)}
-  .vision{height:230vh}
-  .vision-tile{width:min(58vw,260px)}
-  .h2{font-size:clamp(52px,16vw,96px)}
-  section.block{padding-top:56px;padding-bottom:64px}
-  .clients{padding:20px 0}
-  .intro{font-size:17px}
-  .aw-head h2{font-size:34px}
-  .contact{border-radius:20px 20px 0 0}
-
-  #lightbox{
-    padding:0 !important;gap:0 !important;
-    /* Column flex: the main axis is vertical, so it's justify-content
-       that pins the sheet to the bottom - align-items was only ever
-       pushing it right. */
-    align-items:stretch !important;justify-content:flex-end !important;
-    background:rgba(4,4,5,.90) !important;
-  }
-  /* The sheet used to be built out of the lightbox's direct children.
-     Those are wrapped now, so the wrappers have to carry the full-width
-     stacking or the player ends up floating mid-screen. */
-  #lightbox .lb-shell{
-    width:100% !important;flex-direction:column !important;
-    gap:0 !important;align-items:stretch !important;
-  }
-  #lightbox .lb-main{width:100% !important;gap:0 !important;min-width:0}
-  #lightbox .lb-controls{
-    width:100% !important;height:56px;border-radius:0 !important;
-    border-left:0;border-right:0;
-    background:var(--card) !important;color:var(--ink) !important;
-    border-color:color-mix(in srgb,var(--ink) 12%,transparent) !important;
-    backdrop-filter:none !important;-webkit-backdrop-filter:none !important;
-  }
-  #lightbox .lb-ctl{color:var(--ink);border-color:color-mix(in srgb,var(--ink) 22%,transparent)}
-  #lightbox .lb-ctl:hover{background:var(--ink);color:var(--card);border-color:var(--ink)}
-  #lightbox .lb-seek{background:color-mix(in srgb,var(--ink) 20%,transparent)}
-  #lightbox .lb-time{color:var(--muted);min-width:74px}
-  #lightbox .lb-frame{
-    width:min(100vw, calc(76svh * 16 / 9)) !important;
-    max-width:100vw !important;max-height:76svh !important;
-    aspect-ratio:16/9 !important;
-    border-radius:18px 18px 0 0 !important;margin:0 auto !important;transform:none !important;
-  }
-  #lightbox .lb-frame.is-vertical{
-    width:min(100vw, calc(76svh * 9 / 16)) !important;
-    height:min(76svh, calc(100vw * 16 / 9)) !important;
-    aspect-ratio:9/16 !important;
-  }
-  #lightbox .lb-title{
-    width:100%;box-sizing:border-box;margin:0 !important;
-    padding:14px 66px 14px 16px !important;min-height:54px;
-    display:flex;align-items:center;justify-content:flex-start;
-    background:var(--card,#1b1b1a) !important;color:var(--ink,#f1f1ee) !important;
-    border-radius:0 0 18px 18px;text-align:left !important;
-    font-size:14px !important;line-height:1.35;
-  }
-  #lightbox .lb-file{border-color:color-mix(in srgb,var(--ink,#f1f1ee) 25%,transparent);flex-shrink:0}
-  #lightbox .lb-file:hover{background:var(--ink,#f1f1ee);color:var(--card,#1b1b1a)}
-  #lightbox .lb-close{
-    /* The sheet now occupies the bottom, so Close moves up out of it. */
-    top:calc(12px + env(safe-area-inset-top)) !important;bottom:auto !important;
-    right:14px !important;z-index:5;padding:8px 12px !important;border-radius:999px !important;
-    background:rgba(0,0,0,.35) !important;color:#F1F1EE !important;
-    border-color:rgba(255,255,255,.22) !important;
-  }
-}
-@media (prefers-reduced-motion:reduce){
-  .col,.name{animation:none}
-  .view-pill::after{animation:none}
-  .nav,.stage,.niche,.notch,.panel,.niche.is-big .panel,.niche .desc,.allwork,.lb-frame{transition:none!important}
-  .statement .w{opacity:1}
-  .vision{height:auto}
-  .vision-stick{position:relative;height:auto;padding-top:120px;padding-bottom:80px}
-  .words{height:auto;-webkit-mask-image:none;mask-image:none}
-  .vision-bar,.vision-count{display:none}
-}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
 </style>
 </head>
 <body>
 
-<header class="nav" id="nav">
-  <a class="brand" href="#top"><i aria-hidden="true"></i><span id="navBrand">Anmol Chandiok</span></a>
-  <nav aria-label="Main" id="navLinks">
-    <a href="#work">Work</a>
-    <button type="button" data-open-all>All work</button>
-    <a href="#services">Services</a>
-    <a href="#contact">Contact</a>
-  </nav>
-  <div class="nav-right">
-    <button class="theme-toggle" id="themeToggle" type="button" title="Toggle theme">
-      <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 14.5A8.5 8.5 0 1 1 9.5 3 7 7 0 0 0 21 14.5z"/></svg>
-      <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
+
+<header class="nav">
+  <div class="nav-in">
+    <a class="logo" href="#top" aria-label="Back to top">
+      <svg viewBox="0 0 32 32" aria-hidden="true"><rect x="2" y="2" width="28" height="28" rx="8" fill="var(--ink)"/><path d="M8 16h4l2.5-6 3 12 2.5-6h4" stroke="var(--accent)" stroke-width="2.4" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      <span data-c="nav.brand">Anmol Chandiok</span>
+    </a>
+    <nav class="nav-links" aria-label="Sections">
+      <a href="#work">Work</a><a href="#services">Services</a><a href="#about">About</a><a href="#contact">Contact</a>
+    </nav>
+    <button class="theme-btn" id="theme-btn" type="button" aria-label="Switch colour theme" title="Switch colour theme">
+      <svg class="i-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 14.5A8.5 8.5 0 1 1 9.5 3 7 7 0 0 0 21 14.5z"/></svg>
+      <svg class="i-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
     </button>
-    <a class="pill" href="#contact" id="navCta">Let's talk</a>
-    <button class="menu-btn" id="menuBtn" type="button" aria-expanded="false" aria-controls="navLinks">Menu</button>
+    <a class="btn btn-ink" href="#contact" data-c="nav.cta">Let's talk</a>
   </div>
 </header>
 
 <main id="top">
-  <section class="hero">
-    <div class="hero-copy">
-      <div class="hero-top" id="heroTop">
-        <div>
-          <p class="intro" id="heroIntro">Motion designer and video editor in Delhi NCR. I cut reels, animate brands and build After Effects tools through my studio, Pluseshot.</p>
-          <span class="scroll-cue">(Scroll down)</span>
-        </div>
-      </div>
-      <h1 class="name" id="name"><span>Anmol</span><span>Chandiok</span></h1>
+  <section class="hero wrap">
+    <p class="eyebrow">Motion designer &amp; video editor · <b>Delhi NCR</b></p>
+    <h1 data-reveal="load" data-c="nav.brand">Anmol Chandiok</h1>
+    <div class="fan">
+      <div class="fan-inner" id="fan"></div>
+      <span class="bubble" style="left:12%;top:4%">@pluseshot</span>
+      <span class="bubble" style="right:11%;top:12%">Motion design</span>
+      <span class="bubble" style="right:24%;bottom:0">9:16 + 16:9</span>
     </div>
-    <div class="hero-reel" aria-hidden="true">
-      <div class="col-wrap a" id="wrapA"><div class="col up" id="colA"></div></div>
-      <div class="col-wrap b" id="wrapB"><div class="col down" id="colB"></div></div>
+    <p class="hero-sub" data-reveal data-c="hero.intro">Motion designer and video editor in Delhi NCR. I cut reels, animate brands and build After Effects tools through my studio, Pluseshot.</p>
+    <div class="hero-cta">
+      <a class="btn btn-ink" href="#work">See the work</a>
+      <a class="btn btn-ghost" href="#contact">Get in touch</a>
     </div>
   </section>
 
-  <section class="clients" aria-label="Clients">
-    <p class="label">(Clients)</p>
-    <div class="track" id="track"></div>
-  </section>
-
-  <section class="block" id="work">
-    <div class="head">
-      <div class="head-title"><h2 class="h2" id="workTitle">Work<sup id="workCount"></sup></h2></div>
-      <div class="head-side">
-        <p id="workNote">Landscape films and vertical reels, picked from recent projects.</p>
-        <button class="btn-line" type="button" data-open-all>View all work</button>
-      </div>
+  <section class="clients wrap" aria-label="Clients">
+    <div class="clients-head">
+      <h2 data-reveal>Trusted by brands <span class="soft">that need to be seen.</span></h2>
+      <span class="eyebrow">Clients</span>
     </div>
-    <div class="jgrid" id="workGrid"></div>
+    <div class="marquee"><div class="marquee-track" id="clients"></div></div>
   </section>
 
-  <section class="vision" id="vision" aria-label="How I work">
-    <div class="vision-stick">
-      <div class="vision-meta"><span class="label">(How I work)</span><span class="label">(Scroll for more)</span></div>
+  <section class="statement wrap" aria-label="How I work">
+    <div class="deck" id="deck" aria-hidden="true"></div>
+    <p class="statement-text" id="vision">Cut with purpose. Animate with intent. Script the hook. Build the tools. Deliver every frame.</p>
+  </section>
+
+  <section class="work wrap" id="work">
+    <div class="work-head">
       <div>
-        <div class="words"><ul id="words"></ul></div>
-        <p class="vision-count" id="visionCount" aria-hidden="true"></p>
+        <p class="eyebrow">Selected work</p>
+        <h2 data-reveal>Work</h2>
+        <p data-reveal data-c="work.note">Landscape films and vertical reels, picked from recent projects.</p>
       </div>
-      <div class="vision-tile" aria-hidden="true" id="visionTile"></div>
-      <div class="vision-bar" aria-hidden="true"><b id="visionBar"></b></div>
+      <span class="count" id="count"></span>
+    </div>
+    <div class="tabs" role="tablist" aria-label="Filter by category" id="tabs"><span class="tab-pill" aria-hidden="true"></span></div>
+    <div class="grid" id="grid" aria-live="polite"></div>
+  </section>
+
+  <section class="featured wrap" aria-label="Featured film" id="featured-wrap" hidden>
+    <button class="feat-frame" id="featured" type="button"></button>
+  </section>
+
+  <section class="services wrap" id="services">
+    <p class="eyebrow">Services</p>
+    <h2 data-reveal data-c="services.statement" style="margin-top:14px">Edits that hold attention, motion that explains, and tools that make both faster.</h2>
+    <p class="note" data-c="services.note">Open a category to watch the work. Most projects are short-form: property, brand and social video.</p>
+    <div class="s-grid" id="services-grid"></div>
+  </section>
+
+  <section class="about wrap" id="about">
+    <div class="portrait"><img id="portrait" src="media/profile-1784040982966.jpg" alt="Portrait of Anmol Chandiok" loading="lazy"></div>
+    <div>
+      <p class="eyebrow">About</p>
+      <h2 data-reveal style="margin-top:14px">The person <span class="soft">behind the edit.</span></h2>
+      <p class="lead" data-c="hero.intro">Motion designer and video editor in Delhi NCR. I cut reels, animate brands and build After Effects tools through my studio, Pluseshot.</p>
+      <dl class="facts">
+        <div><dt>Based in</dt><dd>Delhi NCR, India</dd></div>
+        <div><dt>Studio</dt><dd>Pluseshot</dd></div>
+        <div><dt>Focus</dt><dd id="fact-focus">Motion design, storytelling, short-form reels</dd></div>
+        <div><dt>Clients</dt><dd id="fact-clients">Square Foot Story, Stained Glass House, SKA Group</dd></div>
+      </dl>
+      <div class="about-cta" id="about-cta"></div>
     </div>
   </section>
 
-  <section class="block services" id="services">
-    <div class="services-head">
-      <h2 class="statement" id="statement">Edits that hold attention, motion that explains, and tools that make both faster.</h2>
-      <p class="statement-note" id="statementNote">Open a category to watch the work. Most projects are short-form: property, brand and social video.</p>
+  <section class="wrap" id="contact">
+    <div class="band">
+      <div class="marquee" aria-hidden="true"><div class="marquee-track" id="talk"></div></div>
+      <div class="contact-grid">
+        <div class="c-item"><span class="eyebrow">Email</span><span class="v"><a id="c-email" href="mailto:anmol.chandiok9@gmail.com">anmol.chandiok9@gmail.com</a></span><div class="act"><button class="mini" id="copy-email" type="button">Copy email</button></div></div>
+        <div class="c-item"><span class="eyebrow">Phone</span><span class="v"><a id="c-phone" href="tel:+918130259174">+91 81302 59174</a></span><div class="act"><a class="mini" id="wa" href="https://wa.me/918130259174" target="_blank" rel="noopener">WhatsApp ↗</a></div></div>
+        <div class="c-item"><span class="eyebrow">Instagram</span><span class="v"><a id="c-ig" href="https://instagram.com/pluseshot" target="_blank" rel="noopener">@pluseshot</a></span><div class="act"><a class="mini" id="c-ig2" href="https://instagram.com/pluseshot" target="_blank" rel="noopener">Open profile ↗</a></div></div>
+      </div>
     </div>
-    <div class="stage" id="stage"><div class="notch" id="notch" aria-hidden="true"></div><p class="more-label label" id="moreLabel" aria-hidden="true">(More categories)</p></div>
   </section>
 </main>
 
-<footer class="contact" id="contact">
-  <h2 class="big" id="big"><span id="bigText">Let's talk</span><i>.</i></h2>
-  <div class="rows">
-    <div>
-      <p class="label">(Email)</p>
-      <a class="val" href="mailto:anmol.chandiok9@gmail.com" id="contactEmailLink">anmol.chandiok9@gmail.com</a><br>
-      <button class="copy" id="copy" type="button">Copy email</button>
-    </div>
-    <div>
-      <p class="label">(Phone)</p>
-      <a class="val" href="tel:+918130259174" id="contactPhoneLink">+91 81302 59174</a>
-    </div>
-    <div>
-      <p class="label">(Instagram)</p>
-      <a class="val" href="https://instagram.com/pluseshot" target="_blank" rel="noopener" id="contactInstaLink">@pluseshot</a>
-    </div>
-    <div id="resumeRow" hidden>
-      <p class="label">(Resume)</p>
-      <a class="val" href="#" id="contactCvLink" download>Download CV</a>
-    </div>
-  </div>
-  <div class="base">
-    <span id="footerNote">© 2026 Anmol Chandiok, Pluseshot</span>
-    <a href="#top">Back to top</a>
-  </div>
+<footer class="wrap">
+  <div class="legal"><span data-c="footer.note">© 2026 Anmol Chandiok, Pluseshot</span><a href="#top">Back to top ↑</a></div>
 </footer>
 
-<div class="allwork" id="allwork" role="dialog" aria-modal="true" aria-labelledby="awTitle">
-  <div class="aw-head">
-    <h2 id="awTitle">All work<sup id="awCount"></sup></h2>
-    <button class="btn-line" type="button" id="awClose">Close</button>
-  </div>
-  <div class="aw-filters" id="awFilters" aria-label="Filter by category"></div>
-  <div class="aw-body" id="awBody" data-lenis-prevent><div class="jgrid" id="awGrid"></div></div>
-</div>
-
-<div class="lightbox" id="lightbox" role="dialog" aria-modal="true" aria-label="Video player">
-  <button class="lb-close" type="button" id="lbClose">Close</button>
-  <div class="lb-shell">
-    <div class="lb-main">
-      <div class="lb-frame" id="lbFrame"></div>
-      <div class="lb-controls" id="lbControls">
-        <button class="lb-ctl" type="button" id="lbPlay" title="Pause" aria-label="Pause">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><g class="ic-pause"><path d="M9 5v14"/><path d="M15 5v14"/></g><g class="ic-play"><path d="M7 4.5v15l12-7.5-12-7.5z"/></g></svg>
-        </button>
-        <button class="lb-ctl" type="button" id="lbRestart" title="Start over" aria-label="Start over">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12a9 9 0 1 0 2.6-6.4"/><path d="M3 4.5V10h5.5"/></svg>
-        </button>
-        <div class="lb-seek" id="lbSeek" role="slider" aria-label="Seek" tabindex="0"><span class="lb-seek-fill" id="lbSeekFill"></span></div>
-        <span class="lb-time" id="lbTime">0:00</span>
-        <button class="lb-ctl" type="button" id="lbMute" title="Mute" aria-label="Mute">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9.5v5h3.5L12 18V6L7.5 9.5H4z"/><g class="snd-on"><path d="M15.5 9.2a4 4 0 0 1 0 5.6"/><path d="M18 6.8a7.5 7.5 0 0 1 0 10.4"/></g><g class="snd-off"><path d="M16 10l4 4"/><path d="M20 10l-4 4"/></g></svg>
-        </button>
-      </div>
-      <p class="lb-title" id="lbTitle"></p>
+<div class="modal" id="modal" hidden role="dialog" aria-modal="true" aria-labelledby="m-title">
+  <div class="modal-back" data-close></div>
+  <div class="modal-box">
+    <div class="modal-media" id="m-media"></div>
+    <div class="modal-info">
+      <div><p class="eyebrow" id="m-meta"></p><h3 id="m-title"></h3></div>
+      <div class="modal-act" id="m-act"></div>
     </div>
-
-    <aside class="lb-notes" id="lbNotes" aria-label="Notes">
-      <div class="lbn-head">
-        <span class="lbn-title">Notes</span>
-        <span class="lbn-count" id="lbnCount"></span>
-      </div>
-      <textarea class="lbn-text" id="lbnText" rows="8"
-        placeholder="Thoughts on this piece - what works, what you'd want changed. Saved as you type, kept per video."></textarea>
-      <div class="lbn-actions">
-        <button class="lbn-btn" type="button" id="lbnMail">Email all</button>
-        <button class="lbn-btn" type="button" id="lbnWa">WhatsApp</button>
-        <button class="lbn-btn" type="button" id="lbnCopy">Copy</button>
-        <button class="lbn-btn lbn-danger" type="button" id="lbnClear">Clear all</button>
-      </div>
-      <p class="lbn-status" id="lbnStatus"></p>
-    </aside>
+    <button class="modal-close" data-close aria-label="Close player" type="button"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><path d="M3 3l10 10M13 3L3 13" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></button>
   </div>
 </div>
+<div class="toast" id="toast" role="status"></div>
 
+<!-- Fallback copy of your data, used only if data/*.json can't be fetched (e.g. opening the file straight from disk).
+     On GitHub Pages the live files win, so admin.html keeps working as before. -->
+<script type="application/json" id="fallback">{"content": {"nav": {"brand": "Anmol Chandiok", "cta": "Let's talk"}, "hero": {"intro": "Motion designer and video editor in Delhi NCR. I cut reels, animate brands and build After Effects tools through my studio, Pluseshot."}, "work": {"note": "Landscape films and vertical reels, picked from recent projects."}, "vision": {"lines": "Cut with purpose.\nAnimate with intent.\nScript the hook.\nBuild the tools.\nDeliver every frame."}, "services": {"statement": "Edits that hold attention, motion that explains, and tools that make both faster.", "note": "Open a category to watch the work. Most projects are short-form: property, brand and social video.", "item1Name": "Motion design", "item1Desc": "Animated explainers, kinetic type and brand motion, built in After Effects.", "item2Name": "Storytelling", "item2Desc": "Story-first edits for property, brands and people, finished with sound and colour.", "item3Name": "Short-form reels", "item3Desc": "Hook-to-CTA reels for Instagram and YouTube Shorts, cut in 30 to 45 seconds.", "item4Name": "After Effects tools", "item4Desc": "ScriptUI panels and scripts, like Stash and A Click, that take the repetitive clicks out of animation."}, "clients": {"list": "Square Foot Story, Stained Glass House, SKA Group"}, "contact": {"headline": "Let's talk", "email": "anmol.chandiok9@gmail.com", "phone": "+91 81302 59174"}, "footer": {"note": "© 2026 Anmol Chandiok, Pluseshot"}}, "videos": {"updated": "2026-09-27T17:02:34.571Z", "videos": [{"type": "youtube", "id": "HFCOP3gnXBU", "title": "Motion Design Test Edit for  @somratdutta  | After Effects | by Anmol Chandiok", "client": "Anmol", "category": "Motion design", "year": "2026", "description": "", "instagramUrl": "", "projectFile": "https://drive.google.com/drive/folders/1w3-Ku15DLkqjoHsoY_QTXHDkl6LJVkO5?usp=drive_link", "aspect": "16:9", "duration": "", "poster": "", "preview": "", "previewMode": "youtube", "start": 0, "featured": true, "hidden": false}, {"type": "youtube", "id": "RkdxejBvoPY", "title": "SKA Group  Can Early Delivery Become a Real Estate Track Record", "client": "Anmol", "category": "Storytelling", "year": "2026", "description": "", "instagramUrl": "", "projectFile": "", "aspect": "16:9", "duration": "4:27", "poster": "", "preview": "", "previewMode": "youtube", "start": 0, "featured": false, "hidden": false}, {"type": "youtube", "id": "-kv-pQQVBXg", "title": "Ghaziabad’s Next Real Estate Hotspot? RNE vs Wave City vs Siddharth Vihar", "client": "Anmol", "category": "Storytelling", "year": "2026", "description": "", "instagramUrl": "", "projectFile": "", "aspect": "9:16", "duration": "", "poster": "", "preview": "", "previewMode": "youtube", "start": 0, "featured": false, "hidden": false}, {"type": "youtube", "id": "D7DKrBgwamE", "title": "Yaas Media Breakdown", "client": "Anmol", "category": "Motion design", "year": "2026", "description": "", "instagramUrl": "", "projectFile": "", "aspect": "16:9", "duration": "", "poster": "", "preview": "", "previewMode": "youtube", "start": 0, "featured": true, "hidden": false}, {"type": "youtube", "id": "tGgPQV6jet8", "title": "Stained Glass House (Shot & Edited)", "client": "Anmol", "category": "Storytelling", "year": "2026", "description": "", "instagramUrl": "", "projectFile": "", "aspect": "9:16", "duration": "", "poster": "", "preview": "", "previewMode": "youtube", "start": 0, "featured": true, "hidden": false}, {"type": "youtube", "id": "rS8y_pvfJsA", "title": "Rethinking the future (AI Generated Clips & Audio)", "client": "Anmol", "category": "Motion design", "year": "2026", "description": "", "instagramUrl": "", "projectFile": "", "aspect": "9:16", "duration": "", "poster": "", "preview": "", "previewMode": "youtube", "start": 0, "featured": false, "hidden": false}, {"type": "youtube", "id": "cUUus-9DAx4", "title": "Square Foot Story (Shot & Edit)", "client": "Anmol", "category": "Storytelling", "year": "2026", "description": "", "instagramUrl": "", "projectFile": "", "aspect": "9:16", "duration": "", "poster": "", "preview": "", "previewMode": "youtube", "start": 0, "featured": false, "hidden": false}, {"type": "youtube", "id": "Rw6tX3h8tYU", "title": "Covered Navbharat Nivas on behalf of Squares Foot Story (Shot & Edited )", "client": "Anmol", "category": "Short-form reels", "year": "2026", "description": "", "instagramUrl": "", "projectFile": "", "aspect": "9:16", "duration": "", "poster": "", "preview": "", "previewMode": "youtube", "start": 0, "featured": false, "hidden": false}, {"type": "youtube", "id": "zyQAIvDuaZs", "title": "Covered Stained Glass House on behalf of Square Foot Story (Scripted, Shot & Edited)", "client": "Anmol", "category": "Short-form reels", "year": "2026", "description": "", "instagramUrl": "", "projectFile": "", "aspect": "9:16", "duration": "", "poster": "", "preview": "", "previewMode": "youtube", "start": 0, "featured": false, "hidden": false}, {"type": "youtube", "id": "0uaKJ1pl184", "title": "Covered Home Store on behalf of Square Foot Story (Shot & Edit)", "client": "Anmol", "category": "Short-form reels", "year": "2026", "description": "", "instagramUrl": "", "projectFile": "", "aspect": "9:16", "duration": "", "poster": "", "preview": "", "previewMode": "youtube", "start": 0, "featured": false, "hidden": false}, {"type": "youtube", "id": "8QQtYfzaB7o", "title": "Rethinking the Future (AI Generated Clips & Audio)", "client": "Anmol", "category": "Motion design", "year": "2026", "description": "", "instagramUrl": "", "projectFile": "", "aspect": "9:16", "duration": "", "poster": "", "preview": "", "previewMode": "youtube", "start": 0, "featured": false, "hidden": false}, {"type": "youtube", "id": "MxeZFr-wmUk", "title": "Covered Stained Glass House on behalf of Square Foot Story", "client": "Anmol", "category": "Short-form reels", "year": "2026", "description": "", "instagramUrl": "", "projectFile": "", "aspect": "9:16", "duration": "", "poster": "", "preview": "", "previewMode": "youtube", "start": 0, "featured": false, "hidden": false}, {"type": "youtube", "id": "l-5I9RVT80M", "title": "Covered Look Book.Co on behalf of Square Foot Story", "client": "Anmol", "category": "Short-form reels", "year": "2026", "description": "", "instagramUrl": "", "projectFile": "", "aspect": "9:16", "duration": "", "poster": "", "preview": "", "previewMode": "youtube", "start": 0, "featured": false, "hidden": false}, {"type": "youtube", "id": "5YaRsU4jO7k", "title": "SaaS Product Launch for Square Foot Stores ", "client": "Anmol", "category": "Motion design", "year": "2026", "description": "", "instagramUrl": "", "projectFile": "", "aspect": "16:9", "duration": "", "poster": "", "preview": "", "previewMode": "youtube", "start": 0, "featured": true, "hidden": false}, {"type": "youtube", "id": "H1ScSGMbUx0", "title": "Rethinking the future (AI Generated Clips & Audio)", "client": "Anmol", "category": "Motion design", "year": "2026", "description": "", "instagramUrl": "", "projectFile": "", "aspect": "9:16", "duration": "", "poster": "", "preview": "", "previewMode": "youtube", "start": 0, "featured": false, "hidden": false}]}, "social": {"instagram": "", "youtube": "", "linkedin": "", "behance": "https://www.behance.net/anmolchandiok"}, "profile": {"image": "media/profile-1784040982966.jpg"}, "resume": {"file": "media/resume-1785675779064.pdf"}}</script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/lenis@1.1.13/dist/lenis.min.js"></script>
 <script>
-/* Nothing on this page is hardcoded content — copy comes from
-   data/content.json and videos from data/videos.json, both published
-   through admin.html. The values below are only fallbacks, used if those
-   files can't be reached, so the page never renders empty.
+(async () => {
+  const $ = id => document.getElementById(id);
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const motion = !!(window.gsap && window.ScrollTrigger) && !reduce;
+  const FB = (() => { try { return JSON.parse($('fallback').textContent); } catch (e) { return {}; } })();
+  const getJSON = async (path, fb) => { try { const r = await fetch(path, { cache: 'no-store' }); if (!r.ok) throw 0; return await r.json(); } catch (e) { return fb; } };
+  const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+  const clean = s => String(s || '').replace(/\s+/g, ' ').replace(/\(\s+/g, '(').replace(/\s+\)/g, ')').trim();
+  const get = (o, path) => path.split('.').reduce((a, k) => (a && a[k] != null ? a[k] : undefined), o);
+  const toast = msg => { const t = $('toast'); t.textContent = msg; t.classList.add('on'); clearTimeout(t._h); t._h = setTimeout(() => t.classList.remove('on'), 2200); };
 
-   The tile artwork below is design, not content: each service and each
-   "how I work" line is paired with a generated canvas animation by
-   position, so adding a line just cycles through the same art set. */
-const SERVICE_ART=[["rings",0],["type",2,"STORY"],["bars",1],["keys",3]];
-const VISION_ART=[["wipe",0],["keys",3],["type",1,"HOOK"],["rings",0],["bars",2]];
-
-const FALLBACK={
-  nav:{brand:"Anmol Chandiok",cta:"Let's talk"},
-  hero:{intro:"Motion designer and video editor in Delhi NCR. I cut reels, animate brands and build After Effects tools through my studio, Pluseshot."},
-  work:{note:"Landscape films and vertical reels, picked from recent projects."},
-  vision:{lines:"Cut with purpose.\nAnimate with intent.\nScript the hook.\nBuild the tools.\nDeliver every frame."},
-  services:{
-    statement:"Edits that hold attention, motion that explains, and tools that make both faster.",
-    note:"Open a category to watch the work. Most projects are short-form: property, brand and social video.",
-    item1Name:"Motion design",       item1Desc:"Animated explainers, kinetic type and brand motion, built in After Effects.",
-    item2Name:"Storytelling",        item2Desc:"Story-first edits for property, brands and people, finished with sound and colour.",
-    item3Name:"Short-form reels",    item3Desc:"Hook-to-CTA reels for Instagram and YouTube Shorts, cut in 30 to 45 seconds.",
-    item4Name:"After Effects tools", item4Desc:"ScriptUI panels and scripts, like Stash and A Click, that take the repetitive clicks out of animation."
-  },
-  clients:{list:"Square Foot Story, Stained Glass House, SKA Group"},
-  contact:{headline:"Let's talk",email:"anmol.chandiok9@gmail.com",phone:"+91 81302 59174"},
-  footer:{note:"© 2026 Anmol Chandiok, Pluseshot"}
-};
-/* Filled in by boot() once content.json has been read. */
-let SERVICES=[], CLIENTS=[], LINES=[];
-/* ==================================================================== */
-
-const REDUCED = matchMedia("(prefers-reduced-motion: reduce)").matches;
-const clamp=(v,a=0,b=1)=>Math.min(b,Math.max(a,v));
-const ease=x=>x<.5?4*x*x*x:1-Math.pow(-2*x+2,3)/2;
-const easeOut=x=>1-Math.pow(1-x,3);
-const $=id=>document.getElementById(id);
-function place(el,x,y,w,h){ Object.assign(el.style,{left:x+"px",top:y+"px",width:w+"px",height:h+"px"}); }
-
-/* ---------- Theme toggle: light default, remembers preference, View
-   Transition crossfade to match the "window" look ---------- */
-const root=document.documentElement;
-const THEME_KEY="anmol-theme";
-function currentTheme(){ return root.getAttribute("data-theme")==="dark"?"dark":"light"; }
-let themeReady=false;
-function applyTheme(theme){
-  const next=theme==="dark"?"dark":"light";
-  root.setAttribute("data-theme",next);
-  try{ localStorage.setItem(THEME_KEY,next); }catch(e){}
-  const meta=document.querySelector('meta[name="theme-color"]');
-  if(meta) meta.setAttribute("content",next==="dark"?"#101010":"#EDEDEA");
-  const btn=$("themeToggle");
-  if(btn){
-    const toDark=next==="light";
-    btn.setAttribute("aria-label",toDark?"Switch to dark mode":"Switch to light mode");
-    btn.title=toDark?"Switch to dark mode":"Switch to light mode";
-  }
-}
-function setTheme(theme){
-  if(themeReady && document.startViewTransition && !REDUCED) document.startViewTransition(()=>applyTheme(theme));
-  else applyTheme(theme);
-}
-(function bootTheme(){
-  let saved=null;
-  try{ saved=localStorage.getItem(THEME_KEY); }catch(e){}
-  applyTheme(saved==="dark"||saved==="light"?saved:"light");
-  themeReady=true;
-})();
-$("themeToggle").addEventListener("click",()=>setTheme(currentTheme()==="dark"?"light":"dark"));
-
-/* ---------- Videos ---------- */
-let VIDEOS=[], REAL=[];
-function setVideos(raw){
-  VIDEOS=raw.map((v,i)=>{
-    const vertical=v.aspect==="9:16";
-    return {...v,vertical,ratio:vertical?9/16:16/9,title:(v.title||"").trim()||v.category||"Untitled",key:i,featured:!!v.featured};
-  });
-  REAL=VIDEOS.filter(v=>v.id);
-}
-function thumbImg(v){
-  const img=new Image(); img.alt=""; img.decoding="async"; img.loading="lazy";
-  const list=v.vertical
-    ?[`https://i.ytimg.com/vi/${v.id}/oar2.jpg`,`https://i.ytimg.com/vi/${v.id}/hqdefault.jpg`]
-    :[`https://i.ytimg.com/vi/${v.id}/maxresdefault.jpg`,`https://i.ytimg.com/vi/${v.id}/hqdefault.jpg`];
-  let k=0; img.src=list[0];
-  img.onerror=()=>{ if(k<list.length-1) img.src=list[++k]; else img.style.visibility="hidden"; };
-  img.onload=()=>{ if(img.naturalWidth<=120 && k<list.length-1) img.src=list[++k]; };
-  return img;
-}
-function videoCard(v,{meta=false,decorative=false}={}){
-  const el=document.createElement(v.id&&!decorative?"button":"div");
-  el.className="vcard"+(v.id?"":" is-empty");
-  el.style.setProperty("--ratio",v.vertical?"9/16":"16/9");
-  el._ratio=v.ratio;
-  if(v.id){
-    el.dataset.videoId=v.id;
-    el.dataset.title=v.title||"";
-    el.dataset.cat=v.category||"";
-    if(v.projectFile) el.dataset.projectFile=v.projectFile;
-    // "Featured" in the dashboard is what opts a video into playing by
-    // itself on the page; previewMode "none" is the explicit opt-out.
-    if(v.featured && v.previewMode!=="none") el.dataset.autoplay="1";
-  }
-  const media=document.createElement("div"); media.className="vmedia"; el.appendChild(media);
-  if(v.id){
-    media.appendChild(thumbImg(v));
-    if(el.tagName==="BUTTON"){ el.type="button"; el.setAttribute("aria-label",`Play ${v.title}`); el.addEventListener("click",()=>openLightbox(v,el)); }
-  }
-  el.insertAdjacentHTML("beforeend",'<span class="vplay" aria-hidden="true"></span>');
-  if(v.projectFile){
-    el.insertAdjacentHTML("beforeend",
-      '<span class="vfile" title="Project file available"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" '+
-      'stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12"/><path d="M7 10l5 5 5-5"/>'+
-      '<path d="M5 19h14"/></svg>File</span>');
-  }
-  if(meta && v.id){
-    const m=document.createElement("span"); m.className="vmeta";
-    m.innerHTML='<span class="vt"></span><span class="vc"></span>';
-    m.firstChild.textContent=v.title; m.lastChild.textContent=v.category;
-    el.appendChild(m);
-  }
-  return el;
-}
-
-/* ---------- Justified grid (mixes 16:9 and 9:16) ---------- */
-function rowTarget(){ const w=innerWidth; return w<640?170:w<980?230:w<1400?300:340; }
-function justify(grid,cards){
-  const W=grid.clientWidth; if(!W) return;
-  const gap=innerWidth<640?8:12;
-  if(innerWidth<640){                               // phones: 16:9 full width, 9:16 reels in pairs
-    let y=0; const pending=[];
-    const pair=(items)=>{ const w=(W-gap)/2, h=w*16/9; items.forEach((c,i)=>place(c,i*(w+gap),y,w,h)); y+=h+gap; };
-    cards.forEach(c=>{
-      if(c._ratio<1){ pending.push(c); if(pending.length===2) pair(pending.splice(0,2)); }
-      else { const h=W*9/16; place(c,0,y,W,h); y+=h+gap; }
-    });
-    if(pending.length) pair(pending);
-    grid.style.height=Math.max(0,y-gap)+"px"; return;
-  }
-  const vis=cards.filter(c=>c.style.display!=="none");
-  const lands=vis.filter(c=>c._ratio>=1);
-  const ports=vis.filter(c=>c._ratio<1);
-  if(lands.length===2 && ports.length===1 && vis.length===3){
-    const leftW=Math.round(W*0.62);
-    const rightW=W-leftW-gap;
-    const landH=leftW*9/16;
-    const totalH=landH*2+gap;
-    place(lands[0],0,0,leftW,landH);
-    place(lands[1],0,landH+gap,leftW,landH);
-    place(ports[0],leftW+gap,0,rightW,totalH);
-    grid.style.height=totalH+"px";
-    return;
-  }
-  const target=rowTarget();
-  let y=0,row=[],sum=0;
-  const flush=last=>{
-    if(!row.length) return;
-    const gaps=gap*(row.length-1);
-    let h=(W-gaps)/sum, fill=true;
-    if(last && h>target){ h=target; fill=false; }
-    let x=0;
-    row.forEach((c,i)=>{ const w=(fill&&i===row.length-1)?W-x:h*c._ratio; place(c,x,y,w,h); x+=w+gap; });
-    y+=h+gap; row=[]; sum=0;
-  };
-  vis.forEach(c=>{ row.push(c); sum+=c._ratio; if(sum*target+gap*(row.length-1)>=W) flush(false); });
-  flush(true);
-  grid.style.height=Math.max(0,y-gap)+"px";
-}
-
-/* ---------- Motion tiles (vision + service blocks) ---------- */
-const PAL=[
-  {bg:"#000000",fg:"#F1F1EE",ac:"#FB5607"},
-  {bg:"#FB5607",fg:"#000000",ac:"#F1F1EE"},
-  {bg:"#D6D6D1",fg:"#000000",ac:"#FB5607"},
-  {bg:"#F8F8F6",fg:"#000000",ac:"#FB5607"},
-];
-const DRAW={
-  rings(c,w,h,t,p){ c.fillStyle=p.bg; c.fillRect(0,0,w,h); const m=Math.min(w,h),cx=w/2,cy=h/2; c.strokeStyle=p.fg; c.lineWidth=1.25;
-    for(let i=0;i<6;i++){ const r=m*(.07+i*.065)+Math.sin(t*1.4-i*.7)*m*.018; c.globalAlpha=1-i*.13; c.beginPath(); c.arc(cx,cy,r,0,Math.PI*2); c.stroke(); }
-    c.globalAlpha=1; c.fillStyle=p.ac; const a=t*1.1;
-    c.beginPath(); c.arc(cx+Math.cos(a)*m*.27,cy+Math.sin(a)*m*.27,m*.035,0,7); c.fill();
-    c.beginPath(); c.arc(cx+Math.cos(-a*1.6+2)*m*.14,cy+Math.sin(-a*1.6+2)*m*.14,m*.018,0,7); c.fill(); },
-  type(c,w,h,t,p,word="EASE"){ c.fillStyle=p.bg; c.fillRect(0,0,w,h); const s=Math.min(h*.42,w*.34);
-    c.font=`600 ${s}px Geist, system-ui, sans-serif`; c.textBaseline="middle"; c.fillStyle=p.fg;
-    const tw=c.measureText(word+" ").width; if(tw<1) return;
-    for(let x=-((t*w*.18)%tw);x<w;x+=tw) c.fillText(word+" ",x,h*.46);
-    const e=ease(Math.min(((t%2.4)/2.4)*1.5,1)); c.fillStyle=p.ac; c.fillRect(w*.08,h*.82,w*.84*e,Math.max(3,h*.018)); },
-  bars(c,w,h,t,p){ c.fillStyle=p.bg; c.fillRect(0,0,w,h); const n=22,gap=w*.012,bw=(w*.84-gap*(n-1))/n,x0=w*.08,hi=Math.floor(t*6)%n;
-    for(let i=0;i<n;i++){ const a=(Math.sin(t*2.6+i*.55)*.5+.5)*(Math.sin(t*1.1+i*.23)*.4+.6); const bh=h*.6*a+h*.03; c.fillStyle=i===hi?p.ac:p.fg; c.fillRect(x0+i*(bw+gap),(h-bh)/2,bw,bh); } },
-  dots(c,w,h,t,p){ c.fillStyle=p.bg; c.fillRect(0,0,w,h); const cols=12,step=w/cols,rows=Math.ceil(h/step);
-    for(let y=0;y<rows;y++) for(let x=0;x<cols;x++){ const px=(x+.5)*step,py=(y+.5)*step,d=Math.hypot(px-w/2,py-h/2)/step,z=Math.sin(d*.9-t*2.4);
-      c.fillStyle=z>.93?p.ac:p.fg; c.beginPath(); c.arc(px,py,step*.07+step*.2*(z*.5+.5),0,7); c.fill(); } },
-  keys(c,w,h,t,p){ c.fillStyle=p.bg; c.fillRect(0,0,w,h); const pad=w*.1,gx=pad,gy=h*.12,gw=w-pad*2,gh=h*.38;
-    c.strokeStyle=p.fg; c.lineWidth=1; c.globalAlpha=.22; c.strokeRect(gx,gy,gw,gh); c.globalAlpha=1;
-    c.lineWidth=1.6; c.beginPath(); c.moveTo(gx,gy+gh); c.bezierCurveTo(gx+gw*.55,gy+gh,gx+gw*.45,gy,gx+gw,gy); c.stroke();
-    const ph=(t*.32)%1,e=ease(ph),px=gx+gw*ph; c.fillStyle=p.ac; c.beginPath(); c.arc(px,gy+gh-gh*e,Math.max(4,w*.024),0,7); c.fill();
-    const keys=[[.12,.46,.8],[.28,.62,.9],[.05,.36,.7]],ds=Math.max(4,w*.02);
-    keys.forEach((k,i)=>{ const y=h*.66+i*h*.1; c.globalAlpha=.25; c.fillStyle=p.fg; c.fillRect(gx,y-.5,gw,1); c.globalAlpha=1;
-      k.forEach(v=>{ const kx=gx+gw*v; c.fillStyle=Math.abs(kx-px)<w*.035?p.ac:p.fg; c.save(); c.translate(kx,y); c.rotate(Math.PI/4); c.fillRect(-ds/2,-ds/2,ds,ds); c.restore(); }); });
-    c.fillStyle=p.fg; c.fillRect(px-.75,h*.6,1.5,h*.3); },
-  wipe(c,w,h,t,p){
-    const cl=x=>Math.min(1,Math.max(0,x)), ph=(t*.28)%1, m=Math.min(w,h);
-    const grid=()=>{ c.fillStyle=p.bg; c.fillRect(0,0,w,h); const st=Math.max(10,m/12); c.fillStyle=p.fg; c.globalAlpha=.22;
-      for(let y=st/2;y<h;y+=st) for(let x=st/2;x<w;x+=st){ c.beginPath(); c.arc(x,y,Math.max(1.2,m*.006),0,7); c.fill(); } c.globalAlpha=1; };
-    grid();
-    const e1=ease(cl(ph/.32)), e2=ease(cl((ph-.34)/.34)), e3=ease(cl((ph-.8)/.2));
-    // diagonal stripes panel wipes in
-    c.save(); c.beginPath(); c.rect(0,0,w*e1,h); c.clip();
-    c.fillStyle=p.fg; c.fillRect(0,0,w,h);
-    const gp=m*.09, off=(t*m*.12)%gp; c.strokeStyle=p.bg; c.lineWidth=Math.max(2,m*.022);
-    for(let x=-h-gp+off;x<w+h;x+=gp){ c.beginPath(); c.moveTo(x,h); c.lineTo(x+h,0); c.stroke(); }
-    c.restore();
-    // accent disc with rings grows from the centre
-    const R=e2*Math.hypot(w,h)*.56;
-    if(R>0){ c.save(); c.beginPath(); c.arc(w/2,h/2,R,0,7); c.clip(); c.fillStyle=p.ac; c.fillRect(0,0,w,h);
-      c.strokeStyle=p.bg; c.lineWidth=Math.max(1.5,m*.008); c.globalAlpha=.5; const rs=m*.07, ro=(t*m*.05)%rs;
-      for(let r=rs-ro;r<R;r+=rs){ c.beginPath(); c.arc(w/2,h/2,r,0,7); c.stroke(); }
-      c.globalAlpha=1; c.fillStyle=p.bg; c.beginPath(); c.arc(w/2,h/2,m*.05*e2,0,7); c.fill(); c.restore(); }
-    // dot grid wipes back in from the right, so the loop is seamless
-    if(e3>0){ c.save(); c.beginPath(); c.rect(w*(1-e3),0,w*e3+1,h); c.clip(); grid(); c.restore(); }
-  },
-};
-function makeCanvas(kind,pal,word){ const cv=document.createElement("canvas"); cv._kind=kind; cv._pal=PAL[pal]; cv._word=word; cv._t=Math.random()*10; cv._speed=1; return cv; }
-const ALL=new Set(), visible=new Set();
-function size(cv){ const d=Math.min(devicePixelRatio||1,1.5),w=cv.clientWidth,h=cv.clientHeight; cv.width=Math.max(1,Math.round(w*d)); cv.height=Math.max(1,Math.round(h*d)); cv._w=w; cv._h=h; cv._d=d; }
-function paint(cv){ if(cv._w===undefined) size(cv); if(cv._w<4||cv._h<4) return; const c=cv.getContext("2d"); c.setTransform(cv._d,0,0,cv._d,0,0); DRAW[cv._kind](c,cv._w,cv._h,cv._t,cv._pal,cv._word); }
-const ro=new ResizeObserver(es=>es.forEach(e=>{size(e.target);paint(e.target)}));
-const io=new IntersectionObserver(es=>es.forEach(e=>e.isIntersecting?visible.add(e.target):visible.delete(e.target)),{rootMargin:"120px"});
-function registerCanvas(cv){ ALL.add(cv); ro.observe(cv); io.observe(cv); if(REDUCED) cv._t=1.3; }
-
-/* ---------- Smooth scroll & nav ---------- */
-let lenis=null;
-if(!REDUCED && window.Lenis){ try{ lenis=new Lenis({lerp:.09,smoothWheel:true}); }catch(e){ lenis=null; } }
-const nav=$("nav"), menuBtn=$("menuBtn");
-function setMenu(open){ nav.classList.toggle("menu-open",open); menuBtn.setAttribute("aria-expanded",open); menuBtn.textContent=open?"Close":"Menu"; }
-menuBtn.addEventListener("click",()=>setMenu(!nav.classList.contains("menu-open")));
-document.querySelectorAll('a[href^="#"]').forEach(a=>a.addEventListener("click",e=>{
-  const id=a.getAttribute("href"), el=id==="#top"?null:document.querySelector(id);
-  if(id!=="#top"&&!el) return;
-  e.preventDefault(); setMenu(false);
-  if(lenis) lenis.scrollTo(el||0,{duration:1.4});
-  else (el?el.scrollIntoView({behavior:REDUCED?"auto":"smooth"}):scrollTo({top:0,behavior:REDUCED?"auto":"smooth"}));
-}));
-function setNavH(){ document.documentElement.style.setProperty("--nav-h",nav.offsetHeight+"px"); }
-setNavH(); addEventListener("resize",setNavH);
-function lockPage(lock){ document.body.classList.toggle("locked",lock); if(lenis) lock?lenis.stop():lenis.start(); }
-
-/* ---------- Hero reel (animated tiles) ---------- */
-const HERO_A=[["rings",0,"tall"],["type",1,"sq","EASE"],["bars",2,"tall"],["keys",3,"sq"],["dots",0,"tall"],["wipe",1,"sq"]];
-const HERO_B=[["type",0,"sq","CUT"],["wipe",2,"tall"],["dots",1,"sq"],["rings",3,"tall"],["bars",0,"sq"],["keys",1,"tall"]];
-function fillCol(el,list){
-  [...list,...list].forEach(([k,p,shape,word])=>{
-    const d=document.createElement("div"); d.className="tile "+shape;
-    const cv=makeCanvas(k,p,word); d.appendChild(cv); el.appendChild(d); registerCanvas(cv);
-  });
-}
-fillCol($("colA"),HERO_A);
-fillCol($("colB"),HERO_B);
-
-/* ---------- Clients marquee ---------- */
-const track=$("track");
-function buildGroup(){ const g=document.createElement("div"); g.className="group"; CLIENTS.forEach(n=>{ const s=document.createElement("span"); s.textContent=n; g.append(s,document.createElement("i")); }); return g; }
-
-/* ---------- Work (featured) ---------- */
-const workGrid=$("workGrid");
-let workCards=[];
-const PHONE_WORK_LIMIT=6;
-function buildWorkGrid(){
-  let featured=VIDEOS.filter(v=>v.featured); if(!featured.length) featured=VIDEOS.slice(0,8);
-  workCards=featured.map(v=>{ const c=videoCard(v,{meta:true}); workGrid.appendChild(c); return c; });
-  $("workCount").textContent=`(${REAL.length||VIDEOS.length})`;
-  layoutWork();
-  attachSmartHover(workGrid);
-  attachFeaturedAutoplay(workGrid);
-}
-function layoutWork(){
-  const lim=innerWidth<640?PHONE_WORK_LIMIT:workCards.length;
-  workCards.forEach((c,i)=>c.style.display=i<lim?"":"none");
-  justify(workGrid,workCards.slice(0,lim));
-}
-new ResizeObserver(layoutWork).observe(workGrid);
-
-/* ---------- Vision ---------- */
-const wordsUl=$("words");
-let lineEls=[], visionCv=null;
-function buildVision(){
-  wordsUl.innerHTML="";
-  LINES.forEach(([t])=>{ const li=document.createElement("li"); li.textContent=t; wordsUl.appendChild(li); });
-  lineEls=[...wordsUl.children];
-  const [k,pal,word]=LINES[0][1];
-  visionCv=makeCanvas(k,pal,word);
-  $("visionTile").innerHTML=""; $("visionTile").appendChild(visionCv); registerCanvas(visionCv);
-}
-
-/* ---------- Statement words ---------- */
-const statement=$("statement");
-let wordEls=[];
-function buildStatement(){
-  const txt=statement.textContent.trim();
-  statement.setAttribute("aria-label",txt);
-  statement.innerHTML=txt.split(/\s+/).map(w=>`<span class="w" aria-hidden="true">${w}</span>`).join(" ");
-  wordEls=[...statement.querySelectorAll(".w")];
-}
-
-/* ---------- Services stage ---------- */
-const stage=$("stage"), notch=$("notch"), moreLabel=$("moreLabel");
-const canHover=matchMedia("(hover:hover) and (pointer:fine)");
-let openI=-1, hoverI=-1, front=0, dragged=false;
-let niches=[];
-const dots=document.createElement("div"); dots.className="deck-dots"; stage.appendChild(dots);
-function ytEmbed(id,startAt){
-  // controls=0 because the player carries its own bar underneath;
-  // enablejsapi so those buttons can drive it.
-  let u=`https://www.youtube-nocookie.com/embed/${id}?autoplay=1&rel=0&playsinline=1&modestbranding=1&controls=0&enablejsapi=1&iv_load_policy=3`;
-  if(startAt>0) u+="&start="+Math.floor(startAt);
-  return u;
-}
-function buildNiches(){
-  niches=SERVICES.map((sv,i)=>{
-    const vids=REAL.filter(v=>v.category===sv.name);
-    const pal=PAL[sv.tile[1]];
-    const el=document.createElement("div"); el.className="niche"; el.style.setProperty("--i",i);
-    el.style.setProperty("--n-bg",pal.bg); el.style.setProperty("--n-fg",pal.fg);
-    el.innerHTML=`<div class="scrim"></div>
-      <div class="info"><div><h3></h3><p class="desc"></p><span class="cue">Click to watch</span></div><span class="count"></span></div>
-      <span class="view-pill" aria-hidden="true"><i></i>View</span>
-      <button class="hit" type="button"></button>
-      <div class="panel" role="region">
-        <div class="panel-head"><div><h3></h3><p></p></div><button class="close" type="button" aria-label="Close"><span class="close-txt">Close</span><svg class="close-x" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg></button></div>
-        <div class="player"></div>
-        <ul class="playlist" data-lenis-prevent></ul>
-      </div>`;
-    const bg=makeCanvas(sv.tile[0],sv.tile[1],sv.tile[2]); bg.className="bgcv"; bg.setAttribute("aria-hidden","true"); el.prepend(bg);
-    const countTxt=vids.length?`${vids.length} ${vids.length===1?"video":"videos"}`:"Coming soon";
-    el.querySelector(".info h3").textContent=sv.name;
-    el.querySelector(".desc").textContent=sv.desc;
-    el.querySelector(".count").textContent=innerWidth<=980?countTxt:`(${countTxt.toLowerCase()})`;
-    const hit=el.querySelector(".hit"); hit.setAttribute("aria-label",`Open ${sv.name}, ${countTxt}`);
-    el.querySelector(".panel").setAttribute("aria-label",sv.name);
-    const head=el.querySelector(".panel-head"); head.querySelector("h3").textContent=sv.name; head.querySelector("p").textContent=sv.desc;
-    const close=el.querySelector(".close"), player=el.querySelector(".player"), list=el.querySelector(".playlist");
-    const buttons=vids.map((v,k)=>{
-      const li=document.createElement("li"), b=document.createElement("button"); b.type="button";
-      const th=document.createElement("span"); th.className="pthumb"+(v.vertical?" is-vertical":""); th.appendChild(thumbImg(v));
-      const tx=document.createElement("span"); tx.textContent=v.title;
-      b.append(th,tx); b.addEventListener("click",()=>playVideo(i,k));
-      li.appendChild(b); list.appendChild(li); return b;
-    });
-    hit.addEventListener("click",()=>{ if(dragged) return; if(stage.classList.contains("compact")&&openI<0&&i!==front){ front=i; layout(); return; } openNiche(i); });
-    close.addEventListener("click",closeNiche);
-    el.addEventListener("mouseenter",()=>{ if(openI<0&&canHover.matches&&innerWidth>980){ hoverI=i; setState(); } });
-    el.addEventListener("mouseleave",()=>{ if(hoverI===i){ hoverI=-1; setState(); } });
-    stage.appendChild(el); registerCanvas(bg);
-    return {el,bg,sv,vids,hit,head,close,player,list,buttons};
-  });
-  dots.innerHTML="";
-  niches.forEach((n,i)=>{ const d=document.createElement("button"); d.type="button"; d.setAttribute("aria-label",`Show ${n.sv.name}`);
-    d.addEventListener("click",()=>{ front=i; layout(); }); dots.appendChild(d); });
-  setState();
-}
-function resetDeck(n){ n.el.style.transform=""; n.el.style.filter=""; n.el.style.opacity=""; n.el.classList.remove("is-front","is-behind"); n.bg._paused=false; }
-function clearPlayer(n){ n.player.innerHTML=""; }
-function playVideo(i,k){
-  const n=niches[i]; clearPlayer(n);
-  if(!n.vids.length){ n.player.innerHTML='<p class="empty-note">Videos for this category are coming soon.</p>'; return; }
-  const v=n.vids[k], f=document.createElement("iframe");
-  f.src=ytEmbed(v.id); f.title=v.title; f.allow="autoplay; encrypted-media; picture-in-picture; fullscreen"; f.allowFullscreen=true;
-  n.player.appendChild(f);
-  n.buttons.forEach((b,j)=>b.setAttribute("aria-current",j===k?"true":"false"));
-}
-function setState(){
-  niches.forEach((n,i)=>{ n.el.classList.toggle("is-big",i===openI); n.el.classList.toggle("is-mini",openI>=0&&i!==openI); n.el.classList.toggle("is-hover",openI<0&&i===hoverI); n.hit.tabIndex=i===openI?-1:0; });
-  layout();
-}
-function layout(){
-  const W=stage.clientWidth, mob=innerWidth<=980, g=mob?8:12;
-  stage.classList.toggle("compact",mob);
-  if(openI<0){
-    notch.style.opacity=0; moreLabel.style.opacity=0;
-    if(mob){
-      const N=niches.length, peek=18, H=Math.round(Math.min(Math.max(W*1.12,380),520)), top=peek*(N-1);
-      niches.forEach((n,i)=>{
-        const d=(i-front+N)%N;
-        place(n.el,0,top,W,H); n.el.style.zIndex=N-d;
-        n.el.style.transform=`translate3d(0,${-d*peek}px,0) scale(${1-d*.055})`;
-        n.el.style.filter=d===0?"none":d===1?"brightness(.82)":`blur(${(d-1)*2.5}px) brightness(${.8-d*.06})`;
-        n.el.style.opacity=d===N-1&&N>3?.8:1;
-        n.el.classList.toggle("is-front",d===0); n.el.classList.toggle("is-behind",d>0);
-        n.bg._paused=d>1;
-        n.hit.setAttribute("aria-label",d===0?`Open ${n.sv.name}`:`Show ${n.sv.name}`);
-      });
-      [...dots.children].forEach((b,i)=>b.setAttribute("aria-current",i===front?"true":"false"));
-      dots.style.top=(top+H+18)+"px"; dots.style.opacity=1; dots.style.pointerEvents="";
-      stage.style.height=(top+H+44)+"px";
-    } else { niches.forEach(resetDeck); const H=460,bw=(W-g*3)/4,base=210,tall=420;
-      niches.forEach((n,i)=>{ const h=i===hoverI?tall:base; place(n.el,i*(bw+g),(H-h)/2,bw,h); n.el.style.zIndex=i===hoverI?2:1; });
-      stage.style.height=H+"px";
-    }
-    return;
-  }
-  const big=niches[openI], minis=niches.filter((_,i)=>i!==openI);
-  const hasList=big.vids.length>0;
-  big.list.style.display=hasList?"":"none";
-  if(mob){
-    niches.forEach(resetDeck); dots.style.opacity=0; dots.style.pointerEvents="none";
-    const H=Math.min(Math.max(innerHeight*.7,440),620),lab=34,mw=(W-g*2)/3,mh=Math.round(mw*1.05);
-    place(big.el,0,0,W,H); big.el.style.zIndex=1;
-    moreLabel.style.top=(H+10)+"px"; moreLabel.style.opacity=1;
-    minis.forEach((n,k)=>{ place(n.el,k*(mw+g),H+lab,mw,mh); n.el.style.zIndex=5; });
-    notch.style.opacity=0; stage.style.height=(H+lab+mh)+"px";
-    big.head.style.width=(W-24)+"px";
-    const hh=big.head.offsetHeight+24, lh=hasList?56:0;
-    place(big.player,12,hh,W-24,Math.max(160,H-hh-12-(hasList?lh+10:0)));
-    place(big.list,12,H-12-lh,W-24,lh);
-  } else {
-    niches.forEach(resetDeck); dots.style.opacity=0;
-    const H=Math.min(Math.max(innerHeight*.86,580),860),mw=Math.max(240,W*.22),ch=H*.5,mh=(ch-g*2)/3;
-    place(big.el,0,0,W,H); big.el.style.zIndex=1;
-    place(notch,W-mw-g,H-ch-g,mw+g,ch+g); notch.style.opacity=1;
-    minis.forEach((n,k)=>{ place(n.el,W-mw,H-ch+k*(mh+g),mw,mh); n.el.style.zIndex=5; });
-    stage.style.height=H+"px";
-    big.head.style.width=(W-40)+"px";
-    const top=big.head.offsetHeight+36;
-    place(big.player,20,top,W-mw-g-40,H-top-20);
-    place(big.list,W-mw,top,mw-20,Math.max(64,H-ch-g-top-14));
-  }
-}
-function openNiche(i){
-  if(openI===i) return;
-  if(openI>=0) clearPlayer(niches[openI]);
-  openI=i; hoverI=-1; setState(); playVideo(i,0);
-  const y=stage.getBoundingClientRect().top+scrollY-nav.offsetHeight-16;
-  if(lenis) lenis.scrollTo(y,{duration:1.1}); else scrollTo({top:y,behavior:REDUCED?"auto":"smooth"});
-  setTimeout(()=>niches[i].close.focus({preventScroll:true}),500);
-}
-function closeNiche(){ if(openI<0) return; const i=openI; clearPlayer(niches[i]); openI=-1; setState(); niches[i].hit.focus({preventScroll:true}); }
-addEventListener("resize",layout);
-// swipe the deck on phones
-(function(){
-  let sx=0,sy=0,dx=0,active=false,horiz=false,pid=null;
-  stage.addEventListener("pointerdown",e=>{
-    if(!niches.length||!stage.classList.contains("compact")||openI>=0||e.pointerType==="mouse"&&e.button!==0) return;
-    active=true; horiz=false; sx=e.clientX; sy=e.clientY; dx=0; pid=e.pointerId;
-  });
-  stage.addEventListener("pointermove",e=>{
-    if(!active||e.pointerId!==pid) return;
-    dx=e.clientX-sx; const dy=e.clientY-sy;
-    if(!horiz){ if(Math.abs(dx)>10&&Math.abs(dx)>Math.abs(dy)) horiz=true; else if(Math.abs(dy)>10){ active=false; return; } else return; }
-    const el=niches[front].el; el.style.transition="none";
-    el.style.transform=`translate3d(${dx}px,0,0) rotate(${dx*.03}deg)`;
-  });
-  const end=e=>{
-    if(!active) return; active=false;
-    if(!horiz) return;
-    dragged=true; setTimeout(()=>dragged=false,60);
-    const el=niches[front].el, N=niches.length, W=stage.clientWidth;
-    if(Math.abs(dx)>70){
-      const dir=dx<0?-1:1;
-      el.style.transition="transform .28s var(--e),opacity .28s";
-      el.style.transform=`translate3d(${dir*W*1.15}px,0,0) rotate(${dir*9}deg)`;
-      setTimeout(()=>{ el.style.transition=""; front=dir<0?(front+1)%N:(front-1+N)%N; layout(); },260);
-    } else { el.style.transition=""; layout(); }
-  };
-  stage.addEventListener("pointerup",end); stage.addEventListener("pointercancel",end);
-})();
-
-/* ---------- Lightbox ---------- */
-const lb=$("lightbox"), lbFrame=$("lbFrame"), lbTitle=$("lbTitle");
-let lbReturn=null;
-function openLightbox(v,from){
-  lbReturn=from||null;
-  // Read this before the preview is taken down - once it's gone, so is
-  // the position it had reached.
-  const resumeAt=(window.smartHoverPlayhead&&from)?window.smartHoverPlayhead():0;
-  // The heavy backdrop blur is a desktop treatment only — phones get the
-  // plain sheet-style player from the media query instead.
-  if(canHover.matches) lb.classList.add("smart-lightbox");
-  lbFrame.classList.toggle("is-vertical",v.vertical);
-  lbFrame.innerHTML=""; const f=document.createElement("iframe");
-  f.src=ytEmbed(v.id,resumeAt); f.title=v.title; f.allow="autoplay; encrypted-media; picture-in-picture; fullscreen"; f.allowFullscreen=true;
-  lbFrame.appendChild(f);
-  lbTitle.textContent=v.title; const s=document.createElement("span"); s.textContent=v.category; lbTitle.appendChild(s);
-  if(v.projectFile){
-    const link=document.createElement("a");
-    link.className="lb-file"; link.href=v.projectFile; link.target="_blank"; link.rel="noopener";
-    link.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" '+
-      'stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>'+
-      '<path d="M7 10l5 5 5-5"/><path d="M12 15V3"/></svg>Project file';
-    lbTitle.appendChild(link);
-  }
-  // Take the hover preview down first, or its audio plays under this one.
-  if(window.silenceSmartHover) window.silenceSmartHover();
-  // Opening the full player is a deliberate "I want to watch this", so it
-  // always starts with sound - and the button has to say so, since the
-  // embed itself isn't muted.
-  lbStartControls(resumeAt,false);
-  openNotesFor(v);
-  lb.classList.add("open"); lockPage(true);
-  setTimeout(()=>$("lbClose").focus({preventScroll:true}),50);
-}
-function closeLightbox(){
-  if(!lb.classList.contains("open")) return;
-  lbStopControls();
-  lb.classList.remove("open"); lbFrame.innerHTML="";
-  if(!aw.classList.contains("open")) lockPage(false);
-  if(lbReturn) lbReturn.focus({preventScroll:true});
-  setTimeout(reconcileSmartHover,30);
-}
-/* ---------- Full player: its own controls, and notes beside it --------
-   The player runs with YouTube's chrome off and enablejsapi on, so the
-   bar underneath drives it over postMessage. Position and play state
-   come back on the same channel; if that never arrives the buttons still
-   work, the seek bar just doesn't move. */
-const lbPlayBtn=$("lbPlay"), lbMuteBtn=$("lbMute"), lbRestartBtn=$("lbRestart"),
-      lbSeek=$("lbSeek"), lbSeekFill=$("lbSeekFill"), lbTimeEl=$("lbTime");
-let lbCur=0, lbDur=0, lbPlaying=true, lbMuted=false, lbPoll=null, lbSeekLock=0;
-
-function lbPost(msg){
-  const f=lbFrame.querySelector("iframe");
-  if(!f||!f.contentWindow) return;
-  try{ f.contentWindow.postMessage(JSON.stringify(msg),"*"); }catch(e){}
-}
-function lbCmd(func,args){ lbPost({event:"command",func:func,args:args||[]}); }
-function lbListen(){ lbPost({event:"listening",id:1,channel:"widget"}); }
-
-function fmt(t){
-  if(!isFinite(t)||t<0) t=0;
-  const m=Math.floor(t/60), sec=Math.floor(t%60);
-  return m+":"+String(sec).padStart(2,"0");
-}
-function lbPaint(){
-  lbPlayBtn.classList.toggle("is-paused",!lbPlaying);
-  lbPlayBtn.title=lbPlaying?"Pause":"Play";
-  lbPlayBtn.setAttribute("aria-label",lbPlayBtn.title);
-  lbMuteBtn.classList.toggle("is-on",!lbMuted);
-  lbMuteBtn.title=lbMuted?"Unmute":"Mute";
-  lbMuteBtn.setAttribute("aria-label",lbMuteBtn.title);
-  const pct=lbDur>0?Math.min(100,(lbCur/lbDur)*100):0;
-  lbSeekFill.style.width=pct+"%";
-  lbSeek.setAttribute("aria-valuenow",Math.round(pct));
-  lbTimeEl.textContent=lbDur>0?(fmt(lbCur)+" / "+fmt(lbDur)):fmt(lbCur);
-}
-addEventListener("message",e=>{
-  if(typeof e.origin!=="string"||e.origin.indexOf("youtube")<0) return;
-  // Every player on the page reports to this same window - the in-grid
-  // ones that play by themselves, and the hover preview. Without pinning
-  // this to the player actually on screen, the bar gets fed whichever
-  // video reported last, which is why it jumped around and kept crawling
-  // forward while this one was paused.
-  const f=lbFrame.querySelector("iframe");
-  if(!f||!e.source||e.source!==f.contentWindow) return;
-
-  let d; try{ d=JSON.parse(e.data); }catch(_){ return; }
-  const i=d&&d.info; if(!i) return;
-
-  // A reading sent just before a seek lands would drag the bar back to
-  // where it was; ignore position for a moment after moving the playhead.
-  if(typeof i.currentTime==="number"&&performance.now()>lbSeekLock) lbCur=i.currentTime;
-  if(typeof i.duration==="number"&&i.duration>0) lbDur=i.duration;
-  if(typeof i.playerState==="number"){
-    lbPlaying=(i.playerState===1);
-    // 0 is ENDED. Run it again from the top rather than sitting on a
-    // frozen last frame - looping via loop/playlist is what put those
-    // prev/next arrows over the video, so it's done by hand here.
-    if(i.playerState===0){
-      lbCur=0; lbSeekLock=performance.now()+700;
-      lbCmd("seekTo",[0,true]); lbCmd("playVideo");
-      lbPlaying=true;
-    }
-  }
-  if(typeof i.muted==="boolean") lbMuted=i.muted;
-  if(lbPoll&&typeof i.currentTime==="number"){ clearInterval(lbPoll); lbPoll=null; }
-  lbPaint();
-});
-
-lbPlayBtn.addEventListener("click",()=>{
-  lbPlaying=!lbPlaying;
-  lbCmd(lbPlaying?"playVideo":"pauseVideo");
-  lbPaint();
-});
-lbRestartBtn.addEventListener("click",()=>{
-  lbCur=0; lbSeekLock=performance.now()+700;
-  lbCmd("seekTo",[0,true]); lbCmd("playVideo");
-  lbPlaying=true; lbPaint();
-});
-lbMuteBtn.addEventListener("click",()=>{
-  lbMuted=!lbMuted;
-  lbCmd(lbMuted?"mute":"unMute");
-  if(!lbMuted) lbCmd("setVolume",[100]);
-  lbPaint();
-});
-lbSeek.addEventListener("click",e=>{
-  if(!lbDur) return;
-  const r=lbSeek.getBoundingClientRect();
-  const to=Math.max(0,Math.min(1,(e.clientX-r.left)/r.width))*lbDur;
-  lbCur=to; lbSeekLock=performance.now()+700;
-  lbCmd("seekTo",[to,true]); lbPaint();
-});
-
-function lbStartControls(startAt,muted){
-  lbCur=startAt||0; lbDur=0; lbPlaying=true; lbMuted=!!muted; lbSeekLock=0;
-  lbPaint();
-  clearInterval(lbPoll);
-  // The player ignores the handshake until it has booted, and gives no
-  // ready signal on this channel, so keep offering for a few seconds.
-  let n=0;
-  lbPoll=setInterval(()=>{ lbListen(); if(++n>12) clearInterval(lbPoll); },400);
-  lbListen();
-}
-function lbStopControls(){ clearInterval(lbPoll); lbPoll=null; }
-
-/* ---------- Notes, one per video, kept in this browser --------------- */
-const NOTES_KEY="anmol-video-notes";
-const lbnText=$("lbnText"), lbnCount=$("lbnCount"), lbnStatus=$("lbnStatus");
-let notesFor=null, notesSaveT=null;
-
-function loadNotes(){ try{ return JSON.parse(localStorage.getItem(NOTES_KEY)||"{}"); }catch(e){ return {}; } }
-function saveNotes(n){ try{ localStorage.setItem(NOTES_KEY,JSON.stringify(n)); }catch(e){} }
-function notesWithText(){
-  const n=loadNotes();
-  return Object.keys(n).filter(k=>n[k]&&n[k].note&&n[k].note.trim());
-}
-function paintNotesCount(){
-  const k=notesWithText().length;
-  lbnCount.textContent=k?(k+(k===1?" video":" videos")):"";
-}
-function openNotesFor(v){
-  notesFor=v;
-  const n=loadNotes();
-  lbnText.value=(n[v.id]&&n[v.id].note)||"";
-  lbnStatus.textContent="";
-  paintNotesCount();
-}
-lbnText.addEventListener("input",()=>{
-  if(!notesFor) return;
-  clearTimeout(notesSaveT);
-  notesSaveT=setTimeout(()=>{
-    const n=loadNotes();
-    const val=lbnText.value;
-    if(val.trim()) n[notesFor.id]={title:notesFor.title||"",cat:notesFor.category||"",note:val};
-    else delete n[notesFor.id];
-    saveNotes(n); paintNotesCount();
-    lbnStatus.textContent="Saved.";
-    setTimeout(()=>{ if(lbnStatus.textContent==="Saved.") lbnStatus.textContent=""; },1400);
-  },400);
-});
-
-function notesBody(){
-  const n=loadNotes(), out=[];
-  notesWithText().forEach(id=>{
-    const e=n[id];
-    out.push((e.title||"Untitled")+(e.cat?" ("+e.cat+")":"")+
-             "\nhttps://youtu.be/"+id+"\n"+e.note.trim());
-  });
-  return out.join("\n\n----------\n\n");
-}
-function withNotes(fn){
-  const body=notesBody();
-  if(!body){ lbnStatus.textContent="No notes yet - type one first."; return; }
-  fn(body,notesWithText().length);
-}
-$("lbnMail").addEventListener("click",()=>withNotes((body,k)=>{
-  const url="mailto:?subject="+encodeURIComponent("Notes on "+k+" video"+(k===1?"":"s"))+
-            "&body="+encodeURIComponent(body);
-  // Mail clients drop very long mailto links, so say so rather than
-  // letting it silently arrive truncated.
-  if(url.length>1900){ lbnStatus.textContent="Too long for email - use Copy instead."; return; }
-  location.href=url;
-  lbnStatus.textContent="Opening your email app...";
-}));
-$("lbnWa").addEventListener("click",()=>withNotes(body=>{
-  window.open("https://wa.me/?text="+encodeURIComponent(body),"_blank","noopener");
-  lbnStatus.textContent="Opening WhatsApp...";
-}));
-$("lbnCopy").addEventListener("click",()=>withNotes(async (body,k)=>{
-  let ok=false;
-  try{ await navigator.clipboard.writeText(body); ok=true; }
-  catch(e){
-    try{ const ta=document.createElement("textarea"); ta.value=body;
-         document.body.appendChild(ta); ta.select(); ok=document.execCommand("copy"); ta.remove(); }catch(_){}
-  }
-  lbnStatus.textContent=ok?("Copied "+k+" note"+(k===1?"":"s")+" - paste anywhere."):"Couldn't copy.";
-}));
-$("lbnClear").addEventListener("click",()=>{
-  if(!notesWithText().length){ lbnStatus.textContent="Nothing to clear."; return; }
-  if(!confirm("Delete the notes on every video? This can't be undone.")) return;
-  saveNotes({}); lbnText.value=""; paintNotesCount();
-  lbnStatus.textContent="All notes cleared.";
-});
-
-$("lbClose").addEventListener("click",closeLightbox);
-lb.addEventListener("click",e=>{ if(e.target===lb) closeLightbox(); });
-
-/* ---------- All work window ---------- */
-const aw=$("allwork"), awGrid=$("awGrid"), awFilters=$("awFilters");
-let awFilter="All", awCards=[], awReturn=null;
-const pool=()=>REAL.length?REAL:VIDEOS;
-function buildAwFilters(){
-  $("awCount").textContent=`(${pool().length})`;
-  awFilters.innerHTML="";
-  ["All",...SERVICES.map(s=>s.name)].forEach(name=>{
-    const n=name==="All"?pool().length:pool().filter(v=>v.category===name).length;
-    const b=document.createElement("button"); b.type="button"; b.className="chip"; b.setAttribute("aria-pressed",name==="All");
-    b.textContent=name; const c=document.createElement("span"); c.textContent=n; b.appendChild(c);
-    b.addEventListener("click",()=>{ awFilter=name; awFilters.querySelectorAll(".chip").forEach(x=>x.setAttribute("aria-pressed",x===b)); renderAll(); });
-    awFilters.appendChild(b);
-  });
-}
-function renderAll(){
-  awGrid.innerHTML="";
-  const list=pool().filter(v=>awFilter==="All"||v.category===awFilter);
-  awCards=list.map(v=>{ const c=videoCard(v,{meta:true}); awGrid.appendChild(c); return c; });
-  justify(awGrid,awCards);
-  $("awBody").scrollTop=0;
-  attachSmartHover(awGrid);
-  attachFeaturedAutoplay(awGrid);
-}
-function openAll(from){
-  awReturn=from||null; setMenu(false);
-  aw.classList.add("open"); lockPage(true); renderAll();
-  setTimeout(()=>$("awClose").focus({preventScroll:true}),80);
-}
-function closeAll(){ aw.classList.remove("open"); lockPage(false); if(awReturn) awReturn.focus({preventScroll:true}); }
-document.querySelectorAll("[data-open-all]").forEach(b=>b.addEventListener("click",()=>openAll(b)));
-$("awClose").addEventListener("click",closeAll);
-new ResizeObserver(()=>{ if(aw.classList.contains("open")) justify(awGrid,awCards); }).observe(awGrid);
-
-addEventListener("keydown",e=>{
-  if(e.key!=="Escape") return;
-  if(lb.classList.contains("open")) closeLightbox();
-  else if(aw.classList.contains("open")) closeAll();
-  else if(nav.classList.contains("menu-open")) setMenu(false);
-  else closeNiche();
-});
-
-/* ---------- Smart hover preview (the "window"): desktop only — hover
-   lifts a .vcard into a larger floating film with a muted YouTube loop,
-   dimming and blurring the rest of the page behind it. Click still opens
-   the real lightbox, unaffected — this only adds the preview. ---------- */
-(function(){
-  const desktop=matchMedia("(hover:hover) and (pointer:fine)");
-  const blur=document.createElement("div");
-  blur.className="smart-hover-blur"; blur.setAttribute("aria-hidden","true");
-  // Never put the blur layer in front of a phone — its backdrop-filter
-  // costs compositing work even while it's sitting at opacity 0.
-  if(desktop.matches) document.body.appendChild(blur);
-  let activeCard=null, sourceCard=null, lastX=-1, lastY=-1;
-  document.addEventListener("mousemove",e=>{ lastX=e.clientX; lastY=e.clientY; },{passive:true});
-
-  /* Sound is off to begin with - it has to be, since a browser will only
-     autoplay a muted video - and stays however you last set it for the
-     rest of the visit. Commands go to the player by postMessage rather
-     than through the full API, so the preview stays a plain iframe. */
-  let soundOn=false;
-  function sendYT(frame,func,args){
-    if(!frame||!frame.contentWindow) return;
-    try{ frame.contentWindow.postMessage(JSON.stringify({event:"command",func:func,args:args||[]}),"*"); }catch(e){}
-  }
-  function listenYT(frame){
-    if(!frame||!frame.contentWindow) return;
-    try{ frame.contentWindow.postMessage(JSON.stringify({event:"listening",id:1,channel:"widget"}),"*"); }catch(e){}
-  }
-  function applySound(frame,on){
-    if(!frame) return;
-    const go=()=>{
-      sendYT(frame,on?"unMute":"mute");
-      if(on) sendYT(frame,"setVolume",[100]);
-    };
-    // The player ignores commands until it has finished booting, and it
-    // gives no ready signal without the API, so nudge it a few times.
-    go(); setTimeout(go,350); setTimeout(go,900);
-  }
-
-  const BAR_H=54;                       // the caption bar joined under the film
-  const OPEN_DELAY=200, CLOSE_DELAY=130; // hover has to be meant, not passed through
-
-  function ytPreview(id,startAt){
-    // No loop/playlist here on purpose: that pair puts the player into
-    // playlist mode, which is what was drawing prev / pause / next
-    // buttons across the middle of the video. A hover preview doesn't
-    // outlast a clip anyway, and the self-playing cards loop through the
-    // API instead.
-    const p={autoplay:1,mute:1,controls:0,disablekb:1,iv_load_policy:3,playsinline:1,rel:0,modestbranding:1,fs:0,cc_load_policy:0,enablejsapi:1};
-    if(startAt>0) p.start=Math.floor(startAt);
-    return "https://www.youtube-nocookie.com/embed/"+encodeURIComponent(id)+"?"+Object.keys(p).map(k=>k+"="+encodeURIComponent(p[k])).join("&");
-  }
-  window.ytPreviewURL=ytPreview;
-
-  /* A plain iframe can't be asked where it is in the video, so the cards
-     that play by themselves are built through YouTube's player API. That
-     is what lets a hover pick up from the frame you were already on
-     instead of snapping back to the beginning. Loaded lazily, and only
-     when a self-playing card actually exists. */
-  let ytApi=null;
-  function loadYTApi(){
-    if(ytApi) return ytApi;
-    ytApi=new Promise(resolve=>{
-      if(window.YT&&window.YT.Player) return resolve(window.YT);
-      const prev=window.onYouTubeIframeAPIReady;
-      window.onYouTubeIframeAPIReady=function(){
-        if(typeof prev==="function"){ try{ prev(); }catch(e){} }
-        resolve(window.YT);
-      };
-      const sc=document.createElement("script");
-      sc.src="https://www.youtube.com/iframe_api";
-      sc.onerror=()=>resolve(null);
-      document.head.appendChild(sc);
-    });
-    return ytApi;
-  }
-
-  /* Grows the card into something comfortably watchable without taking
-     over the screen — the blurred page stays visible around it. The card's
-     own width:height is carried through exactly, so a 9:16 reel grows as a
-     9:16 reel instead of being stretched toward the landscape shape. */
-  function grownRect(r0){
-    const ar=r0.width/r0.height, m=32, tall=ar<1;
-    // A reel can afford more height because it takes so little width, and
-    // a film the reverse - one shared cap made one of them wrong.
-    const vhCap=innerHeight*(tall?0.70:0.50);
-    const vwCap=Math.min(innerWidth-m*2, innerWidth*(tall?0.34:0.56));
-    const totalCap=Math.min(innerHeight-m*2, innerHeight*(tall?0.86:0.66));
-
-    let vh=Math.min(r0.height*1.35, vhCap), vw=vh*ar;
-    if(vw>vwCap){ vw=vwCap; vh=vw/ar; }
-    if(vh+BAR_H>totalCap){ vh=totalCap-BAR_H; vw=vh*ar; }
-    // Deliberately no "never smaller than the card" floor here. The tall
-    // card in the featured layout is already taller than the window, so
-    // that floor was forcing the preview past the bottom edge instead of
-    // letting it settle to something that fits.
-    const w=vw, h=vh+BAR_H;
-    const cx=r0.left+r0.width/2, cy=r0.top+r0.height/2;
-    return {
-      left:Math.min(Math.max(cx-w/2,m), Math.max(m,innerWidth-w-m)),
-      top: Math.min(Math.max(cy-h/2,m), Math.max(m,innerHeight-h-m)),
-      width:w, height:h
-    };
-  }
-
-  function startPreview(card,startAt){
-    if(!card||card._smartPreview) return;
-    const id=card.dataset.videoId; if(!id) return;
-    const r=card.getBoundingClientRect();
-
-    const lift=document.createElement("div");
-    lift.className="smart-preview-lift";
-    // Starts on the card's own footprint, with the bar already allowed for
-    // so the film itself doesn't jump size as it grows.
-    lift.style.left=r.left+"px"; lift.style.top=r.top+"px";
-    lift.style.width=r.width+"px"; lift.style.height=(r.height+BAR_H)+"px";
-
-    const vid=document.createElement("div"); vid.className="spl-video";
-    const frame=document.createElement("iframe");
-    frame.src=ytPreview(id,startAt);
-    frame.allow="autoplay; encrypted-media; picture-in-picture";
-    frame.setAttribute("tabindex","-1"); frame.setAttribute("aria-hidden","true");
-    vid.appendChild(frame);
-
-    const bar=document.createElement("div"); bar.className="spl-bar";
-    const t=document.createElement("span"); t.className="spl-title";
-    t.textContent=card.dataset.title||"";
-    const c=document.createElement("span"); c.className="spl-cat";
-    c.textContent=card.dataset.cat||"";
-
-    const again=document.createElement("button");
-    again.type="button"; again.className="spl-btn spl-again";
-    again.title="Start over"; again.setAttribute("aria-label","Start over");
-    again.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" '+
-      'stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'+
-      '<path d="M3 12a9 9 0 1 0 2.6-6.4"/><path d="M3 4.5V10h5.5"/></svg>';
-    again.addEventListener("click",e=>{
-      e.preventDefault(); e.stopPropagation();
-      sendYT(frame,"seekTo",[0,true]); sendYT(frame,"playVideo");
-      // the card underneath should agree about where we are now
-      card._handoffAt=0; card._handoffFrom=performance.now();
-    });
-
-    const snd=document.createElement("button");
-    snd.type="button"; snd.className="spl-btn spl-sound"+(soundOn?" is-on":"");
-    snd.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" '+
-      'stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'+
-      '<path d="M4 9.5v5h3.5L12 18V6L7.5 9.5H4z"/>'+
-      '<g class="snd-on"><path d="M15.5 9.2a4 4 0 0 1 0 5.6"/><path d="M18 6.8a7.5 7.5 0 0 1 0 10.4"/></g>'+
-      '<g class="snd-off"><path d="M16 10l4 4"/><path d="M20 10l-4 4"/></g></svg>';
-    const label=()=>{ const l=soundOn?"Mute preview":"Play sound"; snd.title=l; snd.setAttribute("aria-label",l); };
-    label();
-    snd.addEventListener("click",e=>{
-      e.preventDefault(); e.stopPropagation();
-      soundOn=!soundOn;
-      snd.classList.toggle("is-on",soundOn);
-      label();
-      applySound(frame,soundOn);
-    });
-
-    bar.append(t,c,again,snd);
-
-    // Moving onto the bar means leaving the card, which would otherwise
-    // schedule the close before the button could be clicked.
-    bar.addEventListener("mouseenter",()=>{ clearTimeout(card._closeT); clearTimeout(card._openT); });
-    bar.addEventListener("mouseleave",()=>{ card._closeT=setTimeout(()=>deactivate(card),CLOSE_DELAY); });
-
-    // Carry the current sound setting into this preview once it is up.
-    frame.addEventListener("load",()=>{
-      if(soundOn) applySound(frame,true);
-      // Open the reporting channel so the end of the clip can be caught
-      // and looped; it stays quiet until asked.
-      listenYT(frame); setTimeout(()=>listenYT(frame),500); setTimeout(()=>listenYT(frame),1200);
-    });
-
-    lift.append(vid,bar);
-    document.body.appendChild(lift);
-    card._smartPreview=lift;
-    void lift.offsetWidth;                        // commit the start box so the grow animates
-    requestAnimationFrame(()=>{
-      if(card._smartPreview!==lift) return;
-      const g=grownRect(r);
-      lift.style.left=g.left+"px"; lift.style.top=g.top+"px";
-      lift.style.width=g.width+"px"; lift.style.height=g.height+"px";
-      lift.classList.add("on");
-    });
-  }
-  function stopPreview(card){
-    if(!card||!card._smartPreview) return;
-    const lift=card._smartPreview; card._smartPreview=null;
-    // Silence it now rather than letting it play on through the shrink.
-    const old=lift.querySelector("iframe");
-    if(old){ sendYT(old,"mute"); sendYT(old,"pauseVideo"); }
-    // Settle back onto the card it grew out of, then clean up.
-    const r=card.getBoundingClientRect();
-    lift.classList.add("closing");
-    lift.classList.remove("on");
-    lift.style.left=r.left+"px"; lift.style.top=r.top+"px";
-    lift.style.width=r.width+"px"; lift.style.height=(r.height+BAR_H)+"px";
-    setTimeout(()=>{ if(lift.parentNode) lift.remove(); },430);
-  }
-  function activate(card){
-    if(!card||!desktop.matches) return;
-    if(activeCard===card) return;   // already up; don't re-read the playhead
-    if(lb.classList.contains("open")) return;
-    if(activeCard&&activeCard!==card) deactivate(activeCard);
-    activeCard=card;
-    root.classList.add("smart-preview-on");
-    card.classList.add("smart-active");
-    blur.classList.add("on");
-    // Hand the playhead over so the lift picks up on the frame the card
-    // was already showing, rather than starting the video again.
-    let at=0;
-    if(card._ytPlayer&&card._ytPlayer.getCurrentTime){
-      try{ at=Math.max(0,card._ytPlayer.getCurrentTime()||0); }catch(e){}
-    }
-    card._handoffAt=at;
-    card._handoffFrom=performance.now();
-    if(card._pauseInline) card._pauseInline();  // paused, not torn down, so it can resume
-    startPreview(card,at);
-  }
-  function deactivate(card){
-    if(!card||card._smartLocked) return;
-    card.classList.remove("smart-active");
-    stopPreview(card);
-    if(activeCard===card) activeCard=null;
-    if(!activeCard){ blur.classList.remove("on"); root.classList.remove("smart-preview-on"); }
-    // Roll the card's own player forward by however long the lift was up,
-    // so going back to the small preview isn't a jump backwards either.
-    if(card._resumeInline&&card._onScreen){
-      let at=card._handoffAt||0;
-      if(card._handoffFrom) at+=(performance.now()-card._handoffFrom)/1000;
-      card._resumeInline(at);
-    }
-  }
-  function attachOne(card){
-    if(card._smartAttached||!card.classList.contains("vcard")||!card.dataset.videoId) return;
-    card._smartAttached=true;
-    card.addEventListener("mouseenter",()=>{
-      clearTimeout(card._closeT);
-      card._openT=setTimeout(()=>activate(card),OPEN_DELAY);
-    });
-    card.addEventListener("mouseleave",()=>{
-      clearTimeout(card._openT);
-      card._closeT=setTimeout(()=>deactivate(card),CLOSE_DELAY);
-    });
-  }
-  window.attachSmartHover=function(container){ container.querySelectorAll(".vcard").forEach(attachOne); };
-
-  /* Featured videos play by themselves, muted, inside their own card once
-     they're actually on screen — and stop again when they scroll off, so
-     only what's visible is ever running. Desktop only: a phone shouldn't be
-     asked to run several YouTube players at once. */
-  window.attachFeaturedAutoplay=function(container){
-    if(!desktop.matches) return;
-    container.querySelectorAll('.vcard[data-autoplay="1"]').forEach(card=>{
-      if(card._autoWired) return;
-      card._autoWired=true;
-      const id=card.dataset.videoId; if(!id) return;
-      // Commands queued before the player has finished booting throw
-      // from inside the API, asynchronously, where a try/catch around the
-      // call can't reach them - so nothing is sent until it says ready.
-      let host=null, player=null, ready=false;
-      card._onScreen=false;
-
-      card._startInline=function(){
-        if(host||card.classList.contains("smart-active")) return;
-        host=document.createElement("div");
-        host.className="vinline";
-        const slot=document.createElement("div");
-        host.appendChild(slot);
-        card.querySelector(".vmedia").appendChild(host);
-        loadYTApi().then(YT=>{
-          if(!YT||!host||!host.isConnected) return;
-          player=new YT.Player(slot,{
-            videoId:id,
-            playerVars:{autoplay:1,mute:1,controls:0,disablekb:1,iv_load_policy:3,
-                        playsinline:1,rel:0,modestbranding:1,fs:0,cc_load_policy:0},
-            events:{
-              // Looped by hand rather than with loop/playlist, which would
-              // put playlist controls over the card.
-              onStateChange:e=>{
-                if(e.data===YT.PlayerState.ENDED){
-                  try{ e.target.seekTo(0,true); e.target.playVideo(); }catch(err){}
-                }
-              },
-              onReady:e=>{
-              ready=true;
-              try{ e.target.mute(); e.target.playVideo(); }catch(err){}
-              const f=e.target.getIframe&&e.target.getIframe();
-              if(f){ f.setAttribute("tabindex","-1"); f.setAttribute("aria-hidden","true"); }
-              if(!card.classList.contains("smart-active")){
-                requestAnimationFrame(()=>card.classList.add("is-inline-playing"));
-              }
-            }}
-          });
-          card._ytPlayer=player;
-        }).catch(()=>{});
-      };
-
-      // Hovering only pauses it — tearing the player down would lose the
-      // position, which is the whole point of the handoff.
-      card._pauseInline=function(){
-        card.classList.remove("is-inline-playing");
-        if(ready&&player&&player.pauseVideo){ try{ player.pauseVideo(); }catch(e){} }
-      };
-      card._resumeInline=function(at){
-        if(!ready||!player||!player.playVideo){ if(!player) card._startInline(); return; }
-        try{
-          let t=at||0;
-          const d=player.getDuration&&player.getDuration();
-          if(d&&d>0&&t>=d) t=t%d;             // it loops, so wrap rather than run off the end
-          player.seekTo(t,true);
-          player.mute(); player.playVideo();
-        }catch(e){}
-        requestAnimationFrame(()=>card.classList.add("is-inline-playing"));
-      };
-      card._stopInline=function(){
-        card.classList.remove("is-inline-playing");
-        card._ytPlayer=null;
-        const h=host, pl=player, wasReady=ready;
-        host=null; player=null; ready=false;
-        setTimeout(()=>{
-          if(wasReady&&pl&&pl.destroy){ try{ pl.destroy(); }catch(e){} }
-          if(h&&h.parentNode) h.remove();
-        },320);
-      };
-      // A tall reel card can be taller than the window, so it can never
-      // reach a high visible ratio - the threshold has to allow for that
-      // or those cards would simply never start.
-      new IntersectionObserver(entries=>entries.forEach(e=>{
-        card._onScreen=e.isIntersecting&&e.intersectionRatio>0.3;
-        if(card._onScreen) card._startInline(); else card._stopInline();
-      }),{threshold:[0,0.3,0.6,1]}).observe(card);
-    });
-  };
-
-  document.addEventListener("click",e=>{
-    const card=e.target.closest&&e.target.closest(".vcard");
-    if(!card||!card.classList.contains("smart-active")) return;
-    sourceCard=card; card._smartLocked=true;
-  },true);
-
-  /* Clicking through to the full player used to leave the preview alive
-     behind it, so that closing would drop you back into it. That was
-     silent while previews were always muted - now it means two videos
-     playing at once. The preview is taken down instead, and the hover is
-     rebuilt on close if the pointer is still on the card. */
-  /* Where the hover preview has reached, so clicking through can carry
-     on from the same frame instead of starting the video again. */
-  // Loop whatever is showing in the preview, pinned to that player so the
-  // other videos reporting on this same channel can't trigger it.
-  addEventListener("message",e=>{
-    if(typeof e.origin!=="string"||e.origin.indexOf("youtube")<0) return;
-    const card=activeCard; if(!card||!card._smartPreview) return;
-    const f=card._smartPreview.querySelector("iframe");
-    if(!f||!e.source||e.source!==f.contentWindow) return;
-    let d; try{ d=JSON.parse(e.data); }catch(_){ return; }
-    const i=d&&d.info; if(!i) return;
-    if(i.playerState===0){ sendYT(f,"seekTo",[0,true]); sendYT(f,"playVideo"); }
+  /* ---------- 0. Theme toggle (same "anmol-theme" key the old site used) ---------- */
+  $('theme-btn').addEventListener('click', () => {
+    const next = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+    document.documentElement.setAttribute('data-theme', next);
+    try { localStorage.setItem('anmol-theme', next); } catch (e) {}
   });
 
-  window.smartHoverMuted=function(){ return !soundOn; };
-
-  window.smartHoverPlayhead=function(){
-    const card=activeCard; if(!card) return 0;
-    let t=card._handoffAt||0;
-    if(card._handoffFrom) t+=(performance.now()-card._handoffFrom)/1000;
-    return t;
-  };
-
-  window.silenceSmartHover=function(){
-    const card=activeCard;
-    if(!card) return;
-    card.classList.remove("smart-active");
-    stopPreview(card);
-    activeCard=null;
-    blur.classList.remove("on");
-    root.classList.remove("smart-preview-on");
-    card._handoffFrom=null;   // time spent in the full player shouldn't skew the resume
-    sourceCard=card;          // remember where to come back to
-    card._smartLocked=true;   // and don't let a stray mouseleave restart the card meanwhile
-  };
-
-  window.reconcileSmartHover=function(){
-    const card=sourceCard; sourceCard=null; if(!card) return;
-    card._smartLocked=false;
-    const el=document.elementFromPoint(lastX,lastY);
-    if(el&&el.closest&&el.closest(".vcard")===card) activate(card); else deactivate(card);
-  };
-})();
-
-/* ---------- Scroll effects ---------- */
-const nameEl=$("name"), heroTop=$("heroTop"), wrapA=$("wrapA"), wrapB=$("wrapB");
-const workTitle=$("workTitle"), vision=$("vision"), visionBar=$("visionBar"), visionCount=$("visionCount");
-const mainEl=document.querySelector("main"), big=$("big"), footer=$("contact");
-let lastY=scrollY, velocity=0, marqueeX=0, marqueeDir=1, groupW=0, activeLine=-1;
-function fitMarquee(){ while(track.children.length>1) track.lastChild.remove(); groupW=track.firstChild.getBoundingClientRect().width; const copies=Math.ceil((innerWidth*2)/groupW)+1; for(let i=1;i<copies;i++) track.appendChild(buildGroup()); }
-
-function effects(dt){
-  if(!lineEls.length) return;            // content still loading
-  const y=scrollY, vh=innerHeight, desk=innerWidth>980;
-  const delta=y-lastY; lastY=y; velocity+=(delta-velocity)*.2;
-  if(!nav.classList.contains("menu-open")){
-    if(y>140&&delta>2) nav.classList.add("hide"); else if(delta<-2||y<140) nav.classList.remove("hide");
-  }
-  if(y<vh*1.3){
-    nameEl.style.transform=`translate3d(0,${y*(desk?.32:.18)}px,0)`;
-    heroTop.style.opacity=desk?1-clamp(y/vh*1.8):1;
-    if(desk){ wrapA.style.transform=`translate3d(0,${-y*.35}px,0)`; wrapB.style.transform=`translate3d(0,${y*.12}px,0)`; }
-  }
-  if(Math.abs(delta)>.5) marqueeDir=delta>0?1:-1;
-  marqueeX-=(60*dt+Math.abs(velocity)*.9)*marqueeDir;
-  if(groupW){ marqueeX%=groupW; if(marqueeX>0) marqueeX-=groupW; }
-  track.style.transform=`translate3d(${marqueeX}px,0,0)`;
-
-  const wr=workTitle.getBoundingClientRect();
-  workTitle.style.transform=innerWidth>640?`translate3d(${(1-easeOut(clamp((vh-wr.top)/(vh*.6))))*-18}vw,0,0)`:"none";
-
-  workCards.forEach(card=>{
-    if(card.style.display==="none") return;
-    const r=card.getBoundingClientRect(); if(r.top>vh+100||r.bottom<-100) return;
-    const e=easeOut(clamp((vh-r.top)/(vh*.5)));
-    card.style.clipPath=`inset(${(1-e)*100}% 0 0 0 round 5px)`;
-    const shift=((r.top+r.height/2)-vh/2)/vh*-6;
-    card.firstChild.style.transform=`translate3d(0,${shift}%,0) scale(${1.24-.12*e})`;
-  });
-
-  const vr=vision.getBoundingClientRect(), vp=clamp(-vr.top/(vr.height-vh)), fi=vp*(LINES.length-1), lh=lineEls[0].offsetHeight;
-  wordsUl.style.transform=`translate3d(0,${(1-fi)*lh}px,0)`;
-  lineEls.forEach((li,j)=>li.style.opacity=Math.max(.14,1-Math.abs(j-fi)*.86));
-  visionBar.style.transform=`scaleX(${vp})`;
-  const ai=Math.round(fi);
-  if(ai!==activeLine){ activeLine=ai; const [k,pal,word]=LINES[ai][1]; visionCv._kind=k; visionCv._pal=PAL[pal]; visionCv._word=word; visionCv._t=0;
-    visionCount.textContent=`${String(ai+1).padStart(2,"0")} / ${String(LINES.length).padStart(2,"0")}`; paint(visionCv); }
-
-  const sr=statement.getBoundingClientRect(), sp=clamp((vh*.85-sr.top)/(vh*.55))*wordEls.length;
-  wordEls.forEach((w,i)=>w.style.opacity=.15+.85*clamp(sp-i));
-
-  const mb=mainEl.getBoundingClientRect().bottom;
-  big.style.transform=`translate3d(0,${(1-easeOut(clamp((vh-mb)/footer.offsetHeight)))*45}%,0)`;
-}
-
-function start(){
-  setNavH(); fitMarquee(); layoutWork(); layout();
-  ALL.forEach(cv=>{ size(cv); paint(cv); });
-  if(REDUCED){ lineEls.forEach(li=>li.style.opacity=1); wordEls.forEach(w=>w.style.opacity=1); return; }
-  let last=performance.now();
-  requestAnimationFrame(function loop(now){
-    const dt=Math.min((now-last)/1000,.05); last=now;
-    if(lenis) lenis.raf(now);
-    effects(dt);
-    const boost=1+Math.min(Math.abs(velocity)*.06,2.5);
-    visible.forEach(cv=>{ if(cv._paused) return; cv._t+=dt*cv._speed*boost; paint(cv); });
-    requestAnimationFrame(loop);
-  });
-}
-addEventListener("resize",fitMarquee);
-
-/* ---------- Copy email ---------- */
-const copyBtn=$("copy");
-copyBtn.addEventListener("click",async()=>{
-  const email=($("contactEmailLink")?.textContent||"").trim(); let ok=false;
-  try{ await navigator.clipboard.writeText(email); ok=true; }
-  catch(e){ try{ const ta=document.createElement("textarea"); ta.value=email; document.body.appendChild(ta); ta.select(); ok=document.execCommand("copy"); ta.remove(); }catch(_){} }
-  copyBtn.textContent=ok?"Email copied":"Select the email above to copy"; copyBtn.classList.toggle("done",ok);
-  setTimeout(()=>{copyBtn.textContent="Copy email";copyBtn.classList.remove("done");},2200);
-});
-
-/* ---------- Boot: pull everything admin.html publishes, then build ------- */
-async function getJSON(path){
-  try{ const r=await fetch(path,{cache:"no-cache"}); return r.ok?await r.json():null; }
-  catch(e){ return null; }
-}
-function setText(id,val){ const el=$(id); if(el&&val) el.textContent=val; }
-
-function applyContent(c){
-  const nav=c.nav||{}, hero=c.hero||{}, work=c.work||{}, sv=c.services||{}, con=c.contact||{}, foot=c.footer||{};
-
-  setText("navBrand",nav.brand); setText("navCta",nav.cta);
-  setText("heroIntro",hero.intro);
-  setText("workNote",work.note);
-  setText("statement",sv.statement); setText("statementNote",sv.note);
-  setText("bigText",con.headline);
-  setText("footerNote",foot.note);
-
-  if(con.email){ const el=$("contactEmailLink"); if(el){ el.href="mailto:"+con.email; el.textContent=con.email; } }
-  if(con.phone){ const el=$("contactPhoneLink"); if(el){ el.href="tel:"+con.phone.replace(/\s+/g,""); el.textContent=con.phone; } }
-
-  // Four categories, paired with their tile art by position. A blank name
-  // drops that category rather than rendering an unnamed card.
-  SERVICES=[1,2,3,4].map(i=>({
-    name:(sv["item"+i+"Name"]||"").trim(),
-    desc:(sv["item"+i+"Desc"]||"").trim(),
-    tile:SERVICE_ART[(i-1)%SERVICE_ART.length]
-  })).filter(s=>s.name);
-
-  CLIENTS=(c.clients&&c.clients.list||"").split(",").map(s=>s.trim()).filter(Boolean);
-
-  LINES=((c.vision&&c.vision.lines)||"").split("\n").map(s=>s.trim()).filter(Boolean)
-    .map((t,i)=>[t,VISION_ART[i%VISION_ART.length]]);
-}
-
-(async function boot(){
-  const [content,videoJson,social,resume]=await Promise.all([
-    getJSON("data/content.json"), getJSON("data/videos.json"),
-    getJSON("data/social.json"), getJSON("data/resume.json")
+  /* ---------- 1. Load content (live files first, fallback second) ---------- */
+  const [content, vjson, social, profile, resume] = await Promise.all([
+    getJSON('data/content.json', FB.content || {}), getJSON('data/videos.json', FB.videos || {}),
+    getJSON('data/social.json', FB.social || {}), getJSON('data/profile.json', FB.profile || {}), getJSON('data/resume.json', FB.resume || {})
   ]);
+  const videos = (Array.isArray(vjson) ? vjson : (vjson.videos || [])).filter(v => v && !v.hidden && (v.id || v.src || v.externalUrl));
 
-  // Merge per-section so a partial content.json still falls back cleanly.
-  const c={}; const src=content||{};
-  Object.keys(FALLBACK).forEach(k=>c[k]=Object.assign({},FALLBACK[k],src[k]||{}));
-  applyContent(c);
+  // aspect "9:16" / "16:9" / "1:1" / "4:5" -> width / height
+  const ratio = a => { const m = String(a || '').match(/(\d+(?:\.\d+)?)\s*[:/x]\s*(\d+(?:\.\d+)?)/); return m ? (+m[1] / +m[2]) : 16 / 9; };
+  const label = a => { const r = ratio(a); return r < .8 ? '9:16' : r > 1.25 ? '16:9' : r === 1 ? '1:1' : '4:5'; };
+  const thumb = v => v.poster || (v.type === 'youtube' || (!v.type && v.id) ? `https://i.ytimg.com/vi/${v.id}/hqdefault.jpg` : '');
+  videos.forEach((v, i) => { v._i = i; v._ar = ratio(v.aspect); v.title = clean(v.title) || 'Untitled'; v.category = clean(v.category) || 'Other'; });
 
-  // Set from admin → Links when it's filled in; otherwise the handle already
-  // in the markup stands, same fallback rule as every other field here.
-  const insta=(social&&(social.instagram||"").trim())||"";
-  const el=$("contactInstaLink");
-  if(el&&insta){
-    el.href=insta;
-    el.textContent="@"+insta.replace(/^https?:\/\/(www\.)?instagram\.com\//,"").replace(/\/$/,"");
+  /* ---------- 2. Fill text from content.json ---------- */
+  document.querySelectorAll('[data-c]').forEach(el => { const val = get(content, el.dataset.c); if (typeof val === 'string' && val.trim()) el.textContent = val.trim(); });
+  const clientList = String(get(content, 'clients.list') || 'Square Foot Story, Stained Glass House, SKA Group').split(',').map(s => s.trim()).filter(Boolean);
+  const loopList = (list, n) => { let out = []; while (out.length < n) out = out.concat(list); return out; };
+  const half = loopList(clientList, 6);
+  $('clients').innerHTML = half.concat(half).map((c, i) => `<span${i >= half.length ? ' aria-hidden="true"' : ''}>${esc(c)}</span>`).join('');
+  $('fact-clients').textContent = clientList.join(', ');
+  const talk = String(get(content, 'contact.headline') || "Let's talk").trim();
+  $('talk').innerHTML = Array(8).fill(`<span>${esc(talk)}</span>`).join('');
+  const lines = String(get(content, 'vision.lines') || '').split('\n').map(s => s.trim()).filter(Boolean);
+  if (lines.length) $('vision').innerHTML = lines.map(l => `<span class="line">${esc(l)}</span>`).join('');
+
+  const email = String(get(content, 'contact.email') || window.CONTACT_EMAIL || '').trim();
+  const phone = String(get(content, 'contact.phone') || '').trim();
+  if (email) { $('c-email').textContent = email; $('c-email').href = 'mailto:' + email; }
+  if (phone) { $('c-phone').textContent = phone; $('c-phone').href = 'tel:' + phone.replace(/[^\d+]/g, ''); $('wa').href = 'https://wa.me/' + phone.replace(/\D/g, ''); }
+  const ig = (social.instagram || '').trim() || 'https://instagram.com/pluseshot';
+  const igHandle = '@' + ig.replace(/\/+$/, '').split('/').pop();
+  $('c-ig').href = $('c-ig2').href = ig; $('c-ig').textContent = igHandle;
+  $('copy-email').addEventListener('click', () => {
+    const fallback = () => { const r = document.createRange(); r.selectNodeContents($('c-email')); const s = getSelection(); s.removeAllRanges(); s.addRange(r); toast('Email selected. Press Ctrl+C to copy.'); };
+    if (navigator.clipboard) navigator.clipboard.writeText($('c-email').textContent).then(() => toast('Email copied'), fallback); else fallback();
+  });
+  if (profile.image) $('portrait').src = profile.image;
+  const aboutCta = [];
+  if (resume.file) aboutCta.push(`<a class="btn btn-ink" href="${esc(resume.file)}" target="_blank" rel="noopener">View resume ↗</a>`);
+  if (social.behance) aboutCta.push(`<a class="btn btn-ghost" href="${esc(social.behance)}" target="_blank" rel="noopener">Behance ↗</a>`);
+  if (social.youtube) aboutCta.push(`<a class="btn btn-ghost" href="${esc(social.youtube)}" target="_blank" rel="noopener">YouTube ↗</a>`);
+  if (social.linkedin) aboutCta.push(`<a class="btn btn-ghost" href="${esc(social.linkedin)}" target="_blank" rel="noopener">LinkedIn ↗</a>`);
+  $('about-cta').innerHTML = aboutCta.join('');
+
+  /* ---------- 3. Categories + services ---------- */
+  const services = [1, 2, 3, 4, 5, 6].map(n => ({ name: clean(get(content, `services.item${n}Name`)), desc: clean(get(content, `services.item${n}Desc`)) })).filter(s => s.name);
+  const cats = [];
+  services.forEach(s => { if (videos.some(v => v.category === s.name)) cats.push(s.name); });
+  videos.forEach(v => { if (!cats.includes(v.category)) cats.push(v.category); });
+  $('fact-focus').textContent = services.map(s => s.name).join(', ') || cats.join(', ');
+  $('services-grid').innerHTML = services.map((s, i) => {
+    const n = videos.filter(v => v.category === s.name).length;
+    return `<a class="s-card" href="${n ? '#work' : '#contact'}" ${n ? `data-filter="${esc(s.name)}"` : ''}>
+      <span class="s-num"><span>${String(i + 1).padStart(2, '0')}</span><span>${n ? n + (n === 1 ? ' video' : ' videos') : 'On request'}</span></span>
+      <h3>${esc(s.name)}</h3><p>${esc(s.desc)}</p><span class="s-go">${n ? 'Watch the work →' : 'Ask about it →'}</span></a>`;
+  }).join('');
+
+  /* ---------- 4. Hero fan + deck from your own thumbnails ---------- */
+  const img = (v, alt = '') => `<img src="${esc(thumb(v))}" alt="${esc(alt)}" loading="lazy" onerror="this.parentNode.classList.add('noimg')"><div class="poster"><i>${label(v.aspect)} · ${esc(v.category)}</i><span>${esc(v.title)}</span></div>`;
+  const byFeat = [...videos].sort((a, b) => (b.featured ? 1 : 0) - (a.featured ? 1 : 0) || a._i - b._i);
+  const fanPick = byFeat.slice(0, 7).sort((a, b) => b._ar - a._ar);               // widest first
+  const slots = []; const midIdx = Math.floor((fanPick.length - 1) / 2);
+  fanPick.forEach((v, k) => slots[midIdx + (k % 2 ? -1 : 1) * Math.ceil(k / 2)] = v); // widest in the centre, verticals at the edges
+  const fanItems = slots.filter(Boolean);
+  const fmid = (fanItems.length - 1) / 2;
+  $('fan').innerHTML = fanItems.map((v, i) => `<div class="hero-card" data-i="${v._i}" style="--ar:${v._ar};--o:${i - fmid};--d:${Math.abs(i - fmid)}" aria-hidden="true">${img(v)}</div>`).join('');
+  const verts = videos.filter(v => v._ar < 1); const deckPick = (verts.length >= 3 ? verts : videos).slice(0, 5);
+  $('deck').innerHTML = deckPick.map((v, i) => `<div class="deck-card" style="z-index:${10 - i};transform:rotate(${i ? (i % 2 ? 4 : -5) * Math.ceil(i / 2) : 0}deg) translate(${i ? (i % 2 ? 1 : -1) * 8 * i : 0}px,${-6 * i}px)">${img(v)}</div>`).join('');
+
+  /* ---------- 5. Featured film (first featured landscape) ---------- */
+  const feat = videos.find(v => v.featured && v._ar > 1) || videos.find(v => v._ar > 1);
+  if (feat) {
+    $('featured-wrap').hidden = false;
+    $('featured').dataset.i = feat._i;
+    $('featured').setAttribute('aria-label', 'Play ' + feat.title);
+    $('featured').innerHTML = `${img(feat)}<div class="feat-copy"><p class="eyebrow">Featured · ${esc(feat.category)}${feat.year ? ' · ' + esc(feat.year) : ''}</p><h3>${esc(feat.title)}</h3></div><span class="feat-play"><svg width="22" height="22" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z" fill="currentColor"/></svg></span>`;
   }
 
-  // The CV row only appears once a PDF has actually been published.
-  const cv=(resume&&(resume.file||"").trim())||"";
-  if(cv){
-    const link=$("contactCvLink");
-    link.href=cv;
-    link.setAttribute("download","Anmol-Chandiok-CV."+((cv.split(".").pop()||"pdf").toLowerCase()));
-    $("resumeRow").hidden=false;
+  /* ---------- 6. Work tiles + adaptive justified grid ---------- */
+  const grid = $('grid');
+  grid.innerHTML = videos.map(v => `
+    <article class="tile" tabindex="0" role="button" aria-label="Play ${esc(v.title)}" data-i="${v._i}" data-cat="${esc(v.category)}" style="--ar:${v._ar}">
+      <div class="tile-in">
+        ${v.type === 'file' && v.src ? `<video src="${esc(v.src)}" muted playsinline preload="metadata"></video><div class="poster"><i>${label(v.aspect)}</i><span>${esc(v.title)}</span></div>` : img(v)}
+        <span class="tile-meta">${label(v.aspect)}${v.duration ? ' · ' + esc(v.duration) : ''}</span>
+        <span class="play"><svg width="16" height="16" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z" fill="currentColor"/></svg></span>
+        <div class="tile-info"><div><h3>${esc(v.title)}</h3><p>${esc(v.category)}${v.year ? ' · ' + esc(v.year) : ''}</p></div>
+          ${v.projectFile ? `<a class="file-btn" href="${esc(v.projectFile)}" target="_blank" rel="noopener">Project file ↓</a>` : ''}</div>
+      </div>
+    </article>`).join('');
+  const tiles = [...grid.querySelectorAll('.tile')];
+  tiles.forEach(t => { const v = videos[+t.dataset.i]; t._v = v; t._ar = v._ar; });
+
+  // Uploaded files report their real shape: re-measure and re-pack when metadata arrives
+  tiles.forEach(t => { const vid = t.querySelector('video'); if (!vid) return;
+    vid.addEventListener('loadedmetadata', () => { if (vid.videoWidth) { t._ar = vid.videoWidth / vid.videoHeight; t.style.setProperty('--ar', t._ar); layout(false); } });
+    t.addEventListener('mouseenter', () => vid.play().catch(() => {})); t.addEventListener('mouseleave', () => vid.pause()); });
+
+  let current = 'All', revealTiles = () => {};
+  const visible = () => tiles.filter(t => current === 'All' || t._v.category === current);
+
+  // Justified rows: every row is the same height and exactly fills the width,
+  // so vertical and landscape clips sit side by side without cropping.
+  function compute(list) {
+    const W = grid.clientWidth, gap = W < 600 ? 8 : 12;
+    const target = W < 600 ? 230 : W < 1000 ? 290 : 350;
+    const rows = []; let row = [], sum = 0;
+    list.forEach(t => { row.push(t); sum += t._ar; if (sum * target + gap * (row.length - 1) >= W) { rows.push({ row, sum, full: true }); row = []; sum = 0; } });
+    if (row.length) rows.push({ row, sum, full: false });
+    // avoid a lonely last row: if it is less than half full, borrow from the row above
+    if (rows.length > 1 && !rows.at(-1).full && rows.at(-1).sum * target < W * .5) {
+      const prev = rows.at(-2), last = rows.at(-1);
+      if (prev.row.length > 2) { const moved = prev.row.pop(); prev.sum -= moved._ar; last.row.unshift(moved); last.sum += moved._ar; }
+      if (last.sum * target + gap * (last.row.length - 1) >= W * .7) last.full = true;
+    }
+    const pos = new Map(); let y = 0;
+    rows.forEach(r => {
+      const avail = W - gap * (r.row.length - 1);
+      const h = r.full ? avail / r.sum : Math.min(target * 1.2, avail / r.sum);
+      let x = r.full ? 0 : Math.max(0, (avail - h * r.sum) / 2);   // a short last row sits centred
+      r.row.forEach(t => { const w = h * t._ar; pos.set(t, { x, y, w, h }); x += w + gap; });
+      y += h + gap;
+    });
+    return { pos, height: Math.max(0, y - gap) };
+  }
+  function layout(animate) {
+    const { pos, height } = compute(visible());
+    pos.forEach((p, t) => {
+      t.classList.toggle('small', p.w < 170);
+      const props = { x: p.x, y: p.y, width: p.w, height: p.h };
+      if (window.gsap) animate ? gsap.to(t, { ...props, duration: .85, ease: 'power3.inOut', overwrite: 'auto' }) : gsap.set(t, props);
+      else Object.assign(t.style, { transform: `translate(${p.x}px,${p.y}px)`, width: p.w + 'px', height: p.h + 'px' });
+    });
+    if (window.gsap && animate) gsap.to(grid, { height, duration: .85, ease: 'power3.inOut', onComplete: () => window.ScrollTrigger && ScrollTrigger.refresh() });
+    else grid.style.height = height + 'px';
   }
 
-  const raw=videoJson?(Array.isArray(videoJson)?videoJson:(videoJson.videos||[])):[];
-  setVideos(raw.filter(v=>v&&v.id&&!v.hidden));
+  // Tabs
+  const tabsEl = $('tabs'), pill = tabsEl.querySelector('.tab-pill');
+  ['All', ...cats].forEach(c => {
+    const n = c === 'All' ? videos.length : videos.filter(v => v.category === c).length;
+    const b = document.createElement('button');
+    b.className = 'tab'; b.type = 'button'; b.setAttribute('role', 'tab'); b.dataset.filter = c;
+    b.id = 'tab-' + c.toLowerCase().replace(/[^a-z0-9]+/g, '-');
+    b.setAttribute('aria-selected', c === 'All'); b.innerHTML = `${c === 'All' ? 'All work' : esc(c)}<sup>${n}</sup>`;
+    tabsEl.appendChild(b);
+  });
+  const tabBtns = [...tabsEl.querySelectorAll('.tab')];
+  const movePill = () => { const b = tabBtns.find(t => t.getAttribute('aria-selected') === 'true'); if (b) { pill.style.width = b.offsetWidth + 'px'; pill.style.transform = `translateX(${b.offsetLeft}px)`; } };
+  const setCount = () => { const n = visible().length; $('count').textContent = `${String(n).padStart(2, '0')} ${n === 1 ? 'video' : 'videos'}`; };
 
-  track.appendChild(buildGroup());
-  buildVision(); buildStatement();
-  buildWorkGrid(); buildNiches(); buildAwFilters();
+  function filter(c) {
+    if (!['All', ...cats].includes(c)) c = 'All';
+    const before = new Set(visible()); current = c;
+    tabBtns.forEach(b => b.setAttribute('aria-selected', b.dataset.filter === c)); movePill();
+    const after = new Set(visible());
+    tiles.forEach(t => {
+      const was = before.has(t), is = after.has(t);
+      if (was && !is) { if (window.gsap) gsap.to(t, { opacity: 0, scale: .9, duration: .35, onComplete: () => { t.hidden = true; gsap.set(t, { scale: 1 }); } }); else t.hidden = true; }
+    });
+    const { pos } = compute([...after]);
+    tiles.forEach(t => {
+      if (!before.has(t) && after.has(t)) {
+        t.hidden = false; const p = pos.get(t);
+        if (window.gsap) { gsap.set(t, { x: p.x, y: p.y, width: p.w, height: p.h, opacity: 0, scale: .9 }); gsap.to(t, { opacity: 1, scale: 1, duration: .6, delay: .3, ease: 'power3.out' }); }
+      }
+    });
+    layout(true); setCount(); setTimeout(() => revealTiles(), 900);
+  }
+  tabBtns.forEach(b => b.addEventListener('click', () => filter(b.dataset.filter)));
+  document.querySelectorAll('[data-filter]').forEach(a => { if (a.classList.contains('s-card')) a.addEventListener('click', () => filter(a.dataset.filter)); });
+  layout(false); setCount(); requestAnimationFrame(movePill);
+  let rz; addEventListener('resize', () => { clearTimeout(rz); rz = setTimeout(() => { layout(false); movePill(); window.ScrollTrigger && ScrollTrigger.refresh(); }, 140); });
+  if (document.fonts) document.fonts.ready.then(movePill);
 
-  await (document.fonts?document.fonts.ready:Promise.resolve());
-  start();
+  /* ---------- 7. Player ---------- */
+  const framed = (() => { try { return window.self !== window.top; } catch (e) { return true; } })();
+  const modal = $('modal'); let lastFocus = null, lenis = null;
+  function openVideo(v, fromEl) {
+    lastFocus = document.activeElement;
+    const media = $('m-media'), box = modal.querySelector('.modal-box');
+    box.style.setProperty('--ar', v._ar);
+    const ytUrl = v.id && v.type !== 'external' ? 'https://www.youtube.com/watch?v=' + v.id : '';
+    const outUrl = v.externalUrl || ytUrl || v.src;
+    if (v.type === 'file' && v.src) media.innerHTML = `<video src="${esc(v.src)}" controls autoplay playsinline></video>`;
+    else if (v.type === 'external' || framed || !v.id) media.innerHTML = `${img(v)}<div class="ext-note"><a class="btn btn-ink" style="background:#fff;color:#111" href="${esc(outUrl)}" target="_blank" rel="noopener">Watch on ${v.type === 'external' ? 'site' : 'YouTube'} ↗</a></div>`;
+    else media.innerHTML = `<iframe src="https://www.youtube-nocookie.com/embed/${encodeURIComponent(v.id)}?autoplay=1&rel=0&modestbranding=1&playsinline=1${v.start ? '&start=' + (+v.start) : ''}" title="${esc(v.title)}" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen></iframe>`;
+    $('m-meta').textContent = [label(v.aspect), v.category, v.year, v.duration].filter(Boolean).join(' · ');
+    $('m-title').textContent = v.title;
+    $('m-act').innerHTML = [
+      outUrl ? `<a class="mini" href="${esc(outUrl)}" target="_blank" rel="noopener">${v.type === 'external' ? 'Open link' : 'YouTube'} ↗</a>` : '',
+      v.instagramUrl ? `<a class="mini" href="${esc(v.instagramUrl)}" target="_blank" rel="noopener">Instagram ↗</a>` : '',
+      v.projectFile ? `<a class="mini" href="${esc(v.projectFile)}" target="_blank" rel="noopener">Project file ↓</a>` : ''
+    ].join('');
+    modal.hidden = false; lenis && lenis.stop(); document.body.style.overflow = 'hidden';
+    if (window.gsap && !reduce) {
+      gsap.fromTo(modal.querySelector('.modal-back'), { opacity: 0 }, { opacity: 1, duration: .4 });
+      const r1 = fromEl && fromEl.getBoundingClientRect(), r2 = media.getBoundingClientRect();
+      if (r1 && r1.width) gsap.from(media, { x: r1.left - r2.left, y: r1.top - r2.top, scaleX: r1.width / r2.width, scaleY: r1.height / r2.height, transformOrigin: '0 0', duration: .7, ease: 'expo.out' });
+      else gsap.from(media, { scale: .94, opacity: 0, duration: .5, ease: 'power3.out' });
+      gsap.from('.modal-info,.modal-close', { opacity: 0, y: 10, duration: .4, delay: .25 });
+    }
+    modal.querySelector('.modal-close').focus({ preventScroll: true });
+  }
+  function closeVideo() {
+    const done = () => { modal.hidden = true; $('m-media').innerHTML = ''; lenis && lenis.start(); document.body.style.overflow = ''; lastFocus && lastFocus.focus({ preventScroll: true }); };
+    if (window.gsap && !reduce) gsap.to(modal, { opacity: 0, duration: .25, onComplete: () => { gsap.set(modal, { opacity: 1 }); done(); } }); else done();
+  }
+  modal.querySelectorAll('[data-close]').forEach(el => el.addEventListener('click', closeVideo));
+  addEventListener('keydown', e => {
+    if (modal.hidden) return;
+    if (e.key === 'Escape') closeVideo();
+    if (e.key === 'Tab') {   // keep keyboard focus inside the open player
+      const f = [...modal.querySelectorAll('a[href],button,iframe,video[controls]')];
+      if (!f.length) return;
+      const first = f[0], last = f.at(-1);
+      if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+      else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+    }
+  });
+  const opener = el => { const v = videos[+el.dataset.i]; if (v) openVideo(v, el.querySelector('.tile-in') || el); };
+  document.addEventListener('click', e => {
+    if (e.target.closest('a')) return;
+    const el = e.target.closest('.tile, .hero-card, .feat-frame'); if (el) opener(el);
+  });
+  grid.addEventListener('keydown', e => { const t = e.target.closest('.tile'); if (t && (e.key === 'Enter' || e.key === ' ')) { e.preventDefault(); opener(t); } });
+
+  if (!motion) return;   // everything above works without animation
+
+  /* ---------- 8. Motion ---------- */
+  gsap.registerPlugin(ScrollTrigger);
+  document.documentElement.classList.add('js-motion');
+  if (window.Lenis) {
+    lenis = new Lenis({ lerp: .09, smoothWheel: true });
+    lenis.on('scroll', ScrollTrigger.update);
+    gsap.ticker.add(t => lenis.raf(t * 1000)); gsap.ticker.lagSmoothing(0);
+    document.querySelectorAll('a[href^="#"]').forEach(a => a.addEventListener('click', e => {
+      const id = a.getAttribute('href'); const el = id.length > 1 ? document.querySelector(id) : document.body;
+      if (el) { e.preventDefault(); lenis.scrollTo(id === '#top' ? 0 : el, { offset: -80, duration: 1.4 }); }
+    }));
+  }
+
+  function splitWords(el) {
+    const out = [];
+    (function walk(node) {
+      [...node.childNodes].forEach(n => {
+        if (n.nodeType === 3) {
+          const frag = document.createDocumentFragment();
+          n.textContent.split(/(\s+)/).forEach(part => {
+            if (!part) return;
+            if (/^\s+$/.test(part)) frag.appendChild(document.createTextNode(part));
+            else { const s = document.createElement('span'); s.className = 'w'; s.textContent = part; frag.appendChild(s); out.push(s); }
+          });
+          n.replaceWith(frag);
+        } else if (n.nodeType === 1) walk(n);
+      });
+    })(el);
+    return out;
+  }
+  const blurIn = (words, extra = {}) => gsap.fromTo(words, { opacity: .12, filter: 'blur(10px)', yPercent: 35 },
+    { opacity: 1, filter: 'blur(0px)', yPercent: 0, duration: 1, ease: 'power3.out', stagger: .04, ...extra });
+  document.querySelectorAll('[data-reveal]').forEach(el => {
+    const w = splitWords(el);
+    el.dataset.reveal === 'load' ? blurIn(w, { delay: .1, stagger: .06 }) : blurIn(w, { scrollTrigger: { trigger: el, start: 'top 88%', once: true } });
+  });
+
+  // Hero: centre card flies up, the rest join, then all fan out in 3D
+  const cards = gsap.utils.toArray('.hero-card');
+  if (cards.length) {
+    const cmid = (cards.length - 1) / 2, front = cards[Math.round(cmid)];
+    const spread = () => Math.min(innerWidth * (innerWidth < 700 ? .1 : .11), 140);
+    gsap.set(cards, { xPercent: -50, yPercent: -50, transformPerspective: 1400 });
+    gsap.set(cards.filter(c => c !== front), { opacity: 0, scale: .92 });
+    gsap.timeline({ delay: .25 })
+      .from(front, { y: innerHeight * .7, rotation: -24, scale: .8, duration: 1.1, ease: 'power3.out' })
+      .to(cards.filter(c => c !== front), { opacity: 1, scale: 1, duration: .35 }, '-=.25')
+      .to(cards, { x: i => (i - cmid) * spread(), y: i => Math.abs(i - cmid) * 9, rotation: i => (i - cmid) * 3, rotationY: i => (i - cmid) * -8, duration: 1.3, ease: 'expo.inOut', stagger: { each: .03, from: 'center' } }, '-=.05')
+      .from('.bubble', { scale: 0, opacity: 0, transformOrigin: '20% 100%', duration: .7, ease: 'back.out(2.2)', stagger: .12 }, '-=.6')
+      .add(() => {
+        gsap.utils.toArray('.bubble').forEach((b, i) => gsap.to(b, { y: -7, duration: 2 + i * .4, repeat: -1, yoyo: true, ease: 'sine.inOut' }));
+        gsap.to(cards, { x: 0, y: 0, rotation: 0, rotationY: 0, ease: 'none', immediateRender: false, scrollTrigger: { trigger: '.fan', start: 'top 40%', end: 'bottom top', scrub: .6 } });
+        gsap.to('.fan-inner', { scale: .72, yPercent: 30, opacity: .2, ease: 'none', scrollTrigger: { trigger: '.fan', start: 'top 30%', end: 'bottom top', scrub: .6 } });
+      });
+  }
+
+  // Statement: pinned, lines light up while the deck shuffles away
+  const st = document.querySelector('.statement');
+  const sWords = splitWords($('vision'));
+  const deck = gsap.utils.toArray('.deck-card');
+  const sTl = gsap.timeline({ scrollTrigger: { trigger: st, start: 'top top', end: '+=150%', pin: true, scrub: .7 } });
+  sTl.fromTo(sWords, { opacity: .14 }, { opacity: 1, ease: 'none', stagger: { amount: 3 }, duration: .3 }, 0);
+  deck.slice(0, -1).forEach((c, i) => { const dir = i % 2 ? 1 : -1;
+    sTl.to(c, { x: dir * (innerWidth < 700 ? 110 : 300), y: -120 - i * 20, rotation: dir * (16 + i * 4), opacity: 0, duration: .7, ease: 'power2.in' }, .2 + i * .7); });
+  if (deck.length) sTl.to(deck.at(-1), { rotation: 0, x: 0, y: 0, scale: 1.06, duration: .5 }, '>-0.2');
+
+  // Work: tiles scatter in and snap into the grid as each batch scrolls into view.
+  // Checked on plain scroll events against each tile's real box: ScrollTrigger.batch never fired
+  // for these absolutely-positioned tiles in testing, which left the whole grid invisible.
+  const pending = new Set(tiles);
+  gsap.set(tiles.map(t => t.querySelector('.tile-in')), { opacity: 0 });
+  revealTiles = () => {
+    const batch = [];
+    pending.forEach(t => { if (t.hidden) return; if (t.getBoundingClientRect().top < innerHeight * .94) { pending.delete(t); batch.push(t.querySelector('.tile-in')); } });
+    if (batch.length) gsap.fromTo(batch,
+      { opacity: 0, x: () => gsap.utils.random(-120, 120), y: () => gsap.utils.random(80, 200), rotation: () => gsap.utils.random(-10, 10), scale: .85 },
+      { opacity: 1, x: 0, y: 0, rotation: 0, scale: 1, duration: 1.1, ease: 'expo.out', stagger: .06 });
+  };
+  addEventListener('scroll', revealTiles, { passive: true });
+  addEventListener('resize', revealTiles);
+  revealTiles();
+
+  // Featured frame opens from an inset card to full width
+  if (feat) {
+    const fST = { trigger: '#featured-wrap', start: 'top 90%', end: 'top 20%', scrub: .6 };
+    gsap.fromTo('.feat-frame', { clipPath: 'inset(8% 14% 8% 14% round 24px)' }, { clipPath: 'inset(0% 0% 0% 0% round 12px)', ease: 'none', scrollTrigger: fST });
+    gsap.fromTo('.feat-frame img', { scale: 1.25 }, { scale: 1, ease: 'none', scrollTrigger: fST });
+  }
+
+  // Services + about: rise in
+  gsap.from('.s-card', { y: 60, opacity: 0, duration: 1, ease: 'power3.out', stagger: .1, scrollTrigger: { trigger: '.s-grid', start: 'top 88%', once: true } });
+  gsap.from('.portrait', { clipPath: 'inset(20% 20% 20% 20% round 12px)', scale: 1.08, duration: 1.4, ease: 'expo.out', scrollTrigger: { trigger: '.about', start: 'top 80%', once: true } });
+  gsap.from('.facts div', { opacity: 0, y: 16, duration: .7, stagger: .08, ease: 'power2.out', scrollTrigger: { trigger: '.facts', start: 'top 90%', once: true } });
+  gsap.from('.c-item', { opacity: 0, y: 24, duration: .8, stagger: .1, ease: 'power3.out', scrollTrigger: { trigger: '.contact-grid', start: 'top 92%', once: true } });
+
+  addEventListener('load', () => ScrollTrigger.refresh());
 })();
 </script>
+
 </body>
 </html>
