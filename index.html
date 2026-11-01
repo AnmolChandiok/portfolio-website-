@@ -307,6 +307,92 @@ html.is-loading .loader{display:block}
 .about-cta{display:flex;gap:10px;flex-wrap:wrap;margin-top:26px}
 @media (max-width:760px){.about{grid-template-columns:1fr}.portrait{max-width:420px}}
 
+/* journey: career cut as an edit timeline. A playhead rides the scroll down a rail of "clips"
+   while a sticky program monitor swaps to each stop's shots. Sticky, not pinned: scroll stays free. */
+.journey{padding-block:clamp(70px,9vw,120px) clamp(40px,6vw,80px)}
+.jr-top{display:flex;justify-content:space-between;align-items:end;gap:20px;flex-wrap:wrap}
+.jr-top h2{font-size:clamp(2rem,4.6vw,3.8rem);letter-spacing:-.05em;line-height:1.02;max-width:16ch;margin-top:12px}
+.jr-top h2 .soft{color:var(--muted)}
+.jr-hint{color:var(--muted);max-width:32ch;font-size:.92rem}
+.jr-body{display:grid;grid-template-columns:minmax(0,.78fr) minmax(0,1.22fr);gap:clamp(24px,4vw,64px);margin-top:clamp(28px,4vw,48px)}
+.jr-track{position:relative;padding:12vh 0 42vh 56px}
+.jr-rail{position:absolute;left:20px;top:0;bottom:0;width:2px;background:repeating-linear-gradient(180deg,var(--ghost) 0 2px,transparent 2px 10px)}
+.jr-fill{position:absolute;left:0;top:0;width:100%;height:0;background:var(--accent);box-shadow:0 0 14px var(--accent)}
+.jr-playhead{position:sticky;top:50vh;height:0;z-index:4;margin-left:-56px;pointer-events:none}
+.jr-playhead::before{content:"";position:absolute;left:62px;right:0;top:0;height:1px;background:linear-gradient(90deg,var(--accent),transparent 85%);opacity:.55}
+.jr-playhead i{position:absolute;left:14px;top:-7px;width:14px;height:14px;background:var(--bg);border:2px solid var(--accent);transform:rotate(45deg);box-shadow:0 0 0 6px color-mix(in srgb,var(--accent) 16%,transparent)}
+.jr-playhead span{position:absolute;left:44px;top:-12px;font:500 .66rem/1 var(--f-mono);letter-spacing:.06em;padding:.45em .6em;border-radius:4px;background:var(--accent);color:#fff;font-variant-numeric:tabular-nums;white-space:nowrap}
+.jr-stop{position:relative;padding-block:6vh;min-height:58vh;display:flex;flex-direction:column;gap:10px;opacity:.32;transition:opacity .5s}
+.jr-stop.on{opacity:1}
+.jr-stop.past{opacity:.55}
+.jr-dot{position:absolute;left:-42px;top:calc(6vh + 4px);width:14px;height:14px;border-radius:50%;background:var(--bg);border:2px solid var(--c);transition:background .4s,transform .4s}
+.jr-stop.on .jr-dot,.jr-stop.past .jr-dot{background:var(--c)}
+.jr-stop.on .jr-dot{transform:scale(1.25)}
+.jr-when{display:flex;align-items:center;gap:10px;font:400 .7rem/1 var(--f-mono);letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+.jr-when b{font-weight:500;color:#fff;background:var(--accent);padding:.35em .55em;border-radius:3px;letter-spacing:.12em}
+.jr-kind{align-self:start;font:400 .64rem/1 var(--f-mono);letter-spacing:.1em;text-transform:uppercase;padding:.5em .7em;border-radius:999px;color:var(--c);background:color-mix(in srgb,var(--c) 12%,transparent)}
+.jr-stop h3{font-size:clamp(1.8rem,3.4vw,3rem);letter-spacing:-.05em;line-height:1}
+.jr-role{font-weight:500;letter-spacing:-.02em}
+.jr-desc{color:var(--muted);max-width:44ch}
+.jr-tags{display:flex;flex-wrap:wrap;gap:6px;list-style:none;margin:4px 0 0;padding:0}
+.jr-tags li{font-size:.76rem;padding:.4em .7em;border-radius:999px;box-shadow:inset 0 0 0 1px var(--line);background:var(--surface)}
+.jr-side{align-self:start;display:inline-flex;align-items:center;gap:8px;margin-top:6px;font-size:.86rem;font-weight:500;text-decoration:none;padding:.6em .9em;border-radius:999px;background:var(--ink);color:var(--bg)}
+.jr-side:hover{opacity:.85}
+.jr-inline{display:none}
+
+.jr-monitor{position:sticky;top:max(90px,calc(50vh - 290px));align-self:start;background:#0e0e0f;color:#f2f2f3;border-radius:var(--r-card);overflow:hidden;box-shadow:0 40px 80px -40px rgba(0,0,0,.55)}
+.jr-bar{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:12px 16px;font:400 .66rem/1 var(--f-mono);letter-spacing:.08em;text-transform:uppercase;color:rgba(255,255,255,.6);border-bottom:1px solid rgba(255,255,255,.08)}
+.jr-bar #jr-name{color:#fff;letter-spacing:.04em;text-transform:none;font-size:.74rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.jr-rec{display:inline-flex;align-items:center;gap:7px}
+.jr-rec i{position:relative;width:7px;height:7px;border-radius:50%;background:#ef4444}
+.jr-rec i::after{content:"";position:absolute;inset:0;border-radius:50%;background:#ef4444;animation:ping 1.8s ease-out infinite}
+.jr-tc2{color:#fff;font-variant-numeric:tabular-nums}
+.jr-screen{position:relative;aspect-ratio:16/11;overflow:hidden;background:radial-gradient(120% 90% at 30% 20%,#1d1d21,#0b0b0c)}
+.jr-screen::after{content:"";position:absolute;inset:0;pointer-events:none;background:linear-gradient(180deg,transparent 55%,rgba(0,0,0,.75));z-index:3}
+.jr-layer{position:absolute;inset:0;opacity:0;visibility:hidden;transition:opacity .6s,visibility 0s .6s}
+.jr-layer.on{opacity:1;visibility:visible;transition:opacity .6s}
+.jr-shot{position:absolute;display:block;overflow:hidden;border-radius:8px;background:#1a1a1d;border:0;padding:0;box-shadow:0 24px 40px -18px rgba(0,0,0,.8);transition:transform 1s cubic-bezier(.2,.8,.2,1),opacity .8s;opacity:0}
+.jr-shot img{width:100%;height:100%;object-fit:cover}
+.jr-layer .jr-shot:nth-child(1){left:5%;top:7%;width:60%;aspect-ratio:16/10;transform:translate(-30px,20px) scale(.94)}
+.jr-layer .jr-shot:nth-child(2){right:5%;top:11%;width:31%;aspect-ratio:3/4;transform:translate(30px,-10px) rotate(8deg) scale(.9)}
+.jr-layer .jr-shot:nth-child(3){left:44%;bottom:9%;width:34%;aspect-ratio:16/10;transform:translateY(40px) rotate(-6deg) scale(.9)}
+.jr-layer.on .jr-shot{opacity:1}
+.jr-layer.on .jr-shot:nth-child(1){transform:none}
+.jr-layer.on .jr-shot:nth-child(2){transform:rotate(3deg);transition-delay:.08s}
+.jr-layer.on .jr-shot:nth-child(3){transform:rotate(-2.5deg);transition-delay:.16s}
+.jr-shot.is-vid{cursor:pointer}
+.jr-shot.is-vid:hover{transform:scale(1.03)!important;z-index:2}
+.jr-play{position:absolute;right:8px;bottom:8px;width:30px;height:30px;border-radius:50%;background:#fff;color:#111;display:grid;place-items:center;font-size:.7rem}
+.is-slate{display:flex!important;flex-direction:column;justify-content:flex-end;gap:4px;padding:12px;text-align:left;background:linear-gradient(135deg,color-mix(in srgb,var(--c) 70%,#000),#141416 75%)}
+.is-slate::before{content:"";position:absolute;left:0;right:0;top:0;height:18%;background:repeating-linear-gradient(135deg,#f2f2f3 0 12px,#111 12px 24px);opacity:.9}
+.is-slate b{font-size:.9rem;font-weight:500;letter-spacing:-.02em;color:#fff}
+.is-slate i{font:400 .58rem/1 var(--f-mono);font-style:normal;letter-spacing:.08em;text-transform:uppercase;color:rgba(255,255,255,.6)}
+.jr-cap{position:absolute;z-index:4;left:18px;bottom:16px;right:18px;pointer-events:none}
+.jr-cap i{display:block;font:400 .62rem/1 var(--f-mono);font-style:normal;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.65)}
+.jr-cap b{display:block;font-size:clamp(1.2rem,2.2vw,1.9rem);font-weight:500;letter-spacing:-.04em;margin-top:6px;transform:translateY(12px);opacity:0;transition:transform .7s cubic-bezier(.2,.8,.2,1) .15s,opacity .7s .15s}
+.jr-layer.on .jr-cap b{transform:none;opacity:1}
+.jr-seq{position:relative;padding:12px 16px 14px;display:grid;gap:5px}
+.jr-lane{display:grid;grid-template-columns:22px repeat(var(--n),minmax(0,1fr));gap:3px;align-items:center}
+.jr-lane>span:first-child{font:400 .56rem/1 var(--f-mono);color:rgba(255,255,255,.4)}
+.jr-blk{height:22px;border-radius:3px;background:color-mix(in srgb,var(--c) 30%,#1b1b1e);box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--c) 55%,transparent);font:400 .56rem/22px var(--f-mono);color:rgba(255,255,255,.75);padding-inline:6px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;transition:background .4s}
+.jr-blk.on{background:var(--c);color:#fff}
+.jr-lane.a .jr-blk{height:12px;background:repeating-linear-gradient(90deg,color-mix(in srgb,var(--c) 45%,#1b1b1e) 0 2px,transparent 2px 4px);box-shadow:none}
+.jr-seq-head{position:absolute;top:6px;bottom:6px;width:2px;background:var(--accent);left:calc(16px + 25px);transition:left .08s linear;z-index:2}
+.jr-seq-head::before{content:"";position:absolute;top:-2px;left:-4px;width:10px;height:10px;background:var(--accent);clip-path:polygon(0 0,100% 0,50% 100%)}
+@media (max-width:900px){
+  .jr-body{grid-template-columns:1fr}
+  .jr-monitor{display:none}
+  .jr-track{padding:6vh 0 30vh 44px}
+  .jr-rail{left:14px}
+  .jr-playhead{margin-left:-44px}
+  .jr-playhead i{left:8px}
+  .jr-playhead span{left:34px}
+  .jr-dot{left:-36px}
+  .jr-stop{min-height:0;padding-block:5vh}
+  .jr-inline{display:flex;gap:8px;overflow-x:auto;margin-top:8px;padding-bottom:4px;scrollbar-width:none}
+  .jr-inline .jr-shot{position:relative;flex:none;width:62%;aspect-ratio:16/10;opacity:1;transform:none!important;inset:auto}
+}
+
 /* contact */
 .band{position:relative;background:var(--surface);box-shadow:inset 0 0 0 1px var(--line);border-radius:var(--r-card);overflow:hidden;padding-block:clamp(24px,4vw,40px)}
 .band .marquee{margin-top:0}
@@ -444,7 +530,7 @@ footer{padding-block:28px 40px}
     <span class="status"><i aria-hidden="true"></i>Available for work</span>
     <nav class="nav-links" aria-label="Sections" id="nav-links">
       <span class="nav-ind" aria-hidden="true"></span>
-      <a href="#packaging">Packaging</a><a href="#work">Work</a><a href="#services">Services</a><a href="#about">About</a><a href="#contact">Contact</a>
+      <a href="#packaging">Packaging</a><a href="#work">Work</a><a href="#services">Services</a><a href="#about">About</a><a href="#journey">Journey</a><a href="#contact">Contact</a>
     </nav>
     <button class="theme-btn" id="theme-btn" type="button" aria-label="Switch colour theme" title="Switch colour theme">
       <svg class="i-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 14.5A8.5 8.5 0 1 1 9.5 3 7 7 0 0 0 21 14.5z"/></svg>
@@ -591,6 +677,30 @@ footer{padding-block:28px 40px}
     </div>
   </section>
 
+  <!-- JOURNEY: your career as an edit timeline. Edit the stops in the #journey-data JSON at the bottom of this file.
+       "shots" takes a YouTube id from videos.json (plays on click), an image path like media/journey/rtf-1.jpg, or "slate" for a placeholder. -->
+  <section class="journey" id="journey" aria-label="Where I have worked">
+    <div class="wrap jr-top">
+      <div>
+        <p class="eyebrow">Journey · 2023 → now</p>
+        <h2 data-reveal>Every place I've worked, <span class="soft">cut as one timeline.</span></h2>
+      </div>
+      <p class="jr-hint">Scroll to scrub. The playhead runs through every studio, team and client so far.</p>
+    </div>
+    <div class="wrap jr-body">
+      <div class="jr-track" id="jr-track">
+        <div class="jr-rail" aria-hidden="true"><span class="jr-fill" id="jr-fill"></span></div>
+        <div class="jr-playhead" aria-hidden="true"><i></i><span id="jr-tc">TC 2023:01:00</span></div>
+        <div id="jr-stops"></div>
+      </div>
+      <div class="jr-monitor">
+        <div class="jr-bar"><span class="jr-rec"><i aria-hidden="true"></i>Program</span><span id="jr-name"></span><span class="jr-tc2" id="jr-tc2">2023:01:00</span></div>
+        <div class="jr-screen" id="jr-screen"></div>
+        <div class="jr-seq" id="jr-seq" aria-hidden="true"></div>
+      </div>
+    </div>
+  </section>
+
   <section class="wrap" id="contact">
     <div class="band">
       <div class="marquee" aria-hidden="true"><div class="marquee-track" id="talk"></div></div>
@@ -622,6 +732,26 @@ footer{padding-block:28px 40px}
 
 <!-- Fallback copy of your data, used only if data/*.json can't be fetched (e.g. opening the file straight from disk).
      On GitHub Pages the live files win, so admin.html keeps working as before. -->
+<!-- JOURNEY DATA: one entry per stop, oldest first. start/end are YYYY-MM ("now" for current). -->
+<script type="application/json" id="journey-data">[
+  {"kind": "Training", "company": "MAAC", "role": "VFX compositing, then 3D", "when": "2023 – 2024", "start": "2023-01", "color": "#8b5cf6",
+   "desc": "Where it started. VFX compositing in Nuke, then Maya and Blender: learning to build a shot, not just cut one.",
+   "tags": ["Nuke", "Compositing", "Maya", "Blender"], "shots": ["slate", "slate", "slate"]},
+  {"kind": "Freelance", "company": "Freelance", "role": "Video editor", "when": "Sep 2023 – Dec 2023", "start": "2023-09", "color": "#14b8a6",
+   "desc": "First paid edits for independent clients: reels, YouTube cuts and motion pieces, from brief to final export.",
+   "tags": ["Premiere Pro", "After Effects", "Reels"], "shots": ["slate", "slate"]},
+  {"kind": "In-house", "company": "Unicore Infotech", "role": "Video editor", "when": "Sep 2023 – Dec 2023", "start": "2023-09", "color": "#3b82f6",
+   "desc": "Video editor on the in-house team, cutting product and marketing videos.",
+   "tags": ["Product video", "Social"], "shots": ["slate", "slate"]},
+  {"kind": "Media brand", "company": "Rethinking The Future", "role": "Senior video editor & graphic designer", "when": "Nov 2024 – Nov 2025", "start": "2024-11", "color": "#f59e0b",
+   "desc": "Edits and graphics for an architecture and design media platform, including films built from AI-generated clips and audio.",
+   "tags": ["Editing", "Graphic design", "AI video"], "shots": ["rS8y_pvfJsA", "8QQtYfzaB7o", "H1ScSGMbUx0"]},
+  {"kind": "Full-time", "company": "Brand Pitaara · Square Foot Story", "role": "Senior video editor & motion graphics", "when": "Nov 2025 – now", "start": "2025-11", "end": "now", "now": true, "color": "#ff5a1f",
+   "desc": "Scripting, shooting and editing property stories, reels and launch films for Square Foot Story.",
+   "tags": ["Scripting", "Shoot + edit", "Reels", "Motion"], "shots": ["zyQAIvDuaZs", "cUUus-9DAx4", "5YaRsU4jO7k"],
+   "side": {"label": "On the side: Ortho Track packaging + website", "href": "#packaging"}}
+]</script>
+
 <script type="application/json" id="fallback">{"content": {"nav": {"brand": "Anmol Chandiok", "cta": "Let's talk"}, "hero": {"intro": "Motion designer, video editor and packaging designer in Delhi NCR. I cut reels, animate brands and design labels and packs that sell on the shelf."}, "work": {"note": "Landscape films and vertical reels, picked from recent projects."}, "vision": {"lines": "Cut with purpose.\nAnimate with intent.\nScript the hook.\nBuild the tools.\nDeliver every frame."}, "services": {"statement": "Edits that hold attention, motion that explains, and packaging that sells on the shelf.", "note": "Open a category to watch the work. Most projects are short-form: property, brand and social video.", "item1Name": "Motion design", "item1Desc": "Animated explainers, kinetic type and brand motion, built in After Effects.", "item2Name": "Storytelling", "item2Desc": "Story-first edits for property, brands and people, finished with sound and colour.", "item3Name": "Short-form reels", "item3Desc": "Hook-to-CTA reels for Instagram and YouTube Shorts, cut in 30 to 45 seconds.", "item4Name": "After Effects tools", "item4Desc": "ScriptUI panels and scripts, like Stash and A Click, that take the repetitive clicks out of animation.", "item5Name": "Packaging design", "item5Desc": "Labels, lids and print-ready packaging artwork, fitted to the dieline and shown as a 3D mockup."}, "clients": {"list": "Square Foot Story, Stained Glass House, SKA Group"}, "contact": {"headline": "Let's talk", "email": "anmol.chandiok9@gmail.com", "phone": "+91 81302 59174"}, "footer": {"note": "© 2026 Anmol Chandiok"}}, "videos": {"updated": "2026-09-27T17:02:34.571Z", "videos": [{"type": "youtube", "id": "HFCOP3gnXBU", "title": "Motion Design Test Edit for  @somratdutta  | After Effects | by Anmol Chandiok", "client": "Anmol", "category": "Motion design", "year": "2026", "description": "", "instagramUrl": "", "projectFile": "https://drive.google.com/drive/folders/1w3-Ku15DLkqjoHsoY_QTXHDkl6LJVkO5?usp=drive_link", "aspect": "16:9", "duration": "", "poster": "", "preview": "", "previewMode": "youtube", "start": 0, "featured": true, "hidden": false}, {"type": "youtube", "id": "RkdxejBvoPY", "title": "SKA Group  Can Early Delivery Become a Real Estate Track Record", "client": "Anmol", "category": "Storytelling", "year": "2026", "description": "", "instagramUrl": "", "projectFile": "", "aspect": "16:9", "duration": "4:27", "poster": "", "preview": "", "previewMode": "youtube", "start": 0, "featured": false, "hidden": false}, {"type": "youtube", "id": "-kv-pQQVBXg", "title": "Ghaziabad’s Next Real Estate Hotspot? RNE vs Wave City vs Siddharth Vihar", "client": "Anmol", "category": "Storytelling", "year": "2026", "description": "", "instagramUrl": "", "projectFile": "", "aspect": "9:16", "duration": "", "poster": "", "preview": "", "previewMode": "youtube", "start": 0, "featured": false, "hidden": false}, {"type": "youtube", "id": "D7DKrBgwamE", "title": "Yaas Media Breakdown", "client": "Anmol", "category": "Motion design", "year": "2026", "description": "", "instagramUrl": "", "projectFile": "", "aspect": "16:9", "duration": "", "poster": "", "preview": "", "previewMode": "youtube", "start": 0, "featured": true, "hidden": false}, {"type": "youtube", "id": "tGgPQV6jet8", "title": "Stained Glass House (Shot & Edited)", "client": "Anmol", "category": "Storytelling", "year": "2026", "description": "", "instagramUrl": "", "projectFile": "", "aspect": "9:16", "duration": "", "poster": "", "preview": "", "previewMode": "youtube", "start": 0, "featured": true, "hidden": false}, {"type": "youtube", "id": "rS8y_pvfJsA", "title": "Rethinking the future (AI Generated Clips & Audio)", "client": "Anmol", "category": "Motion design", "year": "2026", "description": "", "instagramUrl": "", "projectFile": "", "aspect": "9:16", "duration": "", "poster": "", "preview": "", "previewMode": "youtube", "start": 0, "featured": false, "hidden": false}, {"type": "youtube", "id": "cUUus-9DAx4", "title": "Square Foot Story (Shot & Edit)", "client": "Anmol", "category": "Storytelling", "year": "2026", "description": "", "instagramUrl": "", "projectFile": "", "aspect": "9:16", "duration": "", "poster": "", "preview": "", "previewMode": "youtube", "start": 0, "featured": false, "hidden": false}, {"type": "youtube", "id": "Rw6tX3h8tYU", "title": "Covered Navbharat Nivas on behalf of Squares Foot Story (Shot & Edited )", "client": "Anmol", "category": "Short-form reels", "year": "2026", "description": "", "instagramUrl": "", "projectFile": "", "aspect": "9:16", "duration": "", "poster": "", "preview": "", "previewMode": "youtube", "start": 0, "featured": false, "hidden": false}, {"type": "youtube", "id": "zyQAIvDuaZs", "title": "Covered Stained Glass House on behalf of Square Foot Story (Scripted, Shot & Edited)", "client": "Anmol", "category": "Short-form reels", "year": "2026", "description": "", "instagramUrl": "", "projectFile": "", "aspect": "9:16", "duration": "", "poster": "", "preview": "", "previewMode": "youtube", "start": 0, "featured": false, "hidden": false}, {"type": "youtube", "id": "0uaKJ1pl184", "title": "Covered Home Store on behalf of Square Foot Story (Shot & Edit)", "client": "Anmol", "category": "Short-form reels", "year": "2026", "description": "", "instagramUrl": "", "projectFile": "", "aspect": "9:16", "duration": "", "poster": "", "preview": "", "previewMode": "youtube", "start": 0, "featured": false, "hidden": false}, {"type": "youtube", "id": "8QQtYfzaB7o", "title": "Rethinking the Future (AI Generated Clips & Audio)", "client": "Anmol", "category": "Motion design", "year": "2026", "description": "", "instagramUrl": "", "projectFile": "", "aspect": "9:16", "duration": "", "poster": "", "preview": "", "previewMode": "youtube", "start": 0, "featured": false, "hidden": false}, {"type": "youtube", "id": "MxeZFr-wmUk", "title": "Covered Stained Glass House on behalf of Square Foot Story", "client": "Anmol", "category": "Short-form reels", "year": "2026", "description": "", "instagramUrl": "", "projectFile": "", "aspect": "9:16", "duration": "", "poster": "", "preview": "", "previewMode": "youtube", "start": 0, "featured": false, "hidden": false}, {"type": "youtube", "id": "l-5I9RVT80M", "title": "Covered Look Book.Co on behalf of Square Foot Story", "client": "Anmol", "category": "Short-form reels", "year": "2026", "description": "", "instagramUrl": "", "projectFile": "", "aspect": "9:16", "duration": "", "poster": "", "preview": "", "previewMode": "youtube", "start": 0, "featured": false, "hidden": false}, {"type": "youtube", "id": "5YaRsU4jO7k", "title": "SaaS Product Launch for Square Foot Stores ", "client": "Anmol", "category": "Motion design", "year": "2026", "description": "", "instagramUrl": "", "projectFile": "", "aspect": "16:9", "duration": "", "poster": "", "preview": "", "previewMode": "youtube", "start": 0, "featured": true, "hidden": false}, {"type": "youtube", "id": "H1ScSGMbUx0", "title": "Rethinking the future (AI Generated Clips & Audio)", "client": "Anmol", "category": "Motion design", "year": "2026", "description": "", "instagramUrl": "", "projectFile": "", "aspect": "9:16", "duration": "", "poster": "", "preview": "", "previewMode": "youtube", "start": 0, "featured": false, "hidden": false}]}, "social": {"instagram": "", "youtube": "", "linkedin": "", "behance": "https://www.behance.net/anmolchandiok"}, "profile": {"image": "media/profile-1784040982966.jpg"}, "resume": {"file": "media/resume-1785675779064.pdf"}}</script>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
@@ -746,6 +876,35 @@ footer{padding-block:28px 40px}
     const seen = new Set();
     return `<div class="reel-row">${fillRow(list).map(v => { const dup = seen.has(v._i); seen.add(v._i); return reelCard(v, dup); }).join('')}</div>`;
   }).join('');
+
+  /* ---------- 5b. Journey: career as an edit timeline ---------- */
+  let jr = [];
+  try { jr = JSON.parse($('journey-data').textContent); } catch (e) {}
+  if (jr.length) {
+    const vById = id => videos.find(v => v.id === id);
+    const shot = (s, stop) => {
+      const v = vById(s);
+      if (v) return `<button class="jr-shot is-vid" type="button" data-i="${v._i}" aria-label="Play ${esc(v.title)}">${img(v)}<span class="jr-play" aria-hidden="true">▶</span></button>`;
+      if (/\.(jpe?g|png|webp|gif|avif)$/i.test(s)) return `<span class="jr-shot"><img src="${esc(s)}" alt="" loading="lazy"></span>`;
+      return `<span class="jr-shot is-slate"><b>${esc(stop.company)}</b><i>Photo coming soon</i></span>`;
+    };
+    const shots = st => (st.shots || []).slice(0, 3).map(s => shot(s, st)).join('');
+    $('jr-stops').innerHTML = jr.map((st, k) => `
+      <article class="jr-stop" style="--c:${esc(st.color || '#888')}">
+        <span class="jr-dot" aria-hidden="true"></span>
+        <p class="jr-when">${esc(st.when)}${st.now ? '<b>Now</b>' : ''}</p>
+        <span class="jr-kind">${esc(st.kind)}</span>
+        <h3>${esc(st.company)}</h3>
+        <p class="jr-role">${esc(st.role)}</p>
+        <p class="jr-desc">${esc(st.desc)}</p>
+        <ul class="jr-tags">${(st.tags || []).map(t => `<li>${esc(t)}</li>`).join('')}</ul>
+        ${st.side ? `<a class="jr-side" href="${esc(st.side.href)}">${esc(st.side.label)} →</a>` : ''}
+        <div class="jr-inline">${shots(st)}</div>
+      </article>`).join('');
+    $('jr-screen').innerHTML = jr.map(st => `<div class="jr-layer" style="--c:${esc(st.color || '#888')}">${shots(st)}<span class="jr-cap"><i>${esc(st.kind)} · ${esc(st.when)}</i><b>${esc(st.company)}</b></span></div>`).join('');
+    const lane = (cls, tag, label) => `<div class="jr-lane ${cls}" style="--n:${jr.length}"><span>${tag}</span>${jr.map(st => `<span class="jr-blk" style="--c:${esc(st.color || '#888')}">${label ? esc(st.company) : ''}</span>`).join('')}</div>`;
+    $('jr-seq').innerHTML = lane('v', 'V1', true) + lane('a', 'A1', false) + '<span class="jr-seq-head" id="jr-seq-head"></span>';
+  }
 
   /* ---------- 5. Featured film (first featured landscape) ---------- */
   const feat = videos.find(v => v.featured && v._ar > 1) || videos.find(v => v._ar > 1);
@@ -901,9 +1060,40 @@ footer{padding-block:28px 40px}
   const opener = el => { const v = videos[+el.dataset.i]; if (v) openVideo(v, el.querySelector('.tile-in') || el); };
   document.addEventListener('click', e => {
     if (e.target.closest('a')) return;
-    const el = e.target.closest('.tile, .hero-card, .feat-frame, .reel-card'); if (el) opener(el);
+    const el = e.target.closest('.tile, .hero-card, .feat-frame, .reel-card, .jr-shot[data-i]'); if (el) opener(el);
   });
   grid.addEventListener('keydown', e => { const t = e.target.closest('.tile'); if (t && (e.key === 'Enter' || e.key === ' ')) { e.preventDefault(); opener(t); } });
+  // Journey: the playhead sits at screen centre; whichever stop it has passed is "on air"
+  const jTrack = $('jr-track'), jStops = [...document.querySelectorAll('.jr-stop')];
+  if (jTrack && jStops.length) {
+    const jLayers = [...document.querySelectorAll('.jr-layer')], jBlks = [...document.querySelectorAll('.jr-lane.v .jr-blk')];
+    const ym = s => { if (!s || s === 'now') { const d = new Date(); return d.getFullYear() * 12 + d.getMonth(); } const [y, m] = s.split('-').map(Number); return y * 12 + m - 1; };
+    const pad = n => String(n).padStart(2, '0');
+    let jOn = -1, jTick = false;
+    const jUpdate = () => {
+      jTick = false;
+      const r = jTrack.getBoundingClientRect(), y = Math.min(Math.max(innerHeight / 2 - r.top, 0), r.height);
+      $('jr-fill').style.height = y + 'px';
+      let k = 0; jStops.forEach((s, i) => { if (s.offsetTop <= y + 2) k = i; });
+      const a = jStops[k], b = jStops[k + 1];
+      const local = Math.min(Math.max((y - a.offsetTop) / ((b ? b.offsetTop : a.offsetTop + a.offsetHeight) - a.offsetTop), 0), 1);
+      const m0 = ym(jr[k].start), m1 = jr[k + 1] ? ym(jr[k + 1].start) : ym(jr[k].end || 'now');
+      const mm = Math.round(m0 + (m1 - m0) * local), fr = Math.floor(local * 24 * 6) % 24;
+      const tc = `${Math.floor(mm / 12)}:${pad(mm % 12 + 1)}:${pad(fr)}`;
+      $('jr-tc').textContent = 'TC ' + tc; $('jr-tc2').textContent = tc;
+      const head = $('jr-seq-head');
+      if (head) { const lane = head.parentNode.querySelector('.jr-lane'), first = lane.children[1], w = lane.offsetWidth - first.offsetLeft + lane.offsetLeft; head.style.left = (first.offsetLeft + w * (k + local) / jr.length) + 'px'; }
+      if (k !== jOn) {
+        jOn = k;
+        jStops.forEach((s, i) => { s.classList.toggle('on', i === k); s.classList.toggle('past', i < k); });
+        jLayers.forEach((l, i) => l.classList.toggle('on', i === k));
+        jBlks.forEach((bk, i) => bk.classList.toggle('on', i === k));
+        $('jr-name').textContent = jr[k].company;
+      }
+    };
+    const jReq = () => { if (!jTick) { jTick = true; requestAnimationFrame(jUpdate); } };
+    addEventListener('scroll', jReq, { passive: true }); addEventListener('resize', jReq); jUpdate();
+  }
   $('reel').addEventListener('keydown', e => { const t = e.target.closest('.reel-card'); if (t && (e.key === 'Enter' || e.key === ' ')) { e.preventDefault(); opener(t); } });
 
   if (!motion) return;   // everything above works without animation
