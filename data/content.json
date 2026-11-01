@@ -4,7 +4,7 @@
     "cta": "Let's talk"
   },
   "hero": {
-    "intro": "Motion designer and video editor in Delhi NCR. I cut reels, animate brands and build After Effects tools that make editing faster."
+    "intro": "Motion designer, video editor and packaging designer in Delhi NCR. I cut reels, animate brands and design labels and packs that sell on the shelf."
   },
   "work": {
     "note": "Landscape films and vertical reels, picked from recent projects."
@@ -13,7 +13,7 @@
     "lines": "Cut with purpose.\nAnimate with intent.\nScript the hook.\nBuild the tools.\nDeliver every frame."
   },
   "services": {
-    "statement": "Edits that hold attention, motion that explains, and tools that make both faster.",
+    "statement": "Edits that hold attention, motion that explains, and packaging that sells on the shelf.",
     "note": "Open a category to watch the work. Most projects are short-form: property, brand and social video.",
     "item1Name": "Motion design",
     "item1Desc": "Animated explainers, kinetic type and brand motion, built in After Effects.",
@@ -22,7 +22,9 @@
     "item3Name": "Short-form reels",
     "item3Desc": "Hook-to-CTA reels for Instagram and YouTube Shorts, cut in 30 to 45 seconds.",
     "item4Name": "After Effects tools",
-    "item4Desc": "ScriptUI panels and scripts, like Stash and A Click, that take the repetitive clicks out of animation."
+    "item4Desc": "ScriptUI panels and scripts, like Stash and A Click, that take the repetitive clicks out of animation.",
+    "item5Name": "Packaging design",
+    "item5Desc": "Labels, lids and print-ready packaging artwork, fitted to the dieline and shown as a 3D mockup."
   },
   "clients": {
     "list": "Square Foot Story, Stained Glass House, SKA Group"

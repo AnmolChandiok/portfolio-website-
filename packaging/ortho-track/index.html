@@ -1,0 +1,282 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ortho Track Bucket · 3D</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600&display=swap" rel="stylesheet">
+<style>
+  :root{ --ink:#1d1d1f; --muted:#6e6e73; --brand:#ee4b22; --panel:#ffffff; }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{height:100%;background:#d0d0d0;color:var(--ink);font-family:"DM Sans",system-ui,sans-serif}
+  #stage{position:relative;width:100%;height:100vh;min-height:520px;overflow:hidden;
+    background:linear-gradient(180deg,#bbbbbb 0%,#c8c8c8 35%,#d8d8d8 70%,#e5e5e5 100%)}
+  canvas{display:block;width:100%;height:100%;cursor:grab;touch-action:none}
+  canvas:active{cursor:grabbing}
+  .hud{position:absolute;pointer-events:none;inset:0;padding:24px 28px;display:flex;flex-direction:column;justify-content:space-between}
+  .title{font-size:13px;font-weight:600;color:var(--ink)}
+  .title small{display:block;font-weight:400;color:var(--muted);font-size:12px;margin-top:2px}
+  .bar{align-self:center;display:flex;align-items:center;gap:4px;padding:6px;background:var(--panel);border-radius:14px;
+    box-shadow:0 6px 24px rgba(0,0,0,.10),0 1px 3px rgba(0,0,0,.08);pointer-events:auto;flex-wrap:wrap;justify-content:center;max-width:100%}
+  .sep{width:1px;height:22px;background:#e5e5ea;margin:0 6px}
+  button{font:500 12px "DM Sans",sans-serif;color:var(--ink);background:transparent;border:0;padding:9px 12px;border-radius:9px;cursor:pointer;transition:background .15s,color .15s;white-space:nowrap}
+  button:hover{background:#f2f2f4}
+  button.on{background:#1d1d1f;color:#fff}
+  .hint{position:absolute;right:28px;bottom:32px;font-size:12px;color:var(--muted);pointer-events:none}
+  .loader{position:absolute;inset:0;display:grid;place-items:center;font-size:12px;letter-spacing:.2em;color:var(--muted);transition:opacity .6s}
+  @media (max-width:720px){.hud{padding:16px}.hint{display:none}button{padding:8px 9px}}
+  /* ?embed: used inside the portfolio card; the page around it carries the title */
+  .embed .title,.embed .hint{display:none}
+  .embed #stage{height:100%;min-height:0}
+  html.embed,html.embed body{height:100%}
+  .embed .hud{padding:14px}
+  .embed .bar{margin-top:auto;transform:scale(.94);transform-origin:50% 100%}
+  @media (max-width:560px){.embed [data-view],.embed .sep{display:none}}
+</style>
+</head>
+<body>
+<script>if (/[?&]embed/.test(location.search)) document.documentElement.classList.add("embed");</script>
+<div id="stage">
+  <div class="loader" id="loader">LOADING</div>
+  <div class="hud">
+    <div class="title">Ortho Track · Walking Track Bucket<small>Wrap-around label &amp; printed lid</small></div>
+    <div class="bar">
+      <button data-view="front" class="on">Front</button>
+      <button data-view="frontLeft">Front Left</button>
+      <button data-view="frontRight">Front Right</button>
+      <button data-view="back">Back</button>
+      <button data-view="top">Top</button>
+      <span class="sep"></span>
+      <button id="lidBtn">Open lid</button>
+      <button id="spinBtn">Auto spin</button>
+    </div>
+  </div>
+  <div class="hint">Drag to rotate · Scroll to zoom</div>
+</div>
+
+<script type="importmap">
+{ "imports": {
+  "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+  "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
+}}
+</script>
+<script type="module">
+import * as THREE from 'three';
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
+
+// Textures live next to this file
+const LABEL_SRC = "label.jpg";
+const LID_SRC   = "lid.jpg";
+
+const stage = document.getElementById('stage');
+const EMBED = document.documentElement.classList.contains('embed');
+const renderer = new THREE.WebGLRenderer({ antialias:true, alpha:true });
+renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+renderer.outputColorSpace = THREE.SRGBColorSpace;
+renderer.toneMapping = THREE.ACESFilmicToneMapping;
+renderer.toneMappingExposure = 1.0;
+renderer.shadowMap.enabled = true;
+renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+stage.prepend(renderer.domElement);
+
+const scene = new THREE.Scene();
+const pmrem = new THREE.PMREMGenerator(renderer);
+scene.environment = pmrem.fromScene(new RoomEnvironment(), 0.02).texture;
+
+const camera = new THREE.PerspectiveCamera(28, 1, 0.1, 200);
+camera.position.set(0, 5.6 + 40*Math.sin(0.22), 40*Math.cos(0.22));
+
+const controls = new OrbitControls(camera, renderer.domElement);
+controls.target.set(0, 5.6, 0);
+controls.enableDamping = true;
+controls.dampingFactor = 0.06;
+controls.enablePan = false;
+controls.minDistance = 22;
+controls.maxDistance = 75;
+controls.minPolarAngle = 0.15;
+controls.maxPolarAngle = Math.PI / 2 - 0.04;
+controls.autoRotate = EMBED;
+controls.autoRotateSpeed = 1.4;
+if (EMBED) { controls.enableZoom = false; renderer.domElement.style.touchAction = 'pan-y'; }
+
+// Lights: soft neutral studio
+const key = new THREE.DirectionalLight(0xffffff, 1.6);
+key.position.set(2, 30, 7);
+key.castShadow = true;
+key.shadow.mapSize.set(2048, 2048);
+Object.assign(key.shadow.camera, { left:-12, right:12, top:16, bottom:-6, near:1, far:70 });
+key.shadow.radius = 14; key.shadow.blurSamples = 24;
+scene.add(key);
+const fill = new THREE.DirectionalLight(0xffffff, 0.8);
+fill.position.set(-14, 8, 10);
+scene.add(fill);
+const back = new THREE.DirectionalLight(0xffffff, 0.7);
+back.position.set(0, 10, -16);
+scene.add(back);
+scene.add(new THREE.HemisphereLight(0xffffff, 0xbdbdbd, 0.6));
+
+// Materials
+const loader = new THREE.TextureLoader();
+const maxAniso = renderer.capabilities.getMaxAnisotropy();
+function tex(src){
+  const t = loader.load(src, onAssetLoaded);
+  t.colorSpace = THREE.SRGBColorSpace;
+  t.anisotropy = maxAniso;
+  return t;
+}
+let pending = 2;
+function onAssetLoaded(){ if(--pending === 0){ const l=document.getElementById('loader'); l.style.opacity=0; setTimeout(()=>l.remove(),700); intro.start = performance.now(); } }
+
+const plastic = new THREE.MeshPhysicalMaterial({
+  color:0xf7f7f6, roughness:0.2, metalness:0, clearcoat:1.0, clearcoatRoughness:0.08, envMapIntensity:1.3, side:THREE.DoubleSide
+});
+const labelMat = new THREE.MeshPhysicalMaterial({
+  map:tex(LABEL_SRC), roughness:0.34, clearcoat:0.6, clearcoatRoughness:0.15, envMapIntensity:1.1
+});
+const lidPrintMat = new THREE.MeshPhysicalMaterial({
+  map:tex(LID_SRC), color:0xcfcfcf, roughness:0.45, clearcoat:0.3, clearcoatRoughness:0.35
+});
+
+// Geometry (units ≈ 1 cm)
+const bucket = new THREE.Group();
+scene.add(bucket);
+
+const V = (x,y) => new THREE.Vector2(x,y);
+// quarter/partial arc helper for smooth rounded edges (angles in degrees)
+const arc = (cx,cy,r,a0,a1,n=8) => Array.from({length:n+1},(_,i)=>{const t=(a0+(a1-a0)*i/n)*Math.PI/180; return V(cx+r*Math.cos(t), cy+r*Math.sin(t));});
+
+// Proportions measured from the reference renders (units ≈ 1 cm)
+const R0 = 4.38, R1 = 5.35, Y0 = 0.18, Y1 = 8.9;
+const rAt = y => R0 + (R1 - R0) * (y - Y0) / (Y1 - Y0);
+
+// Body: rounded foot, straight tapered wall, chunky container ring, hollow inside
+const bodyPts = [
+  V(0.001,0), V(4.16,0), ...arc(4.16,0.2,0.2,-90,0,6).slice(1), V(R0,Y0+0.05),
+  V(R1,Y1), V(5.42,8.92),
+  ...arc(5.59,9.07,0.12,-90,0,5), ...arc(5.59,9.83,0.12,0,90,5),
+  V(5.45,9.97), V(5.2,9.97), V(rAt(8.9)-0.18,8.9), V(rAt(1.0)-0.18,1.0), V(0.001,1.0)
+];
+const body = new THREE.Mesh(new THREE.LatheGeometry(bodyPts, 180), plastic);
+body.castShadow = true; body.receiveShadow = true;
+bucket.add(body);
+
+// Label: full-height wrap from just above the foot to just under the ring
+const LY0 = 0.4, LY1 = 8.75;
+const labelGeo = new THREE.CylinderGeometry(rAt(LY1)+0.012, rAt(LY0)+0.012, LY1-LY0, 220, 1, true);
+const label = new THREE.Mesh(labelGeo, labelMat);
+label.position.y = (LY0 + LY1) / 2;
+label.rotation.y = Math.PI + 0.565;  // logo faces front, seam at the back
+label.castShadow = true;
+bucket.add(label);
+
+// Lid: wide band + soft rolled lip around a recessed printed panel
+const lid = new THREE.Group();          // pivots around the lid's own centre
+const LIDC = 10.8;
+lid.position.y = LIDC;
+bucket.add(lid);
+const lidInner = new THREE.Group();
+lidInner.position.y = -LIDC;
+lid.add(lidInner);
+const lidPts = [
+  V(5.45,10.0), V(5.73,10.0), ...arc(5.73,10.12,0.12,-90,0,5), ...arc(5.73,10.73,0.12,0,90,5),
+  V(5.62,10.86), V(5.54,10.96),
+  ...arc(5.28,11.25,0.34,-48,180,18),
+  V(4.94,11.15)
+];
+const lidShell = new THREE.Mesh(new THREE.LatheGeometry(lidPts, 180), plastic);
+lidShell.castShadow = true;
+lidInner.add(lidShell);
+const lidTop = new THREE.Mesh(new THREE.CircleGeometry(4.945, 128), lidPrintMat);
+lidTop.rotation.x = -Math.PI / 2;
+lidTop.position.y = 11.151;
+lidInner.add(lidTop);
+const lidUnder = new THREE.Mesh(new THREE.CircleGeometry(5.45, 96), plastic);
+lidUnder.rotation.x = Math.PI / 2;   // closes the underside when the lid lifts
+lidUnder.position.y = 10.0;
+lidInner.add(lidUnder);
+
+// Floor: soft shadow catcher + contact blob
+const floor = new THREE.Mesh(new THREE.PlaneGeometry(80, 80), new THREE.ShadowMaterial({ opacity:0.09 }));
+floor.rotation.x = -Math.PI / 2; floor.receiveShadow = true;
+scene.add(floor);
+const c = document.createElement('canvas'); c.width = c.height = 256;
+const g = c.getContext('2d'), grd = g.createRadialGradient(128,128,10,128,128,128);
+grd.addColorStop(0,'rgba(0,0,0,.42)'); grd.addColorStop(.55,'rgba(0,0,0,.12)'); grd.addColorStop(1,'rgba(0,0,0,0)');
+g.fillStyle = grd; g.fillRect(0,0,256,256);
+const blob = new THREE.Mesh(new THREE.PlaneGeometry(13, 13),
+  new THREE.MeshBasicMaterial({ map:new THREE.CanvasTexture(c), transparent:true, depthWrite:false }));
+blob.rotation.x = -Math.PI / 2; blob.position.y = 0.01;
+scene.add(blob);
+
+// UI
+let lidOpen = false, lidT = 0, resumeTimer;
+const lidBtn = document.getElementById('lidBtn');
+const spinBtn = document.getElementById('spinBtn');
+let spinWanted = EMBED;
+if (EMBED) document.getElementById('spinBtn').classList.add('on');
+lidBtn.onclick = () => { lidOpen = !lidOpen; lidBtn.textContent = lidOpen ? 'Close lid' : 'Open lid'; lidBtn.classList.toggle('on', lidOpen); };
+spinBtn.onclick = () => { spinWanted = !spinWanted; controls.autoRotate = spinWanted; spinBtn.classList.toggle('on', spinWanted); };
+controls.addEventListener('start', () => { controls.autoRotate = false; clearTimeout(resumeTimer); });
+controls.addEventListener('end', () => { clearTimeout(resumeTimer); if (spinWanted) resumeTimer = setTimeout(() => controls.autoRotate = true, 2500); });
+
+// Camera views (smooth fly-to)
+const VIEWS = { front:[0,0.22], frontLeft:[-0.75,0.22], frontRight:[0.75,0.22], back:[Math.PI,0.22], top:[0,1.35] };
+let fly = null;
+document.querySelectorAll('[data-view]').forEach(b => b.onclick = () => {
+  document.querySelectorAll('[data-view]').forEach(x => x.classList.toggle('on', x === b));
+  const [az, el] = VIEWS[b.dataset.view];
+  const r = camera.position.distanceTo(controls.target);
+  const to = new THREE.Vector3(Math.sin(az)*Math.cos(el), Math.sin(el), Math.cos(az)*Math.cos(el)).multiplyScalar(r).add(controls.target);
+  fly = { from: camera.position.clone(), to, t0: performance.now(), dur: 900 };
+  controls.autoRotate = false;
+});
+controls.addEventListener('start', () => { fly = null; document.querySelectorAll('[data-view]').forEach(x => x.classList.remove('on')); });
+
+// Resize to the container, so it works full-page or inside any section
+function resize(){
+  const w = stage.clientWidth, h = stage.clientHeight;
+  renderer.setSize(w, h, false);
+  camera.aspect = w / h;
+  camera.position.sub(controls.target).setLength(EMBED ? (w < 640 ? 52 : 46) : (w < 640 ? 56 : 40)).add(controls.target);
+  camera.updateProjectionMatrix();
+}
+new ResizeObserver(resize).observe(stage); resize();
+
+// Animation
+const intro = { start: Infinity, dur: 1800 };
+const ease = t => 1 - Math.pow(1 - t, 4);
+const easeIO = t => t < .5 ? 4*t*t*t : 1 - Math.pow(-2*t + 2, 3) / 2;
+let last = performance.now();
+renderer.setAnimationLoop(now => {
+  const dt = Math.min((now - last) / 1000, 0.05); last = now;
+
+  const p = Math.min(Math.max((now - intro.start) / intro.dur, 0), 1);
+  const e = ease(p);
+  bucket.rotation.y = -Math.PI * 0.9 * (1 - e);
+  bucket.position.y = 2.5 * (1 - e);
+  bucket.scale.setScalar(0.85 + 0.15 * e);
+  blob.material.opacity = e;
+
+  lidT += ((lidOpen ? 1 : 0) - lidT) * Math.min(dt * 5, 1);
+  const k = easeIO(Math.min(Math.max(lidT, 0), 1));
+  lid.position.set(0, LIDC + 2.6 * k, -2.0 * k);
+  lid.rotation.x = 0.38 * k;
+
+  if (fly) {
+    const q = easeIO(Math.min((now - fly.t0) / fly.dur, 1));
+    // slerp around the target so the camera orbits instead of cutting through
+    const a = fly.from.clone().sub(controls.target), b = fly.to.clone().sub(controls.target);
+    const len = THREE.MathUtils.lerp(a.length(), b.length(), q);
+    const dir = a.normalize().lerp(b.normalize(), q);
+    if (dir.lengthSq() < 1e-6) dir.set(Math.sin(q*Math.PI), 0, Math.cos(q*Math.PI));
+    camera.position.copy(dir.normalize().multiplyScalar(len).add(controls.target));
+    if (q >= 1) { fly = null; if (spinWanted) controls.autoRotate = true; }
+  }
+  controls.update();
+  renderer.render(scene, camera);
+});
+</script>
+</body>
+</html>
