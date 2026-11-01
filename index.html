@@ -246,6 +246,10 @@ html.is-loading .loader{display:block}
 .pack-facts div{display:grid;grid-template-columns:104px minmax(0,1fr);gap:14px;padding-block:11px;border-bottom:1px solid var(--line);font-size:.9rem}
 .pack-facts dt{font:400 .66rem/1.9 var(--f-mono);letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
 .pack-facts dd{margin:0}
+.pack-live{display:inline-flex;align-items:center;gap:8px;font-weight:500;text-decoration:underline;text-underline-offset:3px}
+.pack-live i{position:relative;width:6px;height:6px;border-radius:50%;background:#22c55e}
+.pack-live i::after{content:"";position:absolute;inset:0;border-radius:50%;background:#22c55e;animation:ping 1.8s ease-out infinite}
+.pack-note{display:block;color:var(--muted);font-size:.8rem;margin-top:2px}
 .pack-act{display:flex;gap:10px;flex-wrap:wrap;margin-top:auto;padding-top:6px}
 .pack-flat{display:grid;grid-template-columns:minmax(0,3.2fr) minmax(0,1fr);gap:12px;margin-top:12px}
 .pack-art{margin:0;background:var(--tone);border-radius:var(--r-card);padding:clamp(14px,2vw,24px);display:flex;flex-direction:column;justify-content:space-between;gap:14px;min-width:0}
@@ -514,10 +518,12 @@ footer{padding-block:28px 40px}
         <dl class="pack-facts">
           <div><dt>Client</dt><dd>Ortho Track</dd></div>
           <div><dt>Format</dt><dd>Plastic bucket, wrap-around label and lid</dd></div>
-          <div><dt>Delivered</dt><dd>Label and lid artwork, dieline-fitted print files, 3D mockup</dd></div>
+          <div><dt>Delivered</dt><dd>Label and lid artwork, dieline-fitted print files, 3D mockup, brand website</dd></div>
+          <div><dt>Live site</dt><dd><a class="pack-live" href="https://orthotrack.fit/" target="_blank" rel="noopener"><i aria-hidden="true"></i>orthotrack.fit ↗</a><span class="pack-note">Website I designed and built for the brand</span></dd></div>
         </dl>
         <div class="pack-act">
           <a class="btn btn-ink" href="packaging/ortho-track/" target="_blank" rel="noopener">Open full screen <svg width="12" height="12" viewBox="0 0 12 12" aria-hidden="true"><path d="M3 9l6-6M4 3h5v5" stroke="currentColor" stroke-width="1.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+          <a class="btn btn-ghost" href="https://orthotrack.fit/" target="_blank" rel="noopener">Visit orthotrack.fit ↗</a>
           <a class="btn btn-ghost" href="#contact">Start a packaging project</a>
         </div>
       </div>
